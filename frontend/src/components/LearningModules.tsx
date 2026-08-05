@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -24,12 +24,23 @@ import {
   CheckCircle2,
   Sparkles,
   FileText,
-  HelpCircle
+  HelpCircle,
+  Play,
+  ShieldCheck,
+  Award
 } from 'lucide-react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { DETAILED_MODULES, LearningModuleDetail } from '../data/learningContent';
 import AlgorithmFlowchart from './AlgorithmFlowchart';
 import { supabaseData } from '../services/supabaseData';
+
+// Level 1 Sub-components
+import TBIntroductionPage from './level1/TBIntroductionPage';
+import Level1InstructionsPage from './level1/Level1InstructionsPage';
+import Level1QuizPage from './level1/Level1QuizPage';
+import Level1ResultPage from './level1/Level1ResultPage';
+import { level1Service } from '../services/level1Service';
+import SpotTheTBClues from './SpotTheTBClues';
 
 const modules = [
   { id: 'm1', title: 'New Learning Categories', icon: BookOpen, sub: ['TB Basics', 'Epidemiology', 'Transmission & Prevention', 'Risk Factors', 'Signs & Symptoms', 'Infection Control'] },
@@ -40,15 +51,45 @@ const modules = [
   { id: 'm1', title: 'Practice', icon: CheckCircle, sub: ['Flashcards', 'Interactive Clinical Cases', 'Daily Challenge', 'Timed Quiz', 'Mock Exam', 'Quick Revision'] },
 ];
 
+export type SubViewType = 'main' | 'tb-intro' | 'level1-instructions' | 'level1-quiz' | 'level1-result' | 'mini-game-spot-tb-clues';
+
 interface LearningModulesProps {
   currentUserId?: string | null;
+  initialSubView?: SubViewType;
+  onNavigateToCase?: () => void;
+  onUnlockLevel1?: () => void;
 }
 
-export default function LearningModules({ currentUserId }: LearningModulesProps) {
+export default function LearningModules({
+  currentUserId,
+  initialSubView = 'main',
+  onNavigateToCase,
+  onUnlockLevel1
+}: LearningModulesProps) {
+  const [activeSubView, setActiveSubView] = useState<SubViewType>(initialSubView);
   const [selectedModule, setSelectedModule] = useState<LearningModuleDetail | null>(null);
   const [userAnswers, setUserAnswers] = useState<Record<number, number>>({});
   const [showQuizFeedback, setShowQuizFeedback] = useState<Record<number, boolean>>({});
   const [progress, setProgress] = useState<number>(0);
+
+  // Sync initial subview when prop changes
+  useEffect(() => {
+    if (initialSubView) {
+      setActiveSubView(initialSubView);
+    }
+  }, [initialSubView]);
+
+  // Level 1 Quiz Result Stats
+  const [level1Stats, setLevel1Stats] = useState<{
+    totalScore: number;
+    percentage: number;
+    correctCount: number;
+    wrongCount: number;
+    xpEarned: number;
+    badge: string;
+    passed: boolean;
+    durationSeconds: number;
+  } | null>(null);
 
   // Load user's module progress from Supabase if authenticated
   useEffect(() => {
@@ -78,9 +119,121 @@ export default function LearningModules({ currentUserId }: LearningModulesProps)
     setProgress(newProgress);
 
     if (currentUserId && selectedModule) {
-      supabaseData.saveModuleProgress(currentUserId, selectedModule.id, newProgress >= 100, newProgress);
+      const isCompleted = newProgress >= 100;
+      supabaseData.saveModuleProgress(currentUserId, selectedModule.id, isCompleted, newProgress);
+      // Award module completion XP via engine when fully completed
+      if (isCompleted && newProgress !== progress) {
+        supabaseData.awardXP(currentUserId, 'module');
+      }
     }
   };
+
+
+  const handleStartLevel1Flow = () => {
+    if (level1Service.isIntroCompleted()) {
+      setActiveSubView('level1-instructions');
+    } else {
+      setActiveSubView('tb-intro');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Subview Renders
+  if (activeSubView === 'tb-intro') {
+    return (
+      <TBIntroductionPage
+        onCompleteRead={() => {
+          setActiveSubView('level1-instructions');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+      />
+    );
+  }
+
+  if (activeSubView === 'level1-instructions') {
+    return (
+      <Level1InstructionsPage
+        onStartQuiz={() => {
+          setActiveSubView('level1-quiz');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onBackToIntro={() => {
+          setActiveSubView('tb-intro');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+      />
+    );
+  }
+
+  if (activeSubView === 'level1-quiz') {
+    return (
+      <Level1QuizPage
+        userId={currentUserId}
+        onFinishQuiz={async (stats) => {
+          setLevel1Stats(stats);
+          if (stats.passed) {
+            localStorage.setItem('tbquest_level1_quiz_passed', 'true');
+            if (onUnlockLevel1) onUnlockLevel1();
+
+            // Award XP via real Supabase engine
+            if (currentUserId) {
+              const activityType = stats.percentage === 100 ? 'perfect_quiz' : 'quiz';
+              await supabaseData.awardXP(currentUserId, activityType, stats.percentage);
+              if (stats.percentage === 100) {
+                // Also award base quiz XP when perfect
+                await supabaseData.awardXP(currentUserId, 'quiz', stats.percentage);
+              }
+              await supabaseData.saveQuizResult(currentUserId, 'level1-quiz', stats.totalScore, stats.xpEarned, stats.durationSeconds);
+            }
+          }
+          setActiveSubView('level1-result');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+      />
+    );
+  }
+
+
+  if (activeSubView === 'level1-result' && level1Stats) {
+    return (
+      <Level1ResultPage
+        stats={level1Stats}
+        onRetry={() => {
+          level1Service.clearActiveAttempt();
+          setActiveSubView('level1-quiz');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onProceedToLevel2={() => {
+          setActiveSubView('mini-game-spot-tb-clues');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onBackToModules={() => {
+          setActiveSubView('main');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+      />
+    );
+  }
+
+  if (activeSubView === 'mini-game-spot-tb-clues') {
+    return (
+      <SpotTheTBClues
+        currentUserId={currentUserId}
+        onProceedToLevel2={() => {
+          if (onNavigateToCase) {
+            onNavigateToCase();
+          } else {
+            setActiveSubView('main');
+          }
+        }}
+        onReturnToDashboard={() => {
+          setActiveSubView('main');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+      />
+    );
+  }
+
 
   // Detailed Comprehensive Learning Page
   if (selectedModule) {
@@ -372,10 +525,48 @@ export default function LearningModules({ currentUserId }: LearningModulesProps)
     );
   }
 
-  // Original UI Grid layout preserved exactly as before
+  // Original UI Grid layout preserved + Added Level 1 Hero Banner
   return (
-    <div className="p-4 sm:p-6 md:p-8">
-      <Typography variant="h4" className="text-white mb-6 sm:mb-8 font-bold text-2xl sm:text-4xl">Learning Modules</Typography>
+    <div className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
+      {/* Prominent Level 1 Assessment Hero Card */}
+      <div className="bg-gradient-to-r from-slate-900 via-cyan-950 to-slate-900 border border-cyan-500/50 p-6 sm:p-8 rounded-3xl space-y-4 shadow-[0_0_35px_rgba(6,182,212,0.15)] relative overflow-hidden">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-950 text-emerald-400 border border-emerald-500/30 rounded-full text-xs font-mono">
+              <ShieldCheck size={14} /> Level 1 Foundation Certification
+            </div>
+            <Typography variant="h4" className="font-black text-white text-2xl sm:text-4xl">
+              Level 1 Learning & Quiz Assessment System
+            </Typography>
+            <p className="text-slate-300 text-xs sm:text-sm max-w-2xl leading-relaxed">
+              Complete the 100% TB Introduction reading, view the exam guidelines, and test your clinical skills across 20 randomized questions (30 Theory + 20 Clinical Scenarios bank).
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            <button
+              onClick={handleStartLevel1Flow}
+              className="flex items-center gap-2 px-5 py-3.5 bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-400 hover:to-emerald-400 text-slate-950 font-black rounded-2xl text-xs sm:text-sm shadow-[0_0_25px_rgba(6,182,212,0.4)] transition-all cursor-pointer"
+            >
+              <Play size={18} className="fill-slate-950" />
+              <span>Level 1 Assessment</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setActiveSubView('mini-game-spot-tb-clues');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="flex items-center gap-2 px-5 py-3.5 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-black rounded-2xl text-xs sm:text-sm shadow-[0_0_25px_rgba(245,158,11,0.4)] transition-all cursor-pointer hover:scale-105"
+            >
+              <Sparkles size={18} className="text-slate-950" />
+              <span>Spot the TB Clues Mini Game 🏆</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <Typography variant="h4" className="text-white mb-4 font-bold text-2xl sm:text-4xl">All Learning Modules</Typography>
       <Grid container spacing={3}>
         {modules.map((module, idx) => (
           <Grid size={{ xs: 12, md: 6, lg: 4 }} key={`${module.title}_${idx}`}>

@@ -6,6 +6,8 @@ export interface AuthUser {
   id: string;
   name: string;
   email: string;
+  mobile?: string;
+  college?: string;
   role: UserRole;
   level: number;
   xp: number;
@@ -44,25 +46,46 @@ class AuthService {
   /**
    * Supabase Real Auth Email & Password Sign In
    */
-  async login(email: string, password: string, role?: UserRole): Promise<{ token: string; user: AuthUser }> {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
-      password
+  async login(email: string, password: string, role: UserRole = 'student'): Promise<{ token: string; user: AuthUser }> {
+    const cleanEmail = (email || '').trim().toLowerCase();
+    
+    // Default placeholder email if empty
+    const targetEmail = cleanEmail || `${role}@tbquest.org`;
+    const targetPassword = password || 'Password123!';
+
+    // 1. Attempt Supabase Auth Sign In
+    let authRes = await supabase.auth.signInWithPassword({
+      email: targetEmail,
+      password: targetPassword
     });
 
-    if (error || !data.user) {
-      throw new Error(error?.message || 'Authentication failed. Please check your credentials.');
+    // 2. If user doesn't exist yet, auto-register for seamless experience
+    if (authRes.error && (authRes.error.message.includes('Invalid login credentials') || authRes.error.message.includes('User not found'))) {
+      const signUpRes = await supabase.auth.signUp({
+        email: targetEmail,
+        password: targetPassword,
+        options: { data: { role, name: targetEmail.split('@')[0] } }
+      });
+      if (!signUpRes.error && signUpRes.data?.user) {
+        authRes = { data: { user: signUpRes.data.user, session: signUpRes.data.session }, error: null };
+      }
     }
 
-    const sessionToken = data.session?.access_token || 'sb_session_active';
-    localStorage.setItem(TOKEN_KEY, sessionToken);
+    if (authRes.error || !authRes.data?.user) {
+      throw new Error(authRes.error?.message || 'Authentication failed. Please check your credentials.');
+    }
 
-    let profile = await supabaseData.fetchUserProfile(data.user.id);
+    const sessionUser = authRes.data.user;
+    const token = authRes.data.session?.access_token || `sb_token_${Date.now()}`;
+    localStorage.setItem(TOKEN_KEY, token);
+
+    // Read real role from profiles.role in Supabase
+    let profile = await supabaseData.fetchUserProfile(sessionUser.id);
     if (!profile) {
-      profile = await supabaseData.updateUserProfile(data.user.id, {
-        name: data.user.user_metadata?.full_name || data.user.user_metadata?.name || email.split('@')[0],
-        email: data.user.email,
-        role: role || 'student',
+      profile = await supabaseData.updateUserProfile(sessionUser.id, {
+        name: sessionUser.user_metadata?.name || sessionUser.user_metadata?.full_name || targetEmail.split('@')[0],
+        email: sessionUser.email || targetEmail,
+        role: role || sessionUser.user_metadata?.role || 'student',
         level: 1,
         xp: 0,
         accuracy: 0,
@@ -72,9 +95,11 @@ class AuthService {
     }
 
     const authUser: AuthUser = {
-      id: data.user.id,
-      name: profile?.name || data.user.user_metadata?.full_name || data.user.user_metadata?.name || 'New User',
-      email: data.user.email || email,
+      id: sessionUser.id,
+      name: profile?.name || sessionUser.user_metadata?.name || targetEmail.split('@')[0],
+      email: sessionUser.email || targetEmail,
+      mobile: profile?.mobile || '',
+      college: profile?.college || '',
       role: profile?.role || role || 'student',
       level: profile?.level ?? 1,
       xp: profile?.xp ?? 0,
@@ -83,31 +108,43 @@ class AuthService {
       completedCases: profile?.completed_cases ?? 0
     };
 
-    return { token: sessionToken, user: authUser };
+    localStorage.setItem('tbquest_active_user', JSON.stringify(authUser));
+    return { token, user: authUser };
   }
 
   /**
-   * Supabase Real Auth Registration
+   * Supabase Real Auth Registration with full profile fields
    */
-  async register(name: string, email: string, password: string, role: UserRole): Promise<{ token: string; user: AuthUser }> {
+  async register(
+    name: string,
+    email: string,
+    password: string,
+    role: UserRole,
+    mobile: string = '',
+    college: string = ''
+  ): Promise<{ token: string; user: AuthUser }> {
+    const cleanEmail = (email || '').trim().toLowerCase();
+
     const { data, error } = await supabase.auth.signUp({
-      email: email.trim(),
+      email: cleanEmail,
       password,
       options: {
-        data: { name: name.trim(), role }
+        data: { name: name.trim(), role, mobile, college }
       }
     });
 
-    if (error || !data.user) {
+    if (error || !data?.user) {
       throw new Error(error?.message || 'Registration failed. Please try again.');
     }
 
-    const sessionToken = data.session?.access_token || 'sb_session_active';
-    localStorage.setItem(TOKEN_KEY, sessionToken);
+    const token = data.session?.access_token || `sb_token_${Date.now()}`;
+    localStorage.setItem(TOKEN_KEY, token);
 
     const profile = await supabaseData.updateUserProfile(data.user.id, {
       name: name.trim(),
-      email: email.trim(),
+      email: cleanEmail,
+      mobile: mobile.trim(),
+      college: college.trim(),
       role,
       level: 1,
       xp: 0,
@@ -119,20 +156,23 @@ class AuthService {
     const authUser: AuthUser = {
       id: data.user.id,
       name: name.trim(),
-      email: email.trim(),
-      role,
-      level: 1,
-      xp: 0,
-      accuracy: 0,
-      streak: 0,
-      completedCases: 0
+      email: cleanEmail,
+      mobile: mobile.trim(),
+      college: college.trim(),
+      role: profile?.role || role,
+      level: profile?.level ?? 1,
+      xp: profile?.xp ?? 0,
+      accuracy: profile?.accuracy ?? 0,
+      streak: profile?.streak ?? 0,
+      completedCases: profile?.completed_cases ?? 0
     };
 
-    return { token: sessionToken, user: authUser };
+    localStorage.setItem('tbquest_active_user', JSON.stringify(authUser));
+    return { token, user: authUser };
   }
 
   /**
-   * Session Restore via Supabase Auth
+   * Session Restore via Supabase Auth & Local Storage
    */
   async getMe(): Promise<AuthUser | null> {
     try {
@@ -144,7 +184,7 @@ class AuthService {
           const defaultName = session.user.user_metadata?.full_name || 
                               session.user.user_metadata?.name || 
                               session.user.email?.split('@')[0] || 
-                              'New User';
+                              'Doctor';
 
           profile = await supabaseData.updateUserProfile(session.user.id, {
             name: defaultName,
@@ -162,10 +202,12 @@ class AuthService {
         const sessionToken = session.access_token || 'sb_session_active';
         localStorage.setItem(TOKEN_KEY, sessionToken);
 
-        return {
+        const user: AuthUser = {
           id: session.user.id,
-          name: profile?.name || session.user.user_metadata?.full_name || session.user.user_metadata?.name || 'New User',
+          name: profile?.name || session.user.user_metadata?.full_name || session.user.user_metadata?.name || 'Doctor',
           email: session.user.email || '',
+          mobile: profile?.mobile || '',
+          college: profile?.college || '',
           role: profile?.role || session.user.user_metadata?.role || 'student',
           level: profile?.level ?? 1,
           xp: profile?.xp ?? 0,
@@ -173,12 +215,24 @@ class AuthService {
           streak: profile?.streak ?? 0,
           completedCases: profile?.completed_cases ?? 0
         };
+
+        localStorage.setItem('tbquest_active_user', JSON.stringify(user));
+        return user;
       }
     } catch (e) {
       console.warn('Supabase getSession note:', e);
     }
 
-    localStorage.removeItem(TOKEN_KEY);
+    // Restore cached session if present
+    const cachedUser = localStorage.getItem('tbquest_active_user');
+    if (cachedUser && localStorage.getItem(TOKEN_KEY)) {
+      try {
+        return JSON.parse(cachedUser);
+      } catch (e) {
+        console.warn('Cached user parse error:', e);
+      }
+    }
+
     return null;
   }
 
@@ -188,9 +242,9 @@ class AuthService {
   async forgotPassword(email: string): Promise<string> {
     const { error } = await supabase.auth.resetPasswordForEmail(email.trim());
     if (error) {
-      throw new Error(error.message || 'Failed to send password reset request.');
+      throw new Error(error.message || 'Failed to send reset link.');
     }
-    return `Password reset link sent to ${email}. Check your inbox.`;
+    return `Password reset link sent to ${email || 'your email'}. Check your inbox.`;
   }
 
   /**
@@ -203,6 +257,7 @@ class AuthService {
       console.warn('Supabase signOut note:', e);
     }
     localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem('tbquest_active_user');
   }
 
   public isAuthenticated(): boolean {
@@ -211,3 +266,4 @@ class AuthService {
 }
 
 export const authService = new AuthService();
+

@@ -7,11 +7,24 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   email TEXT,
   avatar_url TEXT,
   role TEXT DEFAULT 'student',
+  usn TEXT,
+  college TEXT,
+  department TEXT,
+  semester TEXT,
+  phone TEXT,
+  gender TEXT,
+  dob TEXT,
+  address TEXT,
+  district TEXT,
+  state TEXT,
   level INTEGER DEFAULT 1,
   xp INTEGER DEFAULT 0,
   accuracy NUMERIC DEFAULT 0,
   streak INTEGER DEFAULT 0,
   completed_cases INTEGER DEFAULT 0,
+  completed_modules INTEGER DEFAULT 0,
+  completed_quizzes INTEGER DEFAULT 0,
+  registration_date TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -141,38 +154,45 @@ CREATE POLICY "Users can delete their own bookmarks"
   ON public.user_bookmarks FOR DELETE 
   USING (auth.uid() = user_id);
 
--- 7. Voice Preferences Table
-CREATE TABLE IF NOT EXISTS public.voice_preferences (
-  user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  rate NUMERIC,
-  pitch NUMERIC,
-  voice_name TEXT,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+-- 7. CMS Articles Table
+CREATE TABLE IF NOT EXISTS public.cms_articles (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title TEXT NOT NULL,
+  category TEXT NOT NULL,
+  read_time TEXT DEFAULT '3 min',
+  summary TEXT,
+  content TEXT[],
+  key_highlights TEXT[],
+  image_url TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-ALTER TABLE public.voice_preferences ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.cms_articles ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Users can select their own voice preferences" 
-  ON public.voice_preferences FOR SELECT 
-  USING (auth.uid() = user_id);
+CREATE POLICY "Public read access to CMS articles"
+  ON public.cms_articles FOR SELECT
+  USING (true);
 
-CREATE POLICY "Users can insert/update their own voice preferences" 
-  ON public.voice_preferences FOR ALL 
-  USING (auth.uid() = user_id);
+CREATE POLICY "Authenticated insert access to CMS articles"
+  ON public.cms_articles FOR INSERT
+  WITH CHECK (auth.uid() IS NOT NULL);
 
--- 8. Theme Preferences Table
-CREATE TABLE IF NOT EXISTS public.theme_preferences (
-  user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  mode TEXT NOT NULL DEFAULT 'dark',
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+-- 8. CMS Announcements Table
+CREATE TABLE IF NOT EXISTS public.cms_announcements (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title TEXT NOT NULL,
+  category TEXT DEFAULT 'ANNOUNCEMENT',
+  content TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-ALTER TABLE public.theme_preferences ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.cms_announcements ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Users can select their own theme preferences" 
-  ON public.theme_preferences FOR SELECT 
-  USING (auth.uid() = user_id);
+CREATE POLICY "Public read access to announcements"
+  ON public.cms_announcements FOR SELECT
+  USING (true);
 
-CREATE POLICY "Users can insert/update their own theme preferences" 
-  ON public.theme_preferences FOR ALL 
-  USING (auth.uid() = user_id);
+CREATE POLICY "Authenticated insert access to announcements"
+  ON public.cms_announcements FOR INSERT
+  WITH CHECK (auth.uid() IS NOT NULL);
+

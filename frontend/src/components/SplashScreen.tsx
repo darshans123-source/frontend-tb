@@ -104,23 +104,23 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="relative flex items-center justify-center p-3 rounded-2xl bg-gradient-to-b from-blue-50/80 to-white border border-blue-100 shadow-inner group"
+                className="relative flex items-center justify-center p-3 rounded-2xl bg-gradient-to-b from-blue-50/80 to-white border border-blue-100 shadow-md shadow-blue-500/10 group"
               >
                 <img
                   src="/nit_logo.png"
-                  alt="Navodaya Institute of Technology Shield Logo"
-                  className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-105"
+                  alt="TB Quest Official Logo"
+                  className="w-[40px] h-[40px] sm:w-[44px] sm:h-[44px] md:w-[48px] md:h-[48px] object-contain rounded-[8px] drop-shadow-md transition-transform duration-300 group-hover:scale-105"
                 />
               </motion.div>
 
               {/* Title & Institutional Hierarchy */}
               <div className="space-y-1.5 w-full">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-blue-950 font-sans">
-                  TB <span className="text-orange-500 inline-block">Q</span>UEST
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[#1E293B] font-sans">
+                  TB QUEST
                 </h1>
                 
-                <p className="text-xs sm:text-sm md:text-base font-bold text-blue-900 tracking-wider uppercase font-sans">
-                  CENTER OF EXCELLENCE (NIT)
+                <p className="text-xs sm:text-sm font-extrabold text-[#0F6FFF] tracking-wider uppercase font-sans">
+                  TB DIAGNOSTIC LEARNING PLATFORM
                 </p>
 
                 <div className="pt-1">

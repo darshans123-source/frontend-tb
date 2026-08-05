@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Stethoscope, Baby, ShieldAlert, Dices, ArrowRight, Bookmark } from 'lucide-react';
+import { Stethoscope, Baby, ShieldAlert, Dices, ArrowRight, Bookmark, Lock, AlertTriangle } from 'lucide-react';
 import { CaseType } from '../types';
 
 interface CaseSelectionProps {
@@ -7,9 +7,18 @@ interface CaseSelectionProps {
   onBack: () => void;
   bookmarkedCases: string[];
   onToggleBookmark: (id: string) => void;
+  isUnlocked?: boolean;
+  onOpenLearningModule?: () => void;
 }
 
-export default function CaseSelection({ onSelectCase, onBack, bookmarkedCases, onToggleBookmark }: CaseSelectionProps) {
+export default function CaseSelection({
+  onSelectCase,
+  onBack,
+  bookmarkedCases,
+  onToggleBookmark,
+  isUnlocked = true,
+  onOpenLearningModule
+}: CaseSelectionProps) {
   const [selectedDifficulty, setSelectedDifficulty] = useState<Record<CaseType, 'Beginner' | 'Intermediate' | 'Advanced'>>({
     pulmonary: 'Beginner',
     pediatric: 'Beginner',
@@ -52,25 +61,50 @@ export default function CaseSelection({ onSelectCase, onBack, bookmarkedCases, o
 
   return (
     <div className="p-4 sm:p-8 max-w-7xl mx-auto min-h-[80vh] flex flex-col justify-center">
-      <div className="text-center mb-6 sm:mb-10">
+      <div className="text-center mb-6 sm:mb-8">
         <h1 className="text-2xl sm:text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500 mb-2">
           TB Quest – Case Selection
         </h1>
         <p className="text-slate-400 text-xs sm:text-sm font-mono">Choose a TB Case Module to Begin Your Diagnostic Journey</p>
       </div>
 
+      {!isUnlocked && (
+        <div className="max-w-3xl mx-auto mb-8 bg-amber-950/80 border-2 border-amber-500/70 p-5 rounded-2xl text-center space-y-3 shadow-xl">
+          <div className="flex items-center justify-center gap-2 text-amber-400 font-bold text-base">
+            <Lock size={20} />
+            <span>Clinical Cases Locked</span>
+          </div>
+          <p className="text-slate-200 text-xs sm:text-sm leading-relaxed font-semibold">
+            Complete the Learning Module and Quiz to unlock Clinical Cases.
+          </p>
+          {onOpenLearningModule && (
+            <button
+              onClick={onOpenLearningModule}
+              className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition-colors shadow-md"
+            >
+              Launch Level 1 Learning & Quiz
+            </button>
+          )}
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         {cases.map((c) => {
           const Icon = c.icon;
           const diff = selectedDifficulty[c.id];
           const isBookmarked = bookmarkedCases.includes(c.id);
+          const isCardDisabled = !isUnlocked;
+
           return (
             <div
               key={c.id}
-              className={`p-5 sm:p-8 bg-gradient-to-br ${c.color} border rounded-2xl sm:rounded-3xl shadow-lg flex flex-col justify-between group relative`}
+              className={`p-5 sm:p-8 bg-gradient-to-br ${c.color} border rounded-2xl sm:rounded-3xl shadow-lg flex flex-col justify-between group relative ${
+                isCardDisabled ? 'opacity-60 grayscale-[40%]' : ''
+              }`}
             >
               <button
                 onClick={() => onToggleBookmark(c.id)}
+                disabled={isCardDisabled}
                 className={`absolute top-4 right-4 p-2 rounded-full transition-colors ${
                   isBookmarked ? 'text-amber-400 bg-amber-400/10' : 'text-slate-500 hover:text-slate-300'
                 }`}
@@ -89,6 +123,7 @@ export default function CaseSelection({ onSelectCase, onBack, bookmarkedCases, o
                   {(['Beginner', 'Intermediate', 'Advanced'] as const).map(d => (
                     <button
                       key={d}
+                      disabled={isCardDisabled}
                       onClick={() => setSelectedDifficulty(prev => ({ ...prev, [c.id]: d }))}
                       className={`px-2.5 sm:px-3 py-1 rounded-full text-[10px] font-mono border transition-all ${
                         diff === d ? 'bg-cyan-500/20 border-cyan-400 text-cyan-200' : 'bg-slate-800 border-slate-700 text-slate-500'
@@ -100,11 +135,32 @@ export default function CaseSelection({ onSelectCase, onBack, bookmarkedCases, o
                 </div>
               </div>
               <button
-                onClick={() => onSelectCase(c.id, diff)}
-                className="mt-5 sm:mt-6 flex items-center justify-center gap-2 p-3 bg-slate-900/60 rounded-xl text-xs sm:text-sm font-semibold text-cyan-300 hover:bg-slate-900 transition-colors"
+                disabled={isCardDisabled}
+                onClick={() => {
+                  if (isCardDisabled) {
+                    alert("Complete the Learning Module and Quiz to unlock Clinical Cases.");
+                    if (onOpenLearningModule) onOpenLearningModule();
+                  } else {
+                    onSelectCase(c.id, diff);
+                  }
+                }}
+                className={`mt-5 sm:mt-6 flex items-center justify-center gap-2 p-3 rounded-xl text-xs sm:text-sm font-semibold transition-colors ${
+                  isCardDisabled
+                    ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700'
+                    : 'bg-slate-900/60 text-cyan-300 hover:bg-slate-900'
+                }`}
               >
-                <span>Start {diff} Simulation</span>
-                <ArrowRight size={16} />
+                {isCardDisabled ? (
+                  <>
+                    <Lock size={16} />
+                    <span>Locked — Quiz Required</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Start {diff} Simulation</span>
+                    <ArrowRight size={16} />
+                  </>
+                )}
               </button>
             </div>
           );

@@ -10,7 +10,7 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType>({
-  mode: 'dark',
+  mode: 'light',
   toggleTheme: () => {},
   setThemeMode: () => {}
 });
@@ -18,18 +18,15 @@ const ThemeContext = createContext<ThemeContextType>({
 export const useTheme = () => useContext(ThemeContext);
 
 export function CustomThemeProvider({ children }: { children: ReactNode }) {
-  // 1. Initial theme detection (localStorage -> system preference -> default 'dark')
+  // Initial theme detection - default 'light' for clean medical blue theme
   const [mode, setMode] = useState<ThemeMode>(() => {
     if (typeof window !== 'undefined') {
       const savedTheme = localStorage.getItem('tb_quest_theme');
-      if (savedTheme === 'dark' || savedTheme === 'light') {
+      if (savedTheme === 'light' || savedTheme === 'dark') {
         return savedTheme;
       }
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        return 'dark';
-      }
     }
-    return 'dark';
+    return 'light';
   });
 
   // Sync class on documentElement and localStorage

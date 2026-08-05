@@ -1,71 +1,118 @@
 import React from 'react';
-import { Search, Bell, Mail, Brain, Sun, Moon, Menu } from 'lucide-react';
-import { useTheme } from '../context/ThemeContext';
+import { Home, BookOpen, BarChart2, Award, FileText, Bell, LogOut, Menu } from 'lucide-react';
 
 interface HeaderProps {
   userData: any;
+  currentTab?: string;
+  setCurrentTab?: (tab: any) => void;
+  onLogout?: () => void;
   onToggleMobileMenu?: () => void;
 }
 
-export default function Header({ userData, onToggleMobileMenu }: HeaderProps) {
-  const { mode, toggleTheme } = useTheme();
+export default function Header({ userData, currentTab = 'dashboard', setCurrentTab, onLogout, onToggleMobileMenu }: HeaderProps) {
+  const navItems = [
+    { id: 'dashboard', label: 'Home', icon: Home },
+    { id: 'modules', label: 'My Learning', icon: BookOpen },
+    { id: 'analytics', label: 'Progress', icon: BarChart2 },
+    { id: 'leaderboard', label: 'Badges', icon: Award },
+    { id: 'certificate', label: 'TB Resources', icon: FileText }
+  ];
 
   return (
-    <header className="h-16 bg-slate-950/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-800 flex items-center justify-between px-4 sm:px-8 fixed top-0 left-0 lg:left-72 right-0 z-30 transition-all">
+    <header className="bg-white/90 backdrop-blur-md border-b border-[#D8E9FF] shadow-xs fixed top-0 left-0 right-0 z-40 h-16 px-4 sm:px-8 flex items-center justify-between">
+      {/* Left: Logo & Subtitle */}
       <div className="flex items-center gap-3">
-        {/* Mobile Hamburger Menu Button */}
         <button
           onClick={onToggleMobileMenu}
-          className="p-2 text-slate-400 hover:text-white rounded-xl lg:hidden focus:outline-none"
-          title="Open Menu"
+          className="p-1.5 text-slate-600 hover:text-slate-900 rounded-lg lg:hidden"
+          title="Toggle Menu"
         >
           <Menu size={22} />
         </button>
 
-        {/* Search Bar */}
-        <div className="relative w-36 sm:w-64 md:w-96">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
-          <input 
-            type="text" 
-            placeholder="Search cases..." 
-            className="w-full bg-slate-900 border border-slate-700 text-white rounded-full py-1.5 pl-9 pr-3 text-xs sm:text-sm focus:outline-none focus:border-cyan-500 transition-all truncate"
+        <div className="flex items-center gap-3 cursor-pointer" onClick={() => setCurrentTab && setCurrentTab('dashboard')}>
+          <img
+            src="/nit_logo.png"
+            alt="TB Quest Official Logo"
+            className="w-[40px] h-[40px] sm:w-[44px] sm:h-[44px] md:w-[48px] md:h-[48px] object-contain rounded-[8px] shadow-md shadow-blue-500/10 shrink-0"
           />
+          <div className="flex flex-col justify-center">
+            <h1 className="text-base sm:text-lg font-extrabold text-[#1E293B] tracking-tight leading-none">
+              TB QUEST
+            </h1>
+            <p className="text-[9px] sm:text-[10px] font-extrabold text-[#0F6FFF] uppercase tracking-wider leading-tight mt-0.5">
+              TB DIAGNOSTIC LEARNING PLATFORM
+            </p>
+          </div>
         </div>
       </div>
 
-      <div className="flex items-center gap-2 sm:gap-4 md:gap-6">
-        <button className="hidden sm:block text-slate-400 hover:text-white transition-colors" title="Notifications">
-          <Bell size={18} />
-        </button>
-        <button className="hidden sm:block text-slate-400 hover:text-white transition-colors" title="Messages">
-          <Mail size={18} />
-        </button>
-        <button className="text-cyan-400 hover:text-cyan-300 transition-colors" title="AI Clinical Mentor">
-          <Brain size={18} />
-        </button>
-        
-        {/* Theme Toggle Button */}
+      {/* Center: Navigation Links */}
+      <nav className="hidden lg:flex items-center gap-2">
+        {navItems.map((item) => {
+          const IconComp = item.icon;
+          const isActive = currentTab === item.id;
+
+          return (
+            <button
+              key={item.id}
+              onClick={() => setCurrentTab && setCurrentTab(item.id)}
+              className={`flex items-center gap-1.5 px-4 py-1.5 text-xs transition-all cursor-pointer ${
+                isActive
+                  ? 'bg-gradient-to-r from-[#0F6FFF] to-[#2563EB] text-white shadow-md shadow-blue-500/20 rounded-full font-bold'
+                  : 'text-[#64748B] hover:text-[#0F6FFF] hover:bg-[#F2F8FD] rounded-full font-semibold'
+              }`}
+            >
+              <IconComp size={15} className={isActive ? 'text-white' : 'text-[#64748B]'} />
+              <span>{item.label}</span>
+            </button>
+          );
+        })}
+      </nav>
+
+      {/* Right: Notifications & User Profile Pill */}
+      <div className="flex items-center gap-3">
+        {/* Notification Bell with Red Badge */}
         <button
-          onClick={toggleTheme}
-          className="p-1.5 sm:p-2 rounded-xl text-slate-400 hover:text-amber-400 hover:bg-slate-800 transition-all flex items-center gap-1 font-mono text-xs"
-          title={mode === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          className="relative p-2 text-slate-600 hover:text-slate-900 transition-colors"
+          title="Notifications"
         >
-          {mode === 'dark' ? (
-            <Sun size={18} className="text-amber-400 animate-pulse" />
-          ) : (
-            <Moon size={18} className="text-cyan-500" />
-          )}
+          <Bell size={20} />
+          <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-red-600 text-white font-mono text-[9px] font-bold flex items-center justify-center shadow-xs">
+            3
+          </span>
         </button>
-        
-        <div className="flex items-center gap-2 sm:gap-3 border-l border-slate-800 pl-3 sm:pl-6">
-          <div className="text-right hidden sm:block">
-            <p className="text-xs sm:text-sm font-semibold text-white truncate max-w-[120px] sm:max-w-none">{userData.name}</p>
-            <p className="text-[10px] sm:text-xs text-slate-500">Lvl {userData.level} • {userData.xp} XP</p>
+
+        {/* User Avatar & Info */}
+        <div 
+          onClick={() => setCurrentTab && setCurrentTab('profile')}
+          className="flex items-center gap-2.5 pl-2 border-l border-slate-200 cursor-pointer hover:opacity-90 transition-opacity"
+          title="View Profile"
+        >
+          <div className="w-9 h-9 rounded-full bg-blue-100 border border-blue-300 flex items-center justify-center text-blue-800 font-bold text-xs shrink-0 shadow-xs">
+            {userData.name ? userData.name.charAt(0).toUpperCase() : 'S'}
           </div>
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-cyan-900 border border-cyan-700 flex items-center justify-center text-xs sm:text-sm font-bold text-white shadow-md shrink-0">
-            {userData.name ? userData.name.charAt(0) : 'S'}
+          <div className="hidden sm:block text-left">
+            <p className="text-xs font-black text-slate-900 leading-tight">
+              {userData.name || 'Student'}
+            </p>
+            <p className="text-[10px] font-semibold text-blue-600 leading-tight">
+              Level {userData.level || 1}
+            </p>
           </div>
         </div>
+
+        {/* Direct Log Out / Back to Login Button */}
+        {onLogout && (
+          <button
+            onClick={onLogout}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-red-50 border border-slate-200 hover:border-red-300 text-slate-700 hover:text-red-600 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ml-1"
+            title="Log Out & Switch User"
+          >
+            <LogOut size={14} />
+            <span className="hidden md:inline">Log Out</span>
+          </button>
+        )}
       </div>
     </header>
   );

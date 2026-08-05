@@ -43,18 +43,17 @@ export default function Sidebar({ currentTab, setCurrentTab, onLogout, isOpenMob
             {/* Uploaded NIT Logo */}
             <img
               src="/nit_logo.png"
-              alt="Navodaya Institute of Technology Logo"
-              className="w-12 h-12 sm:w-14 sm:h-14 object-contain shrink-0 drop-shadow-sm"
-              style={{ width: '52px', height: '52px' }}
+              alt="TB Quest Official Logo"
+              className="w-[40px] h-[40px] sm:w-[44px] sm:h-[44px] md:w-[48px] md:h-[48px] object-contain rounded-[8px] shrink-0 shadow-md"
             />
             
             {/* Text Hierarchy */}
             <div className="flex flex-col justify-center min-w-0">
-              <h1 className="text-[26px] sm:text-[28px] font-extrabold text-white leading-none tracking-tight">
-                TB Quest
+              <h1 className="text-xl font-extrabold text-white leading-none tracking-tight">
+                TB QUEST
               </h1>
-              <p className="text-[13px] font-semibold text-cyan-400 leading-tight mt-1 truncate">
-                Skill Development Center
+              <p className="text-[10px] font-extrabold text-cyan-400 uppercase leading-tight mt-1 truncate">
+                TB DIAGNOSTIC LEARNING PLATFORM
               </p>
               <p className="text-[12px] font-medium text-slate-300 leading-tight truncate">
                 Navodaya Institute of Technology

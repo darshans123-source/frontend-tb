@@ -1,7 +1,8 @@
 import { useState, FormEvent } from 'react';
 import { UserRole } from '../types';
-import { Shield, Lock, Mail, ArrowRight, Sparkles, User as UserIcon, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Shield, Lock, Mail, ArrowRight, Sparkles, User as UserIcon, AlertCircle, CheckCircle2, Phone, GraduationCap } from 'lucide-react';
 import { authService } from '../services/authService';
+import { soundService } from '../services/soundService';
 
 interface LoginProps {
   onLogin: (role: UserRole, email: string, name: string) => void;
@@ -11,8 +12,11 @@ export default function Login({ onLogin }: LoginProps) {
   const [authMode, setAuthMode] = useState<'login' | 'register' | 'forgot'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [role, setRole] = useState<UserRole>('student');
   const [name, setName] = useState('');
+  const [mobile, setMobile] = useState('');
+  const [college, setCollege] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -20,23 +24,33 @@ export default function Login({ onLogin }: LoginProps) {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     setErrorMsg(null);
     setSuccessMsg(null);
-    setIsLoading(true);
 
     try {
       if (authMode === 'login') {
         const { user } = await authService.login(email, password, role);
+        soundService.playLoginSuccess();
         onLogin(user.role, user.email, user.name);
       } else if (authMode === 'register') {
-        const { user } = await authService.register(name, email, password, role);
+        if (password !== confirmPassword) {
+          setErrorMsg('Passwords do not match. Please re-enter.');
+          soundService.playLoginFail();
+          setIsLoading(false);
+          return;
+        }
+        const { user } = await authService.register(name, email, password, role, mobile, college);
+        soundService.playLoginSuccess();
         onLogin(user.role, user.email, user.name);
       } else if (authMode === 'forgot') {
         const msg = await authService.forgotPassword(email);
+        soundService.playLoginSuccess();
         setSuccessMsg(msg);
         setIsLoading(false);
       }
     } catch (err: any) {
+      soundService.playLoginFail();
       setErrorMsg(err.message || 'Authentication failed. Please check your details.');
       setIsLoading(false);
     }
@@ -66,34 +80,103 @@ export default function Login({ onLogin }: LoginProps) {
 
       <div className="w-full max-w-md bg-slate-900/80 backdrop-blur-xl border border-cyan-500/30 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-[0_0_50px_rgba(6,182,212,0.15)] relative z-10 my-4 max-h-[95vh] overflow-y-auto custom-scrollbar">
         <div className="text-center mb-4 sm:mb-6">
-          <div className="inline-flex p-2.5 sm:p-3 bg-white/10 backdrop-blur-md border border-cyan-500/30 rounded-2xl mb-3 sm:mb-4 shadow-[0_0_25px_rgba(6,182,212,0.25)]">
-            <img src="/nit_logo.png" alt="Navodaya Institute of Technology Logo" className="w-12 h-12 sm:w-16 sm:h-16 object-contain" />
+          <div className="inline-flex p-2 bg-white/10 backdrop-blur-md border border-cyan-500/30 rounded-xl mb-3 shadow-md shadow-cyan-500/20">
+            <img 
+              src="/nit_logo.png" 
+              alt="TB Quest Official Logo" 
+              className="w-[40px] h-[40px] sm:w-[44px] sm:h-[44px] md:w-[48px] md:h-[48px] object-contain rounded-[8px]" 
+            />
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 uppercase">
-            {authMode === 'login' ? 'TB Quest Login' : authMode === 'register' ? 'Register Account' : 'Reset Password'}
+            TB QUEST
           </h1>
-          <p className="text-slate-400 text-xs mt-1">Gamified Tuberculosis Diagnostic Platform • Supabase OAuth</p>
+          <p className="text-cyan-300/80 text-[10px] font-extrabold uppercase tracking-widest mt-0.5">TB DIAGNOSTIC LEARNING PLATFORM</p>
+
+          {/* Prominent Auth Mode Navigation Tabs */}
+          <div className="flex items-center justify-center gap-1.5 p-1 bg-slate-950/80 border border-slate-800 rounded-xl mt-4">
+            <button
+              type="button"
+              onClick={() => { setAuthMode('login'); setErrorMsg(null); setSuccessMsg(null); }}
+              className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                authMode === 'login'
+                  ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-md'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900'
+              }`}
+            >
+              Sign In
+            </button>
+            <button
+              type="button"
+              onClick={() => { setAuthMode('register'); setErrorMsg(null); setSuccessMsg(null); }}
+              className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                authMode === 'register'
+                  ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-md'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900'
+              }`}
+            >
+              Register
+            </button>
+            <button
+              type="button"
+              onClick={() => { setAuthMode('forgot'); setErrorMsg(null); setSuccessMsg(null); }}
+              className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                authMode === 'forgot'
+                  ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-md'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900'
+              }`}
+            >
+              Forgot Password
+            </button>
+          </div>
         </div>
 
-        {/* Role Selector */}
+        {/* Role Selector & Instant Access Option */}
         {authMode !== 'forgot' && (
-          <div className="grid grid-cols-3 gap-2 mb-4 sm:mb-6">
-            {(['student', 'faculty', 'admin'] as UserRole[]).map((r) => (
-              <button
-                key={r}
-                type="button"
-                onClick={() => handleRoleSelect(r)}
-                className={`py-1.5 sm:py-2 px-2 sm:px-3 rounded-xl text-[11px] sm:text-xs font-semibold uppercase tracking-wider transition-all border ${
-                  role === r
-                    ? 'bg-cyan-600 border-cyan-400 text-white shadow-[0_0_15px_rgba(6,182,212,0.4)]'
-                    : 'bg-slate-800/60 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-800'
-                }`}
-              >
-                {r}
-              </button>
-            ))}
+          <div className="space-y-2 mb-4 sm:mb-6">
+            <label className="block text-[10px] font-mono uppercase tracking-wider text-slate-400 font-semibold mb-1 text-left">
+              Select User Role
+            </label>
+            <div className="grid grid-cols-3 gap-2">
+              {(['student', 'faculty', 'admin'] as UserRole[]).map((r) => (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => handleRoleSelect(r)}
+                  className={`py-2 px-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all border cursor-pointer flex flex-col items-center justify-center gap-0.5 ${
+                    role === r
+                      ? 'bg-cyan-600 border-cyan-400 text-white shadow-[0_0_15px_rgba(6,182,212,0.4)]'
+                      : 'bg-slate-800/60 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-800'
+                  }`}
+                >
+                  <span>{r}</span>
+                  {role === r && <span className="w-1.5 h-1.5 rounded-full bg-cyan-200 animate-ping" />}
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={async () => {
+                setIsLoading(true);
+                setErrorMsg(null);
+                try {
+                  const demoEmail = `${role}@tbquest.org`;
+                  const demoPassword = 'Password123!';
+                  const { user } = await authService.login(demoEmail, demoPassword, role);
+                  onLogin(user.role, user.email, user.name);
+                } catch (err: any) {
+                  setErrorMsg(err.message || 'Instant login failed.');
+                  setIsLoading(false);
+                }
+              }}
+              className="w-full py-2.5 bg-gradient-to-r from-emerald-600/30 via-teal-600/30 to-cyan-600/30 hover:from-emerald-600/50 hover:to-cyan-600/50 border border-emerald-500/40 rounded-xl text-emerald-300 font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm mt-2"
+            >
+              <Sparkles size={15} className="text-emerald-400 shrink-0" />
+              <span>Instant {role.toUpperCase()} Portal Access</span>
+            </button>
           </div>
         )}
+
 
         {/* Error Alert */}
         {errorMsg && (
@@ -113,20 +196,52 @@ export default function Login({ onLogin }: LoginProps) {
 
         <form onSubmit={handleSubmit} className="space-y-3.5 sm:space-y-4">
           {authMode === 'register' && (
-            <div>
-              <label className="block text-xs uppercase font-mono text-slate-400 mb-1.5">Display Name</label>
-              <div className="relative">
-                <UserIcon className="absolute left-3.5 top-3.5 text-slate-500" size={18} />
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Dr. Full Name"
-                  className="w-full bg-slate-950/60 border border-slate-800 rounded-xl pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition-colors text-xs"
-                  required
-                />
+            <>
+              <div>
+                <label className="block text-xs uppercase font-mono text-slate-400 mb-1.5">Full Name</label>
+                <div className="relative">
+                  <UserIcon className="absolute left-3.5 top-3.5 text-slate-500" size={18} />
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Dr. Full Name"
+                    className="w-full bg-slate-950/60 border border-slate-800 rounded-xl pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition-colors text-xs"
+                    required
+                  />
+                </div>
               </div>
-            </div>
+
+              <div>
+                <label className="block text-xs uppercase font-mono text-slate-400 mb-1.5">Mobile Number</label>
+                <div className="relative">
+                  <Phone className="absolute left-3.5 top-3.5 text-slate-500" size={18} />
+                  <input
+                    type="tel"
+                    value={mobile}
+                    onChange={(e) => setMobile(e.target.value)}
+                    placeholder="+91 98765 43210"
+                    className="w-full bg-slate-950/60 border border-slate-800 rounded-xl pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition-colors text-xs"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs uppercase font-mono text-slate-400 mb-1.5">Medical College / Institution</label>
+                <div className="relative">
+                  <GraduationCap className="absolute left-3.5 top-3.5 text-slate-500" size={18} />
+                  <input
+                    type="text"
+                    value={college}
+                    onChange={(e) => setCollege(e.target.value)}
+                    placeholder="e.g. Navodaya Institute of Technology / RMC"
+                    className="w-full bg-slate-950/60 border border-slate-800 rounded-xl pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition-colors text-xs"
+                    required
+                  />
+                </div>
+              </div>
+            </>
           )}
 
           <div>
@@ -160,6 +275,24 @@ export default function Login({ onLogin }: LoginProps) {
               </div>
             </div>
           )}
+
+          {authMode === 'register' && (
+            <div>
+              <label className="block text-xs uppercase font-mono text-slate-400 mb-1.5">Confirm Password</label>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-3.5 text-slate-500" size={18} />
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full bg-slate-950/60 border border-slate-800 rounded-xl pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition-colors text-xs"
+                  required
+                />
+              </div>
+            </div>
+          )}
+
 
           {authMode === 'login' && (
             <div className="flex items-center justify-between text-xs text-slate-400">

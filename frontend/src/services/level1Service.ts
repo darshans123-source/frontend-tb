@@ -7,6 +7,7 @@ export interface Level1AttemptState {
   questions: any[];
   currentQuestionIndex: number;
   userAnswers: Record<number, number>;
+  visitedQuestions?: number[];
   score: number;
   startTime: number;
   elapsedSeconds: number;
@@ -16,10 +17,13 @@ export interface Level1AttemptState {
     percentage: number;
     correctCount: number;
     wrongCount: number;
+    unansweredCount?: number;
     xpEarned: number;
     badge: string;
     passed: boolean;
     durationSeconds: number;
+    questions?: any[];
+    userAnswers?: Record<number, number>;
   };
 }
 

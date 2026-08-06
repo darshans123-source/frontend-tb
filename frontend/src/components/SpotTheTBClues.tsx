@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Stethoscope,
   Moon,
@@ -138,53 +138,7 @@ export default function SpotTheTBClues({
     soundService.playClick();
   };
 
-  // Timer Countdown Effect
-  useEffect(() => {
-    if (stage !== 'playing') return;
-
-    if (timeLeft <= 0) {
-      finishGame();
-      return;
-    }
-
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          finishGame();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [stage, timeLeft]);
-
-  // Auto-finish when all 6 correct clues are selected
-  useEffect(() => {
-    if (stage !== 'playing') return;
-    const correctCount = cards.filter(c => c.isCorrect && selectedClues.has(c.id)).length;
-    if (correctCount === 6) {
-      finishGame();
-    }
-  }, [selectedClues, stage, cards]);
-
-  const handleCardClick = (card: ClueCardItem) => {
-    if (selectedClues.has(card.id) || stage !== 'playing') return;
-
-    const nextSet = new Set(selectedClues);
-    nextSet.add(card.id);
-    setSelectedClues(nextSet);
-
-    if (card.isCorrect) {
-      soundService.playCorrect();
-    } else {
-      soundService.playIncorrect();
-    }
-  };
-
-  const finishGame = async () => {
+  const finishGame = useCallback(async () => {
     const elapsed = Math.round((Date.now() - startTime) / 1000);
     setStage('result');
     soundService.playTrophy();
@@ -203,6 +157,47 @@ export default function SpotTheTBClues({
     }
     localStorage.setItem('tbquest_minigame_completed', 'true');
     localStorage.setItem('tbquest_level2_unlocked', 'true');
+  }, [currentUserId, startTime]);
+
+  // Timer Countdown Effect
+  useEffect(() => {
+    if (stage !== 'playing') return;
+
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          finishGame();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [stage, finishGame]);
+
+  // Auto-finish when all 6 correct clues are selected
+  useEffect(() => {
+    if (stage !== 'playing') return;
+    const correctCount = cards.filter(c => c.isCorrect && selectedClues.has(c.id)).length;
+    if (correctCount === 6) {
+      finishGame();
+    }
+  }, [selectedClues, stage, cards, finishGame]);
+
+  const handleCardClick = (card: ClueCardItem) => {
+    if (selectedClues.has(card.id) || stage !== 'playing') return;
+
+    const nextSet = new Set(selectedClues);
+    nextSet.add(card.id);
+    setSelectedClues(nextSet);
+
+    if (card.isCorrect) {
+      soundService.playCorrect();
+    } else {
+      soundService.playIncorrect();
+    }
   };
 
   // Timer Color State

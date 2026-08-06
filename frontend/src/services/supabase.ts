@@ -18,51 +18,69 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 // Database Types for Supabase Tables
 export interface ProfileTable {
   id: string;
-  name: string;
-  email: string;
-  role: 'student' | 'faculty' | 'admin';
-  level: number;
+  full_name?: string;
+  name?: string;
+  email?: string;
+  role?: 'student' | 'faculty' | 'admin';
+  avatar_url?: string;
+  xp?: number;
+  level?: number;
+  total_quizzes?: number;
+  correct_answers?: number;
+  wrong_answers?: number;
+  unanswered?: number;
+  progress_percentage?: number;
+  current_question?: number;
+  current_quiz_id?: string;
+  last_activity?: string;
+  usn?: string;
+  college?: string;
+  department?: string;
+  semester?: string;
+  phone?: string;
+  gender?: string;
+  dob?: string;
+  address?: string;
+  district?: string;
+  state?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface QuizAttemptTable {
+  id: string;
+  user_id: string;
+  quiz_id?: string;
+  score?: number;
+  correct_answers?: number;
+  wrong_answers?: number;
+  unanswered?: number;
+  xp_earned?: number;
+  completed?: boolean;
+  started_at?: string;
+  completed_at?: string;
+}
+
+export interface QuizAnswerTable {
+  id?: string;
+  attempt_id: string;
+  question_number: number;
+  selected_option: string;
+  correct: boolean;
+  answered: boolean;
+  created_at?: string;
+}
+
+export interface XPHistoryTable {
+  id?: string;
+  user_id: string;
+  reason: string;
   xp: number;
-  accuracy: number;
-  streak: number;
-  completed_cases: number;
-  created_at: string;
+  created_at?: string;
 }
 
-export interface QuizResultTable {
-  id: string;
-  user_id: string;
-  case_type: string;
-  score: number;
-  xp_gained: number;
-  accuracy: number;
-  duration_seconds: number;
-  created_at: string;
-}
-
-export interface AchievementTable {
-  id: string;
-  user_id: string;
-  badge_title: string;
-  description: string;
-  unlocked_at: string;
-}
-
-export interface BookmarkTable {
-  id: string;
-  user_id: string;
-  case_id: string;
-  created_at: string;
-}
-
-export interface CertificateTable {
-  id: string;
-  user_id: string;
-  certificate_id: string;
-  student_name: string;
-  total_xp: number;
-  cases_mastered: number;
-  accuracy: number;
-  issue_date: string;
-  created_at: string;
+export interface LevelTable {
+  level: number;
+  min_xp: number;
+  max_xp: number;
 }

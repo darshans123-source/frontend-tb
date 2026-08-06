@@ -2,111 +2,96 @@
 
 @layer base {
   :root {
-    --bg-main: #F7FBFF;
+    --bg-main: #F8FAFC;
     --bg-card: #FFFFFF;
-    --bg-subtle: #F2F8FD;
+    --bg-subtle: #EFF6FF;
     --text-main: #1E293B;
     --text-muted: #64748B;
-    --border-main: #D8E9FF;
-    --color-primary: #0F6FFF;
-    --color-secondary: #2563EB;
+    --border-main: #E2E8F0;
+    --color-primary: #2563EB;
+    --color-primary-hover: #1D4ED8;
+    --color-secondary: #0284C7;
   }
 
   body {
-    background-color: var(--bg-main);
-    color: var(--text-main);
+    background-color: #F8FAFC;
+    color: #1E293B;
     font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
     min-height: 100vh;
   }
 }
 
-/* Premium Soft Medical Blue Gradient & Abstract SVG Overlay */
-.bg-medical-gradient {
-  background: linear-gradient(180deg, #F8FCFF 0%, #F2F8FD 50%, #EAF5FF 100%);
-  position: relative;
+/* Premium Clean White Medical Theme Utility Classes */
+.bg-medical-main {
+  background-color: #F8FAFC;
 }
 
-.medical-pattern-bg {
-  background-image: 
-    radial-gradient(circle at 10% 20%, rgba(15, 111, 255, 0.04) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(37, 99, 235, 0.05) 0%, transparent 50%),
-    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l25.98 15v30L30 60 4.02 45V15z' fill-opacity='0.02' fill='%230F6FFF' stroke-opacity='0.03' stroke='%230F6FFF' stroke-width='1'/%3E%3Cpath d='M15 15h30v30H15z' fill='none' stroke-opacity='0.02' stroke='%230F6FFF' stroke-width='1'/%3E%3C/svg%3E");
+.medical-card-white {
+  background-color: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  transition: all 0.25s ease-in-out;
 }
 
-/* Premium Medical Cards */
-.medical-card {
-  background: #FFFFFF;
-  border: 1px solid #D8E9FF;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(15, 111, 255, 0.05);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.medical-card-white:hover {
+  box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.1), 0 8px 10px -6px rgba(37, 99, 235, 0.05);
+  border-color: #CBD5E1;
+  transform: translateY(-2px);
 }
 
-.medical-card-hover {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.medical-card-hover:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 40px rgba(15, 111, 255, 0.12);
-  border-color: rgba(15, 111, 255, 0.35);
-}
-
-/* Primary Button Styling */
-.btn-medical-primary {
-  background: linear-gradient(135deg, #0F6FFF 0%, #2563EB 100%);
+.btn-primary-blue {
+  background-color: #2563EB;
   color: #FFFFFF;
-  border-radius: 14px;
-  box-shadow: 0 4px 14px rgba(15, 111, 255, 0.3);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 12px;
   font-weight: 700;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
 }
 
-.btn-medical-primary:hover {
+.btn-primary-blue:hover {
+  background-color: #1D4ED8;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(15, 111, 255, 0.4);
+}
+
+.btn-secondary-white {
+  background-color: #FFFFFF;
+  color: #1E293B;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-secondary-white:hover {
+  background-color: #F8FAFC;
+  border-color: #CBD5E1;
 }
 
 /* Custom Scrollbars */
 ::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #F2F8FD;
+  background: #F1F5F9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #C4DDFC;
-  border-radius: 10px;
+  background: #CBD5E1;
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #0F6FFF;
+  background: #94A3B8;
 }
 
-@keyframes float-subtle {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-6px);
-  }
-}
-
-.animate-float {
-  animation: float-subtle 4s ease-in-out infinite;
-}
-
-/* Footer Marquee Keyframes & Utilities */
+/* Marquee Animations */
 @keyframes marquee-scroll-rtl {
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-33.333333%);
-  }
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-33.333333%); }
 }
 
 .animate-marquee-rtl {
@@ -120,14 +105,9 @@
   animation-play-state: paused;
 }
 
-/* Continuous News Ticker Keyframes */
 @keyframes live-ticker-scroll {
-  0% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
 }
 
 .animate-live-ticker {
@@ -137,15 +117,6 @@
   will-change: transform;
 }
 
-.animate-live-ticker:hover,
-.group:hover .animate-live-ticker {
+.animate-live-ticker:hover {
   animation-play-state: paused;
-}
-
-.marquee-white-text {
-  color: #ffffff !important;
-}
-
-.marquee-white-text span {
-  color: inherit;
 }

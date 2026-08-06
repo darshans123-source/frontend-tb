@@ -3,6 +3,8 @@ import { ShieldCheck, Award, Bell, LogOut, Sparkles, Sun, Moon, Edit3, Save, X, 
 import { useTheme } from '../context/ThemeContext';
 import { supabaseData } from '../services/supabaseData';
 
+import { useSupabaseProfile } from '../hooks/useSupabaseProfile';
+
 interface ProfileProps {
   userName: string;
   userEmail: string;
@@ -57,19 +59,34 @@ export default function Profile({
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
+  // Section 7: Fetch Live Supabase Profile
+  const { profile } = useSupabaseProfile(currentUserId);
+
+  const liveName = profile?.full_name || profile?.name || userName;
+  const liveEmail = profile?.email || userEmail;
+  const liveXp = profile?.xp ?? xp;
+  const liveLevel = profile?.level ?? userLevel;
+  const liveProgress = profile?.progress_percentage ?? 0;
+  const liveCorrect = profile?.correct_answers ?? 0;
+  const liveWrong = profile?.wrong_answers ?? 0;
+  const liveQuizzes = profile?.total_quizzes ?? completedQuizzes;
+  const liveLastActivity = profile?.last_activity
+    ? new Date(profile.last_activity).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+    : 'Active Now';
+
   // Form states
   const [formData, setFormData] = useState({
-    name: userName,
-    usn,
-    college,
-    department,
-    semester,
-    phone,
-    gender,
-    dob,
-    address,
-    district,
-    state
+    name: liveName,
+    usn: profile?.usn || usn,
+    college: profile?.college || college,
+    department: profile?.department || department,
+    semester: profile?.semester || semester,
+    phone: profile?.phone || phone,
+    gender: profile?.gender || gender,
+    dob: profile?.dob || dob,
+    address: profile?.address || address,
+    district: profile?.district || district,
+    state: profile?.state || state
   });
 
   const handleSaveProfile = async (e: React.FormEvent) => {
@@ -79,6 +96,7 @@ export default function Profile({
 
     if (currentUserId) {
       await supabaseData.updateUserProfile(currentUserId, {
+        full_name: formData.name,
         name: formData.name,
         usn: formData.usn,
         college: formData.college,
@@ -106,13 +124,16 @@ export default function Profile({
       {/* Header Profile Summary */}
       <div className="text-center pt-2 sm:pt-4 pb-2 relative">
         <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 rounded-2xl sm:rounded-3xl mx-auto flex items-center justify-center text-2xl sm:text-3xl font-black shadow-[0_0_30px_rgba(6,182,212,0.4)] mb-3 sm:mb-4">
-          {formData.name ? formData.name.charAt(0) : 'S'}
+          {liveName ? liveName.charAt(0) : 'S'}
         </div>
-        <h2 className="text-xl sm:text-2xl font-bold">{formData.name || userName}</h2>
-        <p className="text-xs text-slate-400 font-mono mt-0.5">{userEmail}</p>
+        <h2 className="text-xl sm:text-2xl font-bold">{liveName}</h2>
+        <p className="text-xs text-slate-400 font-mono mt-0.5">{liveEmail}</p>
         <div className="flex flex-wrap items-center justify-center gap-2 mt-3">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-cyan-950/80 border border-cyan-500/40 rounded-full text-cyan-300 text-xs font-semibold">
-            <Sparkles size={13} /> Level {userLevel} • TB Diagnostic Expert
+            <Sparkles size={13} /> Level {liveLevel} • TB Diagnostic Expert
+          </span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-900 border border-slate-700 rounded-full text-slate-300 text-xs font-mono">
+            Last Active: {liveLastActivity}
           </span>
           <button
             onClick={() => setIsEditing(true)}
@@ -123,23 +144,31 @@ export default function Profile({
         </div>
       </div>
 
-      {/* 4 Stats Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-        <div className="p-3.5 sm:p-4 bg-slate-900/80 border border-slate-800 rounded-2xl text-center shadow-xs">
-          <p className="text-[10px] sm:text-xs text-slate-400 uppercase font-mono">Total XP</p>
-          <p className="text-xl sm:text-2xl font-black text-cyan-400 font-mono mt-1">{xp}</p>
+      {/* 6 Stats Cards (Section 7 - Live Supabase Data) */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5">
+        <div className="p-3 bg-slate-900/80 border border-slate-800 rounded-2xl text-center shadow-xs">
+          <p className="text-[10px] text-slate-400 uppercase font-mono">Total XP</p>
+          <p className="text-xl font-black text-cyan-400 font-mono mt-1">{liveXp}</p>
         </div>
-        <div className="p-3.5 sm:p-4 bg-slate-900/80 border border-slate-800 rounded-2xl text-center shadow-xs">
-          <p className="text-[10px] sm:text-xs text-slate-400 uppercase font-mono">Daily Streak</p>
-          <p className="text-xl sm:text-2xl font-black text-emerald-400 font-mono mt-1">{streak} Days 🔥</p>
+        <div className="p-3 bg-slate-900/80 border border-slate-800 rounded-2xl text-center shadow-xs">
+          <p className="text-[10px] text-slate-400 uppercase font-mono">Current Level</p>
+          <p className="text-xl font-black text-blue-400 font-mono mt-1">Level {liveLevel}</p>
         </div>
-        <div className="p-3.5 sm:p-4 bg-slate-900/80 border border-slate-800 rounded-2xl text-center shadow-xs">
-          <p className="text-[10px] sm:text-xs text-slate-400 uppercase font-mono">Cases Mastered</p>
-          <p className="text-xl sm:text-2xl font-black text-purple-400 font-mono mt-1">{completedCases}</p>
+        <div className="p-3 bg-slate-900/80 border border-slate-800 rounded-2xl text-center shadow-xs">
+          <p className="text-[10px] text-slate-400 uppercase font-mono">Progress %</p>
+          <p className="text-xl font-black text-emerald-400 font-mono mt-1">{liveProgress}%</p>
         </div>
-        <div className="p-3.5 sm:p-4 bg-slate-900/80 border border-slate-800 rounded-2xl text-center shadow-xs">
-          <p className="text-[10px] sm:text-xs text-slate-400 uppercase font-mono">Quizzes Passed</p>
-          <p className="text-xl sm:text-2xl font-black text-amber-400 font-mono mt-1">{completedQuizzes}</p>
+        <div className="p-3 bg-slate-900/80 border border-slate-800 rounded-2xl text-center shadow-xs">
+          <p className="text-[10px] text-slate-400 uppercase font-mono">Correct</p>
+          <p className="text-xl font-black text-emerald-400 font-mono mt-1">{liveCorrect}</p>
+        </div>
+        <div className="p-3 bg-slate-900/80 border border-slate-800 rounded-2xl text-center shadow-xs">
+          <p className="text-[10px] text-slate-400 uppercase font-mono">Wrong</p>
+          <p className="text-xl font-black text-rose-400 font-mono mt-1">{liveWrong}</p>
+        </div>
+        <div className="p-3 bg-slate-900/80 border border-slate-800 rounded-2xl text-center shadow-xs">
+          <p className="text-[10px] text-slate-400 uppercase font-mono">Total Quizzes</p>
+          <p className="text-xl font-black text-amber-400 font-mono mt-1">{liveQuizzes}</p>
         </div>
       </div>
 

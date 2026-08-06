@@ -17,7 +17,9 @@ import {
   Settings,
   LogOut,
   ChevronRight,
-  ShieldAlert
+  ShieldAlert,
+  HeartHandshake,
+  Building2
 } from 'lucide-react';
 import { soundService } from '../../services/soundService';
 

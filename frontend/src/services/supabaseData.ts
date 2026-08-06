@@ -772,6 +772,207 @@ class SupabaseDataService {
       quizResults
     };
   }
+
+  // ==========================================
+  // QUIZ & LEVEL LOGIC (SECTIONS 5 - 10)
+  // ==========================================
+
+  /**
+   * Automatically calculate Level from XP (Section 5 & 7)
+   * Level 1: 0–99
+   * Level 2: 100–199
+   * Level 3: 200–299
+   * Level 4: 300–399
+   * Level 5: 400–500+
+   */
+  calculateLevelFromXP(xp: number): number {
+    if (xp >= 400) return 5;
+    if (xp >= 300) return 4;
+    if (xp >= 200) return 3;
+    if (xp >= 100) return 2;
+    return 1;
+  }
+
+  /**
+   * Realtime subscription for Profile updates (Section 9 & 13)
+   */
+  subscribeProfileChanges(userId: string, onUpdate: (profile: any) => void) {
+    const channel = supabase
+      .channel(`profile:${userId}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'profiles', filter: `id=eq.${userId}` },
+        (payload) => {
+          if (payload.new) {
+            onUpdate(payload.new);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }
+
+  /**
+   * Create or fetch active Quiz Attempt in quiz_attempts table
+   */
+  async getOrCreateActiveQuizAttempt(userId: string) {
+    if (!userId) return null;
+    try {
+      const { data: existing } = await supabase
+        .from('quiz_attempts')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('completed', false)
+        .order('started_at', { ascending: false })
+        .limit(1);
+
+      if (existing && existing.length > 0) {
+        return existing[0];
+      }
+
+      const { data: created, error } = await supabase
+        .from('quiz_attempts')
+        .insert({
+          user_id: userId,
+          score: 0,
+          correct_answers: 0,
+          wrong_answers: 0,
+          unanswered: 50,
+          xp_earned: 0,
+          completed: false,
+          started_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+
+      if (error) console.warn('Supabase create quiz_attempt note:', error.message);
+      return created;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /**
+   * Instantly record Answer, XP (+2 for correct), Level, & Progress to Supabase (Section 6 & 8)
+   */
+  async recordAnswerAndXP(
+    userId: string,
+    attemptId: string,
+    questionNumber: number,
+    selectedOption: string,
+    isCorrect: boolean,
+    totalAnswered: number,
+    totalCorrect: number,
+    totalWrong: number
+  ) {
+    if (!userId || !attemptId) return null;
+
+    try {
+      const xpGained = isCorrect ? 2 : 0;
+
+      // 1. Record Answer in quiz_answers
+      await supabase.from('quiz_answers').upsert({
+        attempt_id: attemptId,
+        question_number: questionNumber,
+        selected_option: selectedOption,
+        correct: isCorrect,
+        answered: true,
+        created_at: new Date().toISOString()
+      }, { onConflict: 'attempt_id,question_number' });
+
+      // 2. Insert into xp_history if correct
+      if (isCorrect) {
+        await supabase.from('xp_history').insert({
+          user_id: userId,
+          reason: `Correct answer on Question ${questionNumber}`,
+          xp: 2,
+          created_at: new Date().toISOString()
+        });
+      }
+
+      // 3. Update Quiz Attempt status
+      const unanswered = Math.max(0, 50 - totalAnswered);
+      const score = totalCorrect * 2;
+      const completed = totalAnswered >= 50;
+
+      await supabase.from('quiz_attempts').update({
+        score,
+        correct_answers: totalCorrect,
+        wrong_answers: totalWrong,
+        unanswered,
+        xp_earned: score,
+        completed,
+        completed_at: completed ? new Date().toISOString() : null
+      }).eq('id', attemptId);
+
+      // 4. Update Profile XP, Level, Progress %, Current Question, Last Activity
+      const currentProfile = await this.fetchUserProfile(userId);
+      const currentXp = currentProfile?.xp || 0;
+      const newXp = currentXp + xpGained;
+      const newLevel = this.calculateLevelFromXP(newXp);
+      const progressPercent = Math.round((totalAnswered / 50) * 100);
+
+      const updatedProfile = await this.updateUserProfile(userId, {
+        xp: newXp,
+        level: newLevel,
+        total_quizzes: completed ? (currentProfile?.total_quizzes || 0) + 1 : (currentProfile?.total_quizzes || 0),
+        correct_answers: totalCorrect,
+        wrong_answers: totalWrong,
+        unanswered,
+        progress_percentage: progressPercent,
+        current_question: Math.min(50, questionNumber + 1),
+        current_quiz_id: attemptId,
+        last_activity: new Date().toISOString()
+      });
+
+      return { newXp, newLevel, progressPercent, updatedProfile };
+    } catch (e) {
+      console.warn('recordAnswerAndXP error:', e);
+      return null;
+    }
+  }
+
+  /**
+   * Restore state on page refresh from Supabase (Section 10)
+   */
+  async restoreQuizAttempt(userId: string) {
+    if (!userId) return null;
+    try {
+      const { data: attempts, error } = await supabase
+        .from('quiz_attempts')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('completed', false)
+        .order('started_at', { ascending: false })
+        .limit(1);
+
+      if (error || !attempts || attempts.length === 0) return null;
+      const activeAttempt = attempts[0];
+
+      const { data: answers } = await supabase
+        .from('quiz_answers')
+        .select('*')
+        .eq('attempt_id', activeAttempt.id);
+
+      const answersMap: Record<number, number> = {};
+      (answers || []).forEach(ans => {
+        const optionIdx = ans.selected_option ? ans.selected_option.charCodeAt(0) - 65 : 0;
+        answersMap[ans.question_number - 1] = Math.max(0, optionIdx);
+      });
+
+      return {
+        attemptId: activeAttempt.id,
+        attempt: activeAttempt,
+        answersMap,
+        answeredCount: Object.keys(answersMap).length
+      };
+    } catch (e) {
+      return null;
+    }
+  }
 }
 
 export const supabaseData = new SupabaseDataService();

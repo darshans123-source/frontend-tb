@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Card,
   CardContent,
@@ -27,7 +27,8 @@ import {
   HelpCircle,
   Play,
   ShieldCheck,
-  Award
+  Award,
+  ArrowRight
 } from 'lucide-react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { DETAILED_MODULES, LearningModuleDetail } from '../data/learningContent';
@@ -43,12 +44,12 @@ import { level1Service } from '../services/level1Service';
 import SpotTheTBClues from './SpotTheTBClues';
 
 const modules = [
-  { id: 'm1', title: 'New Learning Categories', icon: BookOpen, sub: ['TB Basics', 'Epidemiology', 'Transmission & Prevention', 'Risk Factors', 'Signs & Symptoms', 'Infection Control'] },
-  { id: 'm1', title: 'Clinical Learning', icon: Stethoscope, sub: ['Pulmonary TB', 'Pediatric TB', 'Extrapulmonary TB', 'HIV-associated TB', 'Drug-Resistant TB (MDR/XDR)', 'Latent TB Infection'] },
-  { id: 'm1', title: 'Diagnostic Learning', icon: Microscope, sub: ['History Taking', 'Physical Examination', 'Chest X-ray Interpretation', 'CBNAAT', 'Sputum Smear Microscopy', 'Culture & Drug Sensitivity Testing', 'Tuberculin Skin Test (TST)', 'IGRA'] },
-  { id: 'm1', title: 'Treatment Learning', icon: Pill, sub: ['Drug Regimens', 'Treatment Monitoring', 'Adverse Drug Reactions', 'Patient Counselling', 'Follow-up Care'] },
-  { id: 'm1', title: 'AI Learning', icon: Brain, sub: ['AI Clinical Tutor', 'AI Voice Mentor', 'AI Case Generator', 'AI Quiz Generator', 'Personalized Learning Path'] },
-  { id: 'm1', title: 'Practice', icon: CheckCircle, sub: ['Flashcards', 'Interactive Clinical Cases', 'Daily Challenge', 'Timed Quiz', 'Mock Exam', 'Quick Revision'] },
+  { id: 'm1', title: 'TB Fundamentals & Epidemiology', category: 'Foundation', difficulty: 'Beginner', duration: '25 Mins', readTime: '15 Min Read', image: '/tb_lungs_hero.png', completion: 100, icon: BookOpen, sub: ['TB Basics', 'Epidemiology', 'Transmission & Prevention', 'Risk Factors', 'Signs & Symptoms', 'Infection Control'] },
+  { id: 'm1', title: 'Clinical Manifestations & Diagnostics', category: 'Clinical Science', difficulty: 'Intermediate', duration: '40 Mins', readTime: '25 Min Read', image: '/doctor_examining_patient.png', completion: 75, icon: Stethoscope, sub: ['Pulmonary TB', 'Pediatric TB', 'Extrapulmonary TB', 'HIV-associated TB', 'Drug-Resistant TB (MDR/XDR)', 'Latent TB Infection'] },
+  { id: 'm1', title: 'Diagnostic Algorithms & CBNAAT', category: 'Laboratory Science', difficulty: 'Advanced', duration: '35 Mins', readTime: '20 Min Read', image: '/tb_lab_diagnosis.png', completion: 50, icon: Microscope, sub: ['History Taking', 'Physical Examination', 'Chest X-ray Interpretation', 'CBNAAT', 'Sputum Smear Microscopy', 'Culture & Drug Sensitivity Testing', 'Tuberculin Skin Test (TST)', 'IGRA'] },
+  { id: 'm1', title: 'Treatment Protocols & FDCs', category: 'Pharmacotherapy', difficulty: 'Advanced', duration: '30 Mins', readTime: '18 Min Read', image: '/tb_medicines.png', completion: 60, icon: Pill, sub: ['Drug Regimens', 'Treatment Monitoring', 'Adverse Drug Reactions', 'Patient Counselling', 'Follow-up Care'] },
+  { id: 'm1', title: 'AI Clinical Mentor & Tutor', category: 'AI Learning', difficulty: 'Intermediate', duration: '20 Mins', readTime: '12 Min Read', image: '/assets/nikshay_mitra_banner.png', completion: 40, icon: Brain, sub: ['AI Clinical Tutor', 'AI Voice Mentor', 'AI Case Generator', 'AI Quiz Generator', 'Personalized Learning Path'] },
+  { id: 'm1', title: 'Clinical Cases & Practice Exams', category: 'Clinical Practice', difficulty: 'All Levels', duration: '45 Mins', readTime: '30 Min Read', image: '/assets/awareness_banner.png', completion: 80, icon: CheckCircle, sub: ['Flashcards', 'Interactive Clinical Cases', 'Daily Challenge', 'Timed Quiz', 'Mock Exam', 'Quick Revision'] },
 ];
 
 export type SubViewType = 'main' | 'tb-intro' | 'level1-instructions' | 'level1-quiz' | 'level1-result' | 'mini-game-spot-tb-clues';
@@ -56,6 +57,7 @@ export type SubViewType = 'main' | 'tb-intro' | 'level1-instructions' | 'level1-
 interface LearningModulesProps {
   currentUserId?: string | null;
   initialSubView?: SubViewType;
+  onSubViewChange?: (subView: SubViewType) => void;
   onNavigateToCase?: () => void;
   onUnlockLevel1?: () => void;
 }
@@ -63,6 +65,7 @@ interface LearningModulesProps {
 export default function LearningModules({
   currentUserId,
   initialSubView = 'main',
+  onSubViewChange,
   onNavigateToCase,
   onUnlockLevel1
 }: LearningModulesProps) {
@@ -72,9 +75,18 @@ export default function LearningModules({
   const [showQuizFeedback, setShowQuizFeedback] = useState<Record<number, boolean>>({});
   const [progress, setProgress] = useState<number>(0);
 
-  // Sync initial subview when prop changes
+  const updateSubView = (newSubView: SubViewType) => {
+    setActiveSubView(newSubView);
+    if (onSubViewChange) {
+      onSubViewChange(newSubView);
+    }
+  };
+
+  // Sync initial subview ONLY when prop explicitly changes value from previous
+  const prevInitialSubViewRef = useRef(initialSubView);
   useEffect(() => {
-    if (initialSubView) {
+    if (initialSubView && initialSubView !== prevInitialSubViewRef.current) {
+      prevInitialSubViewRef.current = initialSubView;
       setActiveSubView(initialSubView);
     }
   }, [initialSubView]);
@@ -131,9 +143,9 @@ export default function LearningModules({
 
   const handleStartLevel1Flow = () => {
     if (level1Service.isIntroCompleted()) {
-      setActiveSubView('level1-instructions');
+      updateSubView('level1-instructions');
     } else {
-      setActiveSubView('tb-intro');
+      updateSubView('tb-intro');
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -143,7 +155,7 @@ export default function LearningModules({
     return (
       <TBIntroductionPage
         onCompleteRead={() => {
-          setActiveSubView('level1-instructions');
+          updateSubView('level1-instructions');
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
       />
@@ -154,11 +166,11 @@ export default function LearningModules({
     return (
       <Level1InstructionsPage
         onStartQuiz={() => {
-          setActiveSubView('level1-quiz');
+          updateSubView('level1-quiz');
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
         onBackToIntro={() => {
-          setActiveSubView('tb-intro');
+          updateSubView('tb-intro');
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
       />
@@ -186,7 +198,7 @@ export default function LearningModules({
               await supabaseData.saveQuizResult(currentUserId, 'level1-quiz', stats.totalScore, stats.xpEarned, stats.durationSeconds);
             }
           }
-          setActiveSubView('level1-result');
+          updateSubView('level1-result');
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
       />
@@ -200,15 +212,15 @@ export default function LearningModules({
         stats={level1Stats}
         onRetry={() => {
           level1Service.clearActiveAttempt();
-          setActiveSubView('level1-quiz');
+          updateSubView('level1-quiz');
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
         onProceedToLevel2={() => {
-          setActiveSubView('mini-game-spot-tb-clues');
+          updateSubView('mini-game-spot-tb-clues');
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
         onBackToModules={() => {
-          setActiveSubView('main');
+          updateSubView('main');
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
       />
@@ -223,11 +235,11 @@ export default function LearningModules({
           if (onNavigateToCase) {
             onNavigateToCase();
           } else {
-            setActiveSubView('main');
+            updateSubView('main');
           }
         }}
         onReturnToDashboard={() => {
-          setActiveSubView('main');
+          updateSubView('main');
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
       />
@@ -527,37 +539,37 @@ export default function LearningModules({
 
   // Original UI Grid layout preserved + Added Level 1 Hero Banner
   return (
-    <div className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
+    <div className="bg-[#F8FAFC] p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 text-[#1E293B] font-sans">
       {/* Prominent Level 1 Assessment Hero Card */}
-      <div className="bg-gradient-to-r from-slate-900 via-cyan-950 to-slate-900 border border-cyan-500/50 p-6 sm:p-8 rounded-3xl space-y-4 shadow-[0_0_35px_rgba(6,182,212,0.15)] relative overflow-hidden">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-950 text-emerald-400 border border-emerald-500/30 rounded-full text-xs font-mono">
-              <ShieldCheck size={14} /> Level 1 Foundation Certification
+      <div className="bg-white border border-[#E2E8F0] p-6 sm:p-8 rounded-2xl space-y-4 shadow-sm relative overflow-hidden">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div className="space-y-2 flex-1">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#EFF6FF] text-[#2563EB] border border-blue-200 rounded-full text-xs font-semibold">
+              <ShieldCheck size={15} /> Level 1 Foundation Certification
             </div>
-            <Typography variant="h4" className="font-black text-white text-2xl sm:text-4xl">
+            <h2 className="font-extrabold text-[#1E293B] text-2xl sm:text-3xl">
               Level 1 Learning & Quiz Assessment System
-            </Typography>
-            <p className="text-slate-300 text-xs sm:text-sm max-w-2xl leading-relaxed">
-              Complete the 100% TB Introduction reading, view the exam guidelines, and test your clinical skills across 20 randomized questions (30 Theory + 20 Clinical Scenarios bank).
+            </h2>
+            <p className="text-slate-600 text-xs sm:text-sm max-w-2xl leading-relaxed">
+              Complete the required TB Introduction curriculum reading, view the clinical guidelines, and test your diagnostic skills across 50 randomized questions (30 Theory + 20 Clinical Scenarios).
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3 shrink-0">
             <button
               onClick={handleStartLevel1Flow}
-              className="flex items-center gap-2 px-5 py-3.5 bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-400 hover:to-emerald-400 text-slate-950 font-black rounded-2xl text-xs sm:text-sm shadow-[0_0_25px_rgba(6,182,212,0.4)] transition-all cursor-pointer"
+              className="flex items-center gap-2 px-6 py-3.5 bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-extrabold rounded-xl text-xs sm:text-sm shadow-md transition-all cursor-pointer"
             >
-              <Play size={18} className="fill-slate-950" />
-              <span>Level 1 Assessment</span>
+              <Play size={18} className="fill-white" />
+              <span>Start Level 1 Assessment</span>
             </button>
 
             <button
               onClick={() => {
-                setActiveSubView('mini-game-spot-tb-clues');
+                updateSubView('mini-game-spot-tb-clues');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="flex items-center gap-2 px-5 py-3.5 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-black rounded-2xl text-xs sm:text-sm shadow-[0_0_25px_rgba(245,158,11,0.4)] transition-all cursor-pointer hover:scale-105"
+              className="flex items-center gap-2 px-5 py-3.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold rounded-xl text-xs sm:text-sm shadow-sm transition-all cursor-pointer"
             >
               <Sparkles size={18} className="text-slate-950" />
               <span>Spot the TB Clues Mini Game 🏆</span>
@@ -566,47 +578,105 @@ export default function LearningModules({
         </div>
       </div>
 
-      <Typography variant="h4" className="text-white mb-4 font-bold text-2xl sm:text-4xl">All Learning Modules</Typography>
+      {/* Header Title */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl sm:text-3xl font-extrabold text-[#1E293B]">All Learning Modules</h2>
+        <span className="text-xs font-semibold text-slate-500 font-mono">6 Curriculum Modules</span>
+      </div>
+
+      {/* Grid of Clean White Module Cards */}
       <Grid container spacing={3}>
-        {modules.map((module, idx) => (
-          <Grid size={{ xs: 12, md: 6, lg: 4 }} key={`${module.title}_${idx}`}>
-            <Card className="bg-slate-900 border border-slate-800 text-white rounded-2xl hover:border-cyan-500/50 transition-all cursor-pointer">
-              <CardContent>
-                <div
-                  className="flex items-center justify-between mb-4 flex-wrap gap-2"
-                  onClick={() => handleOpenModule(module.id)}
-                >
-                  <div className="flex items-center gap-3">
-                    <module.icon className="text-cyan-400" size={24} />
-                    <Typography variant="h6" className="font-bold text-base sm:text-lg">{module.title}</Typography>
+        {modules.map((module, idx) => {
+          const IconComponent = module.icon;
+
+          return (
+            <Grid size={{ xs: 12, md: 6, lg: 4 }} key={`${module.title}_${idx}`}>
+              <div className="bg-white border border-[#E2E8F0] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between h-full group">
+                {/* Module Header Image */}
+                <div className="relative h-44 overflow-hidden bg-slate-100 border-b border-[#E2E8F0]">
+                  <img
+                    src={module.image}
+                    alt={module.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
+                  />
+                  <div className="absolute top-3 left-3 flex items-center gap-2">
+                    <span className="px-2.5 py-1 bg-white/90 backdrop-blur-xs text-[#2563EB] border border-blue-200 rounded-md text-[11px] font-bold font-mono shadow-xs">
+                      {module.category}
+                    </span>
+                    <span className="px-2.5 py-1 bg-slate-900/80 text-white rounded-md text-[11px] font-semibold font-mono">
+                      {module.difficulty}
+                    </span>
                   </div>
-                  <Chip label="Open Module" size="small" color="primary" onClick={() => handleOpenModule(module.id)} />
                 </div>
 
-                {module.sub.map((sub) => (
-                  <Accordion key={sub} className="bg-slate-950 border border-slate-800 text-slate-300 shadow-none">
-                    <AccordionSummary expandIcon={<ExpandMoreIcon className="text-slate-500" />}>
-                      <Typography className="text-xs sm:text-sm">{sub}</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails className="space-y-2">
-                      <Typography variant="body2" className="text-slate-400 text-xs">
-                        CDC & NTEP guideline topics for {sub}. Includes clinical objectives, diagnostic flowcharts, and self-assessment quiz.
-                      </Typography>
-                      <Button
-                        size="small"
-                        variant="text"
-                        sx={{ color: '#06b6d4', textTransform: 'none', fontSize: '12px' }}
-                        onClick={() => handleOpenModule(module.id)}
-                      >
-                        Read Full CDC Module Notes →
-                      </Button>
-                    </AccordionDetails>
-                  </Accordion>
-                ))}
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
+                {/* Card Content Body */}
+                <div className="p-5 space-y-4 flex-1 flex flex-col justify-between">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-xs text-slate-500 font-mono">
+                      <span>⏳ {module.duration}</span>
+                      <span>📖 {module.readTime}</span>
+                    </div>
+
+                    <h3
+                      className="font-bold text-base text-[#1E293B] group-hover:text-[#2563EB] transition-colors cursor-pointer line-clamp-2"
+                      onClick={() => handleOpenModule(module.id)}
+                    >
+                      {module.title}
+                    </h3>
+                  </div>
+
+                  {/* Animated Progress Bar */}
+                  <div className="space-y-1 pt-1">
+                    <div className="flex justify-between items-center text-[11px] font-mono text-slate-600">
+                      <span>Completion</span>
+                      <strong className="text-[#2563EB] font-bold">{module.completion}%</strong>
+                    </div>
+                    <div className="w-full bg-[#F1F5F9] h-2 rounded-full overflow-hidden border border-[#E2E8F0]">
+                      <div
+                        className="bg-[#2563EB] h-full rounded-full transition-all duration-500"
+                        style={{ width: `${module.completion}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Subtopics Accordion Summary */}
+                  <div className="pt-2 border-t border-[#E2E8F0] space-y-2">
+                    <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block font-mono">
+                      Included Topics ({module.sub.length}):
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {module.sub.slice(0, 4).map((subItem) => (
+                        <span
+                          key={subItem}
+                          className="px-2 py-0.5 bg-[#F8FAFC] border border-[#E2E8F0] text-slate-700 text-[11px] rounded-md font-medium"
+                        >
+                          {subItem}
+                        </span>
+                      ))}
+                      {module.sub.length > 4 && (
+                        <span className="px-2 py-0.5 bg-blue-50 border border-blue-200 text-[#2563EB] text-[11px] rounded-md font-bold">
+                          +{module.sub.length - 4} more
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Action Button */}
+                  <div className="pt-3">
+                    <button
+                      onClick={() => handleOpenModule(module.id)}
+                      className="w-full py-2.5 bg-white hover:bg-[#EFF6FF] border border-[#E2E8F0] hover:border-blue-300 text-[#2563EB] font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                    >
+                      <span>Read Module Guidelines</span>
+                      <ArrowRight size={14} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </Grid>
+          );
+        })}
       </Grid>
     </div>
   );

@@ -14,6 +14,8 @@ import Profile from './pages/Profile';
 import LevelUpCelebration from './components/LevelUpCelebration';
 import VoiceAssistant from './components/VoiceAssistant';
 import SkeletonLoader from './components/SkeletonLoader';
+import SnakeLadderGame from './components/level1/SnakeLadderGame';
+import ErrorBoundary from './components/common/ErrorBoundary';
 import { authService } from './services/authService';
 import { supabaseData } from './services/supabaseData';
 import { supabase } from './services/supabase';
@@ -64,8 +66,8 @@ export default function App() {
 
   // Navigation & Tabs
   const [currentTab, setCurrentTab] = useState<'dashboard' | 'cases' | 'flowcharts' | 'ai-tutor' | 'modules' | 'leaderboard' | 'analytics' | 'certificate' | 'profile'>('dashboard');
-  const [subView, setSubView] = useState<'none' | 'case-select' | 'case-engine'>('none');
-  const [moduleSubView, setModuleSubView] = useState<'main' | 'tb-intro' | 'level1-instructions' | 'level1-quiz' | 'level1-result' | 'mini-game-spot-tb-clues'>('main');
+  const [subView, setSubView] = useState<'none' | 'case-select' | 'case-engine' | 'snake-ladder'>('none');
+  const [moduleSubView, setModuleSubView] = useState<'main' | 'tb-intro' | 'level1-instructions' | 'level1-quiz' | 'level1-result' | 'mini-game-spot-tb-clues' | 'snake-and-ladder'>('main');
   const [selectedCaseType, setSelectedCaseType] = useState<CaseType>('pulmonary');
 
   // Gamification state
@@ -73,7 +75,7 @@ export default function App() {
   const [leaderboardEntries, setLeaderboardEntries] = useState<LeaderboardEntry[]>([]);
   const [bookmarkedCases, setBookmarkedCases] = useState<string[]>([]);
 
-  const isLevel1Unlocked = userRole === 'admin' || userRole === 'faculty' || userData.level > 1 || completedQuizzes.includes('level1-quiz') || localStorage.getItem('tbquest_level1_quiz_passed') === 'true';
+  const isLevel1Unlocked = userRole === 'admin' || userRole === 'faculty' || userData.level > 1 || completedQuizzes.includes('level1-quiz') || localStorage.getItem('tbquest_level1_quiz_passed') === 'true' || localStorage.getItem('tbquest_level2_unlocked') === 'true';
 
   const toggleBookmark = async (caseId: string) => {
     if (!currentUserId) return;
@@ -124,7 +126,7 @@ export default function App() {
     const passed = quizResults.filter((q: any) => q.case_type === 'level1-quiz' && q.score >= 80).map((q: any) => q.case_type);
     setCompletedQuizzes(passed);
 
-    if (passed.length > 0 || localStorage.getItem('tbquest_level1_quiz_passed') === 'true') {
+    if (passed.length > 0 || localStorage.getItem('tbquest_level1_quiz_passed') === 'true' || localStorage.getItem('tbquest_level2_unlocked') === 'true') {
       setUnlockedCases(['pulmonary', 'pediatric']);
     }
 
@@ -404,7 +406,7 @@ export default function App() {
   }
 
   // 3. Student Role -> Student Dashboard & Learning Portal
-  const isLevel1Passed = userData.level > 1 || completedQuizzes.includes('level1-quiz') || (typeof window !== 'undefined' && localStorage.getItem('tbquest_level1_quiz_passed') === 'true');
+  const isLevel1Passed = userData.level > 1 || completedQuizzes.includes('level1-quiz') || (typeof window !== 'undefined' && (localStorage.getItem('tbquest_level1_quiz_passed') === 'true' || localStorage.getItem('tbquest_level2_unlocked') === 'true'));
 
   return (
     <ProgressProvider>
@@ -423,7 +425,31 @@ export default function App() {
         isQuizPassed={isLevel1Passed}
       >
         <Suspense fallback={<SkeletonLoader type="dashboard" />}>
-          {subView === 'case-engine' ? (
+          {subView === 'snake-ladder' ? (
+            <ErrorBoundary fallbackTitle="Snake & Ladder Game">
+              <SnakeLadderGame
+                currentUserId={currentUserId}
+                onProceedToLevel2={() => {
+                  setSubView('case-select');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                onBackToDashboard={() => {
+                  setSubView('none');
+                  setCurrentTab('dashboard');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                onUnlockLevel1={() => {
+                  setCompletedQuizzes(prev => [...prev, 'level1-quiz']);
+                  setUnlockedCases(['pulmonary', 'pediatric']);
+                  setUserData(prev => ({
+                    ...prev,
+                    level: Math.max(prev.level, 2),
+                    xp: prev.xp + 500
+                  }));
+                }}
+              />
+            </ErrorBoundary>
+          ) : subView === 'case-engine' ? (
             <CaseEngine
               caseType={selectedCaseType}
               currentUserId={currentUserId}
@@ -457,9 +483,12 @@ export default function App() {
                     setModuleSubView('tb-intro');
                   }}
                   onSelectLevel1={() => {
-                    setSubView('none');
-                    setCurrentTab('modules');
-                    setModuleSubView('level1-instructions');
+                    setSubView('snake-ladder');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  onStartSnakeLadder={() => {
+                    setSubView('snake-ladder');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
                   onStartMiniGame={() => {
                     setSubView('none');

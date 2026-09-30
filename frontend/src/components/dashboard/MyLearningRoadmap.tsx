@@ -31,15 +31,15 @@ export default function MyLearningRoadmap({
     {
       id: 1,
       title: 'LEVEL 1',
-      subtitle: 'TB RECOGNITION',
+      subtitle: 'SNAKE & LADDER • TB AWARENESS',
       iconType: 'target',
       color: 'blue',
       status: 'AVAILABLE',
-      isCompleted: userLevel > 1,
-      nodeBg: 'bg-blue-600 ring-4 ring-blue-100',
-      cardBorder: 'border-blue-300 bg-blue-50/20 shadow-xs ring-2 ring-blue-500/10',
-      btnClass: 'bg-blue-600 hover:bg-blue-700 text-white font-black shadow-xs',
-      btnText: 'START'
+      isCompleted: userLevel > 1 || (typeof window !== 'undefined' && localStorage.getItem('tbquest_level2_unlocked') === 'true'),
+      nodeBg: 'bg-emerald-600 ring-4 ring-emerald-100',
+      cardBorder: 'border-emerald-300 bg-emerald-50/20 shadow-xs ring-2 ring-emerald-500/10',
+      btnClass: 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black shadow-xs',
+      btnText: 'PLAY 🐍'
     },
     {
       id: 2,

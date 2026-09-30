@@ -277,7 +277,7 @@ export default function TBIntroductionPage({ onCompleteRead }: TBIntroductionPag
             <h1 className="text-sm sm:text-base font-extrabold text-[#1E293B] truncate">
               TB Introduction & WHO/NTEP Curriculum
             </h1>
-            <p className="text-xs text-slate-500 font-medium">Read 90%+ to unlock Level 1 Competency Assessment</p>
+            <p className="text-xs text-slate-500 font-medium">Read 90%+ to unlock Level 1 Snake & Ladder</p>
           </div>
         </div>
 
@@ -426,13 +426,13 @@ export default function TBIntroductionPage({ onCompleteRead }: TBIntroductionPag
       <div className="bg-white border border-[#E2E8F0] p-6 sm:p-8 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
         <div className="space-y-1">
           <h2 className="font-extrabold text-[#1E293B] text-base sm:text-lg flex items-center gap-2">
-            <ShieldCheck size={20} className="text-[#2563EB]" />
-            <span>Ready for Level 1 Competency Assessment?</span>
+            <ShieldCheck size={20} className="text-[#1677FF]" />
+            <span>Ready to Play Level 1 Snake & Ladder?</span>
           </h2>
           <p className="text-xs text-slate-500">
             {isReadComplete
-              ? 'You have completed the required curriculum reading. Click below to proceed to exam guidelines.'
-              : 'Scroll and review the core curriculum (90%+) to unlock the Level 1 assessment.'}
+              ? 'You have completed the required curriculum reading. Click below to begin the Level 1 Game Introduction.'
+              : 'Scroll and review the core curriculum (90%+) to unlock Level 1 Snake & Ladder.'}
           </p>
         </div>
 
@@ -441,11 +441,12 @@ export default function TBIntroductionPage({ onCompleteRead }: TBIntroductionPag
           disabled={!isReadComplete}
           className={`flex items-center gap-2 px-6 py-3.5 rounded-xl font-bold text-xs sm:text-sm transition-all shrink-0 ${
             isReadComplete
-              ? 'bg-[#2563EB] hover:bg-[#1D4ED8] text-white shadow-md cursor-pointer'
+              ? 'bg-gradient-to-r from-[#1677FF] via-[#00B8A9] to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white shadow-md shadow-blue-500/25 cursor-pointer active:scale-95'
               : 'bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed'
           }`}
         >
-          <span>Complete Read & Unlock Level 1</span>
+          <span className="text-base">🐍</span>
+          <span>START TB QUEST</span>
           <ArrowRight size={18} />
         </button>
       </div>

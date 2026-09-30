@@ -3,7 +3,8 @@
  */
 
 const envApiUrl = (import.meta as any).env?.VITE_API_BASE_URL;
-export const API_BASE_URL = (envApiUrl || 'https://tb-backend-w2qy.onrender.com/api').replace(/\/$/, '');
+const isLocalhost = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+export const API_BASE_URL = (envApiUrl || (isLocalhost ? 'http://localhost:3000/api' : 'https://tb-backend-w2qy.onrender.com/api')).replace(/\/$/, '');
 
 export async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const token = localStorage.getItem('tb_quest_jwt_token');

@@ -16,6 +16,7 @@ interface StudentDashboardProps {
   userId?: string | null;
   onStartLearning: () => void;
   onSelectLevel1: () => void;
+  onStartSnakeLadder?: () => void;
   onStartMiniGame?: () => void;
   onStartCase: () => void;
   onOpenAITutor: () => void;
@@ -40,6 +41,7 @@ export default function StudentDashboard({
   userId,
   onStartLearning,
   onSelectLevel1,
+  onStartSnakeLadder,
   onStartMiniGame,
   onStartCase,
   onOpenAITutor,
@@ -133,6 +135,106 @@ export default function StudentDashboard({
           <TBFactCard
             onOpenArticle={(article) => setSelectedArticle(article)}
           />
+        </div>
+      </div>
+
+      {/* 🐍 TB QUEST LEVEL 1 — SNAKE & LADDER & LEVEL 2 HERO SECTION */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+        {/* Card 1: 🐍 TB QUEST - PATH TO TB AWARENESS */}
+        <div className="lg:col-span-7 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-2 border-emerald-500/50 rounded-2xl p-6 shadow-xl relative overflow-hidden text-white flex flex-col justify-between">
+          <div className="absolute -top-20 -right-20 w-48 h-48 rounded-full bg-emerald-500/15 blur-2xl pointer-events-none" />
+          <div className="space-y-3 relative z-10">
+            <div className="flex items-center gap-2.5">
+              <div className="p-2.5 bg-emerald-500/20 border border-emerald-400/40 rounded-xl text-emerald-400 text-2xl shrink-0 shadow-md">
+                🐍
+              </div>
+              <div>
+                <span className="text-[11px] font-mono font-bold text-emerald-400 uppercase tracking-widest block">
+                  LEVEL 1 LEARNING MODE
+                </span>
+                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                  TB QUEST: PATH TO TB AWARENESS
+                </h3>
+              </div>
+            </div>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium">
+              Learn clinical TB awareness through gameplay! Journey from <strong>🧑‍🎓 TB Learner</strong> to <strong>🛡️ Awareness Champion</strong> on a 100-square board. Climb ladders with clinical reasoning, avoid distraction snakes, and master presumptive TB diagnosis.
+            </p>
+          </div>
+
+          <div className="pt-4 flex flex-wrap items-center justify-between gap-3 relative z-10 border-t border-slate-700/60 mt-3">
+            <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 font-bold">
+              <span>🎯 100 Squares</span>
+              <span>•</span>
+              <span>🪜 Ladders</span>
+              <span>•</span>
+              <span>🐍 Snakes</span>
+              <span>•</span>
+              <span>⭐ XP Rewards</span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                soundService.playClick();
+                if (onStartSnakeLadder) onStartSnakeLadder();
+              }}
+              className="px-6 py-3 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black rounded-xl text-xs sm:text-sm shadow-lg shadow-emerald-500/25 transition-all cursor-pointer hover:scale-105 flex items-center gap-2"
+            >
+              <Sparkles size={18} className="text-slate-950" />
+              <span>PLAY LEVEL 1</span>
+              <ArrowRight size={18} />
+            </button>
+          </div>
+        </div>
+
+        {/* Card 2: 🔓 LEVEL 2 - INVESTIGATION LEARNING */}
+        <div className={`lg:col-span-5 rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between transition-all ${
+          isUnlocked
+            ? 'bg-gradient-to-br from-blue-900 via-indigo-950 to-slate-900 border-2 border-cyan-400/50 text-white'
+            : 'bg-slate-50 border-2 border-slate-200 text-slate-700'
+        }`}>
+          <div className="space-y-3 relative z-10">
+            <div className="flex items-center justify-between">
+              <span className={`text-[11px] font-mono font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-md ${
+                isUnlocked ? 'bg-cyan-500/20 border border-cyan-400/40 text-cyan-300' : 'bg-slate-200 text-slate-600'
+              }`}>
+                {isUnlocked ? '🔓 UNLOCKED' : '🔒 LEVEL 2 LOCKED'}
+              </span>
+              <span className="text-xs font-mono font-bold text-slate-400">
+                CLINICAL CASES
+              </span>
+            </div>
+            <h3 className="text-xl sm:text-2xl font-black tracking-tight">
+              LEVEL 2: INVESTIGATION LEARNING
+            </h3>
+            <p className="text-xs sm:text-sm leading-relaxed">
+              {isUnlocked
+                ? 'Level 1 mastered! You now have access to comprehensive clinical simulations, lab reader tools, CBNAAT interpretation, and pediatric cases.'
+                : 'Master Level 1 by completing the Snake & Ladder journey with ≥ 80% accuracy to unlock clinical investigation cases.'}
+            </p>
+          </div>
+
+          <div className="pt-4 relative z-10 border-t border-slate-200/50 mt-3">
+            {isUnlocked ? (
+              <button
+                type="button"
+                onClick={() => {
+                  soundService.playClick();
+                  onStartCase();
+                }}
+                className="w-full py-3.5 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-blue-500 text-white font-black rounded-xl text-xs sm:text-sm shadow-lg shadow-blue-500/25 transition-all cursor-pointer hover:scale-105 flex items-center justify-center gap-2"
+              >
+                <span>START LEVEL 2 →</span>
+                <ArrowRight size={18} />
+              </button>
+            ) : (
+              <div className="flex items-center justify-between gap-2 p-3 bg-slate-100 rounded-xl text-slate-500 text-xs font-bold font-mono">
+                <span className="flex items-center gap-1.5"><Lock size={16} /> LOCKED</span>
+                <span>Requires Level 1 (≥80%)</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

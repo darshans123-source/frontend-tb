@@ -40,8 +40,10 @@ import TBIntroductionPage from './level1/TBIntroductionPage';
 import Level1InstructionsPage from './level1/Level1InstructionsPage';
 import Level1QuizPage from './level1/Level1QuizPage';
 import Level1ResultPage from './level1/Level1ResultPage';
+import SnakeLadderGame from './level1/SnakeLadderGame';
 import { level1Service } from '../services/level1Service';
 import SpotTheTBClues from './SpotTheTBClues';
+import ErrorBoundary from './common/ErrorBoundary';
 
 const modules = [
   { id: 'm1', title: 'TB Fundamentals & Epidemiology', category: 'Foundation', difficulty: 'Beginner', duration: '25 Mins', readTime: '15 Min Read', image: '/tb_lungs_hero.png', completion: 100, icon: BookOpen, sub: ['TB Basics', 'Epidemiology', 'Transmission & Prevention', 'Risk Factors', 'Signs & Symptoms', 'Infection Control'] },
@@ -52,7 +54,7 @@ const modules = [
   { id: 'm1', title: 'Clinical Cases & Practice Exams', category: 'Clinical Practice', difficulty: 'All Levels', duration: '45 Mins', readTime: '30 Min Read', image: '/assets/awareness_banner.png', completion: 80, icon: CheckCircle, sub: ['Flashcards', 'Interactive Clinical Cases', 'Daily Challenge', 'Timed Quiz', 'Mock Exam', 'Quick Revision'] },
 ];
 
-export type SubViewType = 'main' | 'tb-intro' | 'level1-instructions' | 'level1-quiz' | 'level1-result' | 'mini-game-spot-tb-clues';
+export type SubViewType = 'main' | 'tb-intro' | 'level1-instructions' | 'level1-quiz' | 'level1-result' | 'mini-game-spot-tb-clues' | 'snake-and-ladder';
 
 interface LearningModulesProps {
   currentUserId?: string | null;
@@ -164,16 +166,18 @@ export default function LearningModules({
 
   if (activeSubView === 'level1-instructions') {
     return (
-      <Level1InstructionsPage
-        onStartQuiz={() => {
-          updateSubView('level1-quiz');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-        onBackToIntro={() => {
-          updateSubView('tb-intro');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-      />
+      <ErrorBoundary fallbackTitle="Level 1 Game Introduction">
+        <Level1InstructionsPage
+          onStartQuiz={() => {
+            updateSubView('snake-and-ladder');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          onBackToIntro={() => {
+            updateSubView('tb-intro');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+        />
+      </ErrorBoundary>
     );
   }
 
@@ -243,6 +247,28 @@ export default function LearningModules({
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
       />
+    );
+  }
+
+  if (activeSubView === 'snake-and-ladder') {
+    return (
+      <ErrorBoundary fallbackTitle="Snake & Ladder Game">
+        <SnakeLadderGame
+          currentUserId={currentUserId}
+          onProceedToLevel2={() => {
+            if (onNavigateToCase) {
+              onNavigateToCase();
+            } else {
+              updateSubView('main');
+            }
+          }}
+          onBackToDashboard={() => {
+            updateSubView('main');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          onUnlockLevel1={onUnlockLevel1}
+        />
+      </ErrorBoundary>
     );
   }
 
@@ -540,28 +566,42 @@ export default function LearningModules({
   // Original UI Grid layout preserved + Added Level 1 Hero Banner
   return (
     <div className="bg-[#F8FAFC] p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 text-[#1E293B] font-sans">
-      {/* Prominent Level 1 Assessment Hero Card */}
+      {/* Prominent Level 1 Hero Card */}
       <div className="bg-white border border-[#E2E8F0] p-6 sm:p-8 rounded-2xl space-y-4 shadow-sm relative overflow-hidden">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div className="space-y-2 flex-1">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#EFF6FF] text-[#2563EB] border border-blue-200 rounded-full text-xs font-semibold">
-              <ShieldCheck size={15} /> Level 1 Foundation Certification
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-[#1677FF] border border-blue-200 rounded-full text-xs font-bold font-mono">
+              <ShieldCheck size={15} /> Level 1 • TB Awareness Journey
             </div>
-            <h2 className="font-extrabold text-[#1E293B] text-2xl sm:text-3xl">
-              Level 1 Learning & Quiz Assessment System
+            <h2 className="font-extrabold text-[#102A43] text-2xl sm:text-3xl">
+              🐍 TB Quest — Level 1: Snake & Ladder Game
             </h2>
-            <p className="text-slate-600 text-xs sm:text-sm max-w-2xl leading-relaxed">
-              Complete the required TB Introduction curriculum reading, view the clinical guidelines, and test your diagnostic skills across 50 randomized questions (30 Theory + 20 Clinical Scenarios).
+            <p className="text-slate-600 text-xs sm:text-sm max-w-2xl leading-relaxed font-medium">
+              Travel across the 100-square clinical board, roll the 3D dice, and answer 25 integrated clinical challenges. Achieve 80%+ mastery to unlock Level 2 Investigation Learning!
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3 shrink-0">
             <button
-              onClick={handleStartLevel1Flow}
-              className="flex items-center gap-2 px-6 py-3.5 bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-extrabold rounded-xl text-xs sm:text-sm shadow-md transition-all cursor-pointer"
+              onClick={() => {
+                updateSubView('level1-instructions');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-[#1677FF] via-[#00B8A9] to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white font-black rounded-xl text-xs sm:text-sm shadow-lg shadow-blue-500/25 transition-all cursor-pointer hover:scale-105 active:scale-95"
             >
-              <Play size={18} className="fill-white" />
-              <span>Start Level 1 Assessment</span>
+              <span className="text-base">🎲</span>
+              <span>PLAY LEVEL 1</span>
+            </button>
+
+            <button
+              onClick={() => {
+                updateSubView('tb-intro');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="flex items-center gap-2 px-5 py-3.5 bg-white border-2 border-slate-200 hover:border-blue-300 text-slate-700 font-extrabold rounded-xl text-xs sm:text-sm shadow-sm transition-all cursor-pointer"
+            >
+              <BookOpen size={18} className="text-[#1677FF]" />
+              <span>Curriculum Reading</span>
             </button>
 
             <button

@@ -435,7 +435,7 @@ export default function Login({ onLogin }: LoginProps) {
         </form>
 
         {/* Divider */}
-        {!isStudent && authMode !== 'forgot' && (
+        {authMode !== 'forgot' && (
           <div className="my-4 sm:my-5 flex items-center gap-3 text-xs text-slate-500 font-mono">
             <div className="flex-1 h-px bg-slate-800"></div>
             <span>OR</span>
@@ -444,7 +444,7 @@ export default function Login({ onLogin }: LoginProps) {
         )}
 
         {/* Continue with Google Sign-In Button */}
-        {!isStudent && authMode !== 'forgot' && (
+        {authMode !== 'forgot' && (
           <button
             type="button"
             onClick={handleGoogleSignIn}
@@ -471,6 +471,10 @@ export default function Login({ onLogin }: LoginProps) {
             </svg>
             <span>{isGoogleLoading ? 'CONNECTING TO GOOGLE...' : 'Continue with Google'}</span>
           </button>
+        )}
+
+        {isStudent && authMode !== 'forgot' && (
+          <p className="text-[11px] text-slate-500 text-center -mt-2">Google sign-in uses a Supabase account and lands you as a student. It is separate from your 4-digit key account — the same person using both will have two accounts.</p>
         )}
 
         {/* Mode Switch Footers */}

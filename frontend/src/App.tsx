@@ -152,6 +152,8 @@ export default function App() {
           ...prev,
           name: authUser.name,
           email: authUser.email,
+          phone: authUser.mobile || '',
+          college: authUser.college || '',
           level: authUser.level ?? 1,
           xp: authUser.xp ?? 0,
           accuracy: authUser.accuracy ?? 0,
@@ -159,15 +161,22 @@ export default function App() {
           completedCases: authUser.completedCases ?? 0
         }));
 
-        await loadUserDataFromSupabase(authUser.id);
-
-        // Award daily login XP (only once per day)
-        const todayKey = `tbquest_login_xp_${new Date().toDateString()}`;
-        if (!localStorage.getItem(todayKey)) {
-          localStorage.setItem(todayKey, '1');
-          await supabaseData.awardXP(authUser.id, 'daily_login');
-          // Reload to get updated XP
+        // PIN students have no auth.users row, so the profile/progress
+        // tables keyed to auth.users do not apply to them. Their account
+        // (name/phone/college) is already in Supabase student_accounts and
+        // their stats above come from that row. Skip the profile load and
+        // the daily-XP write, which would otherwise fail on the FK.
+        if (authUser.loginType !== 'student_pin') {
           await loadUserDataFromSupabase(authUser.id);
+
+          // Award daily login XP (only once per day)
+          const todayKey = `tbquest_login_xp_${new Date().toDateString()}`;
+          if (!localStorage.getItem(todayKey)) {
+            localStorage.setItem(todayKey, '1');
+            await supabaseData.awardXP(authUser.id, 'daily_login');
+            // Reload to get updated XP
+            await loadUserDataFromSupabase(authUser.id);
+          }
         }
 
         setIsAuthenticated(true);
@@ -258,13 +267,18 @@ export default function App() {
         ...prev,
         name: authUser.name || name || 'Doctor',
         email: authUser.email || email,
+        phone: authUser.mobile || '',
+        college: authUser.college || '',
         level: authUser.level ?? 1,
         xp: authUser.xp ?? 0,
         accuracy: authUser.accuracy ?? 0,
         streak: authUser.streak ?? 0,
         completedCases: authUser.completedCases ?? 0
       }));
-      await loadUserDataFromSupabase(authUser.id);
+      // See restoreSession: PIN students skip the auth.users profile load.
+      if (authUser.loginType !== 'student_pin') {
+        await loadUserDataFromSupabase(authUser.id);
+      }
     } else {
       // No real Supabase session — do not fake a login. Stay on the
       // login screen so the user sees the real auth error / state.

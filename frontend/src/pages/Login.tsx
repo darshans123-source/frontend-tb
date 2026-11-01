@@ -37,21 +37,31 @@ export default function Login({ onLogin }: LoginProps) {
         if (password !== confirmPassword) {
           setErrorMsg('Passwords do not match. Please re-enter.');
           soundService.playLoginFail();
-          setIsLoading(false);
           return;
         }
-        const { user } = await authService.register(name, email, password, role, mobile, college);
+        const result = await authService.register(name, email, password, role, mobile, college);
+        if (result.needsConfirmation) {
+          // Real Supabase account, but no session until email confirmation.
+          // Do NOT log in — send the user back to Sign In with instructions.
+          setSuccessMsg(
+            `Account created for ${result.user.email}. Please check your email to confirm your account, then sign in.`,
+          );
+          setAuthMode('login');
+          setPassword('');
+          setConfirmPassword('');
+          return;
+        }
         soundService.playLoginSuccess();
-        onLogin(user.role, user.email, user.name);
+        onLogin(result.user.role, result.user.email, result.user.name);
       } else if (authMode === 'forgot') {
         const msg = await authService.forgotPassword(email);
         soundService.playLoginSuccess();
         setSuccessMsg(msg);
-        setIsLoading(false);
       }
     } catch (err: any) {
       soundService.playLoginFail();
       setErrorMsg(err.message || 'Authentication failed. Please check your details.');
+    } finally {
       setIsLoading(false);
     }
   };
@@ -130,7 +140,7 @@ export default function Login({ onLogin }: LoginProps) {
           </div>
         </div>
 
-        {/* Role Selector & Instant Access Option */}
+        {/* Role Selector */}
         {authMode !== 'forgot' && (
           <div className="space-y-2 mb-4 sm:mb-6">
             <label className="block text-[10px] font-mono uppercase tracking-wider text-slate-400 font-semibold mb-1 text-left">
@@ -154,26 +164,6 @@ export default function Login({ onLogin }: LoginProps) {
               ))}
             </div>
 
-            <button
-              type="button"
-              onClick={async () => {
-                setIsLoading(true);
-                setErrorMsg(null);
-                try {
-                  const demoEmail = `${role}@tbquest.org`;
-                  const demoPassword = 'Password123!';
-                  const { user } = await authService.login(demoEmail, demoPassword, role);
-                  onLogin(user.role, user.email, user.name);
-                } catch (err: any) {
-                  setErrorMsg(err.message || 'Instant login failed.');
-                  setIsLoading(false);
-                }
-              }}
-              className="w-full py-2.5 bg-gradient-to-r from-emerald-600/30 via-teal-600/30 to-cyan-600/30 hover:from-emerald-600/50 hover:to-cyan-600/50 border border-emerald-500/40 rounded-xl text-emerald-300 font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm mt-2"
-            >
-              <Sparkles size={15} className="text-emerald-400 shrink-0" />
-              <span>Instant {role.toUpperCase()} Portal Access</span>
-            </button>
           </div>
         )}
 

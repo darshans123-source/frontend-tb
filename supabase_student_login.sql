@@ -29,6 +29,9 @@
 --     determined attacker could try keys through the login function —
 --     that is inherent to any 4-digit code and why it must not be used
 --     for faculty/admin accounts.
+--   * NOTE: pgcrypto digest() takes bytea, not text, so the salt+key string
+--     is cast to bytea before hashing. Without the cast, Postgres raises
+--     "function digest(text, unknown) does not exist" on every login/register.
 --   * FORGOT KEY: there is no self-service reset (no OTP, by design).
 --     The owner deletes the student's row in Table Editor and the student
 --     registers again with the same phone number and a new key.
@@ -90,7 +93,7 @@ begin
     raise exception 'phone already registered';
   end if;
 
-  v_hash := encode(digest(v_salt || p_pin, 'sha256'), 'hex');
+  v_hash := encode(digest((v_salt || p_pin)::bytea, 'sha256'), 'hex');
 
   insert into public.student_accounts (name, phone, college, pin_hash, pin_salt)
   values (btrim(p_name), p_phone, coalesce(nullif(btrim(p_college), ''), ''), v_hash, v_salt)
@@ -133,7 +136,7 @@ begin
   from public.student_accounts s
   where s.phone = p_phone
     and lower(btrim(s.name)) = lower(btrim(p_name))
-    and s.pin_hash = encode(digest(s.pin_salt || p_pin, 'sha256'), 'hex');
+    and s.pin_hash = encode(digest((s.pin_salt || p_pin)::bytea, 'sha256'), 'hex');
 
   if not found then
     return;

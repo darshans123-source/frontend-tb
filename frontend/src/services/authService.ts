@@ -1,7 +1,6 @@
 import { supabase } from './supabase';
 import { UserRole } from '../types';
 import { supabaseData } from './supabaseData';
-import { API_BASE_URL } from '../api/client';
 
 export interface AuthUser {
   id: string;
@@ -17,146 +16,114 @@ export interface AuthUser {
   completedCases: number;
 }
 
+export interface RegisterResult {
+  token: string;
+  user: AuthUser;
+  /** True when Supabase created the account but has not issued a session yet (email confirmation is on). The user must confirm, then sign in — they are not logged in yet. */
+  needsConfirmation?: boolean;
+}
+
 const TOKEN_KEY = 'tb_quest_jwt_token';
+const CACHED_USER_KEY = 'tbquest_active_user';
+
+function clearLocalSession() {
+  localStorage.removeItem(TOKEN_KEY);
+  // Remove any session cached by the old fake-login flow. A real session
+  // is restored from Supabase itself (see getMe), never from this key.
+  localStorage.removeItem(CACHED_USER_KEY);
+}
 
 class AuthService {
   /**
-   * Supabase OAuth Sign In with Google
+   * Supabase OAuth Sign In with Google.
+   * Always returns to the site the user is actually on, so Google login
+   * works on tb-quest-sdg-24.vercel.app, on localhost, and on any other
+   * deployment — not a hardcoded old domain.
    */
   async loginWithGoogle(): Promise<void> {
-    try {
-      const redirectTo = window.location.origin.includes('localhost')
-        ? window.location.origin
-        : 'https://tb-frontend-flame.vercel.app';
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+      },
+    });
 
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo,
-          queryParams: {
-            access_type: 'offline',
-            prompt: 'consent'
-          }
-        }
-      });
-
-      if (error) {
-        throw new Error(error.message || 'Google Sign-In failed. Please try again.');
-      }
-    } catch (e: any) {
-      throw new Error(e.message || 'Google Sign-In is unavailable currently.');
+    if (error) {
+      throw new Error(error.message || 'Google Sign-In failed. Please try again.');
     }
   }
 
   /**
-   * Resilient Sign In:
-   * 1. Tries local/production backend API (/api/auth/login)
-   * 2. Tries Supabase Auth (if reachable)
-   * 3. Seamless offline/demo fallback so login NEVER fails
+   * Supabase-only email & password sign in.
+   *
+   * No backend shortcut, no auto-sign-up on a wrong password, and no
+   * fake local session: if Supabase rejects the credentials, or issues
+   * no session, this throws and the login page shows the real error.
    */
   async login(email: string, password: string, role: UserRole = 'student'): Promise<{ token: string; user: AuthUser }> {
     const cleanEmail = (email || '').trim().toLowerCase();
-    const targetEmail = cleanEmail || `${role}@tbquest.org`;
-    const targetPassword = password || 'Password123!';
-
-    // Tier 1: Try Backend API (localhost:3000 / Render)
-    try {
-      const res = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: targetEmail, password: targetPassword, role })
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data.token && data.user) {
-          const authUser: AuthUser = {
-            id: data.user.id || `usr_${role}`,
-            name: data.user.name || targetEmail.split('@')[0],
-            email: data.user.email || targetEmail,
-            role: data.user.role || role || 'student',
-            level: data.user.level ?? (role === 'admin' ? 99 : role === 'faculty' ? 10 : 1),
-            xp: data.user.xp ?? (role === 'admin' ? 99999 : role === 'faculty' ? 8500 : 0),
-            accuracy: data.user.accuracy ?? 100,
-            streak: data.user.streak ?? 1,
-            completedCases: data.user.completedCases ?? 0
-          };
-          localStorage.setItem(TOKEN_KEY, data.token);
-          localStorage.setItem('tbquest_active_user', JSON.stringify(authUser));
-          return { token: data.token, user: authUser };
-        }
-      }
-    } catch (backendErr) {
-      console.warn('Backend API login note:', backendErr);
+    if (!cleanEmail || !password) {
+      throw new Error('Please enter your email and password.');
     }
 
-    // Tier 2: Try Supabase Auth
-    try {
-      let authRes = await supabase.auth.signInWithPassword({
-        email: targetEmail,
-        password: targetPassword
-      });
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: cleanEmail,
+      password,
+    });
 
-      if (authRes.error && (authRes.error.message.includes('Invalid') || authRes.error.message.includes('not found') || authRes.error.message.includes('credentials'))) {
-        const signUpRes = await supabase.auth.signUp({
-          email: targetEmail,
-          password: targetPassword,
-          options: { data: { role, name: targetEmail.split('@')[0] } }
-        });
-        if (!signUpRes.error && signUpRes.data?.user) {
-          authRes = { data: { user: signUpRes.data.user, session: signUpRes.data.session }, error: null };
-        }
-      }
-
-      if (authRes.data?.user) {
-        const sessionUser = authRes.data.user;
-        const token = authRes.data.session?.access_token || `sb_token_${Date.now()}`;
-        localStorage.setItem(TOKEN_KEY, token);
-
-        let profile = await supabaseData.fetchUserProfile(sessionUser.id);
-        const authUser: AuthUser = {
-          id: sessionUser.id,
-          name: profile?.name || sessionUser.user_metadata?.name || targetEmail.split('@')[0],
-          email: sessionUser.email || targetEmail,
-          mobile: profile?.mobile || '',
-          college: profile?.college || '',
-          role: profile?.role || role || 'student',
-          level: profile?.level ?? 1,
-          xp: profile?.xp ?? 0,
-          accuracy: profile?.accuracy ?? 0,
-          streak: profile?.streak ?? 0,
-          completedCases: profile?.completed_cases ?? 0
-        };
-
-        localStorage.setItem('tbquest_active_user', JSON.stringify(authUser));
-        return { token, user: authUser };
-      }
-    } catch (sbErr) {
-      console.warn('Supabase auth note:', sbErr);
+    if (error || !data.user || !data.session) {
+      clearLocalSession();
+      throw new Error(error?.message || 'Authentication failed. Please check your credentials.');
     }
 
-    // Tier 3: Seamless Local Fallback Session (Always succeeds)
-    const token = `local_jwt_${Date.now()}`;
-    const cleanName = targetEmail.split('@')[0].replace(/^./, (c) => c.toUpperCase());
-    const fallbackUser: AuthUser = {
-      id: `usr_${role}_${Date.now()}`,
-      name: role === 'faculty' ? 'Dr. Anandkumar Harwalkar' : role === 'admin' ? 'System Administrator' : `Dr. ${cleanName}`,
-      email: targetEmail,
-      role: role || 'student',
-      level: role === 'admin' ? 99 : role === 'faculty' ? 10 : 1,
-      xp: role === 'admin' ? 99999 : role === 'faculty' ? 8500 : 0,
-      accuracy: 100,
-      streak: 1,
-      completedCases: role === 'admin' ? 500 : role === 'faculty' ? 150 : 0
+    localStorage.setItem(TOKEN_KEY, data.session.access_token);
+
+    // Create a profile row for a real Supabase user who has none yet.
+    // An existing profile is never overwritten here, so the stored role
+    // (student / faculty / admin) stays authoritative — picking a different
+    // role on the login screen does not escalate privileges.
+    let profile = await supabaseData.fetchUserProfile(data.user.id);
+    if (!profile) {
+      profile = await supabaseData.updateUserProfile(data.user.id, {
+        name: data.user.user_metadata?.full_name || data.user.user_metadata?.name || cleanEmail.split('@')[0],
+        email: data.user.email,
+        role,
+        level: 1,
+        xp: 0,
+        accuracy: 0,
+        streak: 0,
+        completed_cases: 0,
+      });
+    }
+
+    const authUser: AuthUser = {
+      id: data.user.id,
+      name: profile?.name || data.user.user_metadata?.full_name || data.user.user_metadata?.name || 'New User',
+      email: data.user.email || cleanEmail,
+      mobile: profile?.mobile || '',
+      college: profile?.college || '',
+      role: profile?.role || role || 'student',
+      level: profile?.level ?? 1,
+      xp: profile?.xp ?? 0,
+      accuracy: profile?.accuracy ?? 0,
+      streak: profile?.streak ?? 0,
+      completedCases: profile?.completed_cases ?? 0,
     };
 
-    localStorage.setItem(TOKEN_KEY, token);
-    localStorage.setItem('tbquest_active_user', JSON.stringify(fallbackUser));
-    return { token, user: fallbackUser };
+    return { token: data.session.access_token, user: authUser };
   }
 
   /**
-   * Resilient Registration
+   * Supabase-only registration.
+   *
+   * If email confirmation is enabled in Supabase, signUp returns a user
+   * with no session. That is not a login: this returns
+   * needsConfirmation=true, stores no token, and the login page tells
+   * the user to confirm their email and then sign in.
    */
   async register(
     name: string,
@@ -164,136 +131,103 @@ class AuthService {
     password: string,
     role: UserRole,
     mobile: string = '',
-    college: string = ''
-  ): Promise<{ token: string; user: AuthUser }> {
+    college: string = '',
+  ): Promise<RegisterResult> {
     const cleanEmail = (email || '').trim().toLowerCase();
-
-    // Tier 1: Try Backend API
-    try {
-      const res = await fetch(`${API_BASE_URL}/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name.trim(), email: cleanEmail, password, role })
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data.token && data.user) {
-          const authUser: AuthUser = {
-            id: data.user.id || `usr_${Date.now()}`,
-            name: data.user.name || name.trim(),
-            email: cleanEmail,
-            mobile,
-            college,
-            role: data.user.role || role,
-            level: 1,
-            xp: 0,
-            accuracy: 100,
-            streak: 1,
-            completedCases: 0
-          };
-          localStorage.setItem(TOKEN_KEY, data.token);
-          localStorage.setItem('tbquest_active_user', JSON.stringify(authUser));
-          return { token: data.token, user: authUser };
-        }
-      }
-    } catch (backendErr) {
-      console.warn('Backend register note:', backendErr);
+    if (!cleanEmail || !password || !name.trim()) {
+      throw new Error('Please enter your name, email and password.');
     }
 
-    // Tier 2: Try Supabase
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email: cleanEmail,
-        password,
-        options: {
-          data: { name: name.trim(), role, mobile, college }
-        }
-      });
-
-      if (!error && data?.user) {
-        const token = data.session?.access_token || `sb_token_${Date.now()}`;
-        localStorage.setItem(TOKEN_KEY, token);
-
-        await supabaseData.updateUserProfile(data.user.id, {
-          name: name.trim(),
-          email: cleanEmail,
-          mobile: mobile.trim(),
-          college: college.trim(),
-          role,
-          level: 1,
-          xp: 0,
-          accuracy: 0,
-          streak: 0,
-          completed_cases: 0
-        });
-
-        const authUser: AuthUser = {
-          id: data.user.id,
-          name: name.trim(),
-          email: cleanEmail,
-          mobile: mobile.trim(),
-          college: college.trim(),
-          role,
-          level: 1,
-          xp: 0,
-          accuracy: 0,
-          streak: 0,
-          completedCases: 0
-        };
-
-        localStorage.setItem('tbquest_active_user', JSON.stringify(authUser));
-        return { token, user: authUser };
-      }
-    } catch (sbErr) {
-      console.warn('Supabase register note:', sbErr);
-    }
-
-    // Tier 3: Local Session Fallback
-    const token = `local_jwt_${Date.now()}`;
-    const authUser: AuthUser = {
-      id: `usr_${Date.now()}`,
-      name: name.trim() || 'Doctor',
+    const { data, error } = await supabase.auth.signUp({
       email: cleanEmail,
-      mobile,
-      college,
-      role: role || 'student',
+      password,
+      options: {
+        data: { name: name.trim(), role, mobile, college },
+      },
+    });
+
+    if (error || !data.user) {
+      clearLocalSession();
+      throw new Error(error?.message || 'Registration failed. Please try again.');
+    }
+
+    const authUser: AuthUser = {
+      id: data.user.id,
+      name: name.trim(),
+      email: cleanEmail,
+      mobile: mobile.trim(),
+      college: college.trim(),
+      role,
       level: 1,
       xp: 0,
-      accuracy: 100,
-      streak: 1,
-      completedCases: 0
+      accuracy: 0,
+      streak: 0,
+      completedCases: 0,
     };
 
-    localStorage.setItem(TOKEN_KEY, token);
-    localStorage.setItem('tbquest_active_user', JSON.stringify(authUser));
-    return { token, user: authUser };
+    if (!data.session) {
+      // Email confirmation pending — do not fake a session or a profile.
+      // (A profile row cannot be created yet: RLS requires auth.uid() = id.)
+      return { token: '', user: authUser, needsConfirmation: true };
+    }
+
+    localStorage.setItem(TOKEN_KEY, data.session.access_token);
+
+    await supabaseData.updateUserProfile(data.user.id, {
+      name: name.trim(),
+      email: cleanEmail,
+      mobile: mobile.trim(),
+      college: college.trim(),
+      role,
+      level: 1,
+      xp: 0,
+      accuracy: 0,
+      streak: 0,
+      completed_cases: 0,
+    });
+
+    return { token: data.session.access_token, user: authUser };
   }
 
   /**
-   * Session Restore
+   * Session restore from Supabase only.
+   *
+   * The old code returned a cached `tbquest_active_user` object from
+   * localStorage before ever checking Supabase, so a fake/expired
+   * session survived refreshes. Now: no Supabase session = no user.
    */
   async getMe(): Promise<AuthUser | null> {
-    // 1. Cached user from local storage
-    const cachedUser = localStorage.getItem('tbquest_active_user');
-    const token = localStorage.getItem(TOKEN_KEY);
-
-    if (cachedUser && token) {
-      try {
-        return JSON.parse(cachedUser);
-      } catch (e) {
-        console.warn('Cached user parse note:', e);
-      }
-    }
-
-    // 2. Try Supabase session safely
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (session && session.user) {
         let profile = await supabaseData.fetchUserProfile(session.user.id);
-        const user: AuthUser = {
+
+        if (!profile) {
+          const defaultName =
+            session.user.user_metadata?.full_name ||
+            session.user.user_metadata?.name ||
+            session.user.email?.split('@')[0] ||
+            'New User';
+          profile = await supabaseData.updateUserProfile(session.user.id, {
+            name: defaultName,
+            email: session.user.email,
+            avatar_url: session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture || '',
+            role: session.user.user_metadata?.role || 'student',
+            level: 1,
+            xp: 0,
+            accuracy: 0,
+            streak: 0,
+            completed_cases: 0,
+          });
+        }
+
+        localStorage.setItem(TOKEN_KEY, session.access_token);
+
+        return {
           id: session.user.id,
-          name: profile?.name || session.user.user_metadata?.full_name || session.user.user_metadata?.name || 'Doctor',
+          name: profile?.name || session.user.user_metadata?.full_name || session.user.user_metadata?.name || 'New User',
           email: session.user.email || '',
           mobile: profile?.mobile || '',
           college: profile?.college || '',
@@ -302,48 +236,37 @@ class AuthService {
           xp: profile?.xp ?? 0,
           accuracy: profile?.accuracy ?? 0,
           streak: profile?.streak ?? 0,
-          completedCases: profile?.completed_cases ?? 0
+          completedCases: profile?.completed_cases ?? 0,
         };
-        localStorage.setItem(TOKEN_KEY, session.access_token);
-        localStorage.setItem('tbquest_active_user', JSON.stringify(user));
-        return user;
       }
     } catch (e) {
       console.warn('Supabase getSession note:', e);
     }
 
+    clearLocalSession();
     return null;
   }
 
   /**
-   * Forgot Password
+   * Supabase password reset only. Throws on a real Supabase error
+   * instead of reporting success when nothing was sent.
    */
   async forgotPassword(email: string): Promise<string> {
-    try {
-      const res = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim() })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        return data.message || `Password reset instructions sent to ${email}.`;
-      }
-    } catch (e) {
-      console.warn('Backend forgot-password note:', e);
+    const cleanEmail = email.trim();
+    if (!cleanEmail) {
+      throw new Error('Please enter your registered email address.');
     }
-
-    try {
-      await supabase.auth.resetPasswordForEmail(email.trim());
-    } catch (e) {
-      console.warn('Supabase reset note:', e);
+    const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
+      redirectTo: window.location.origin,
+    });
+    if (error) {
+      throw new Error(error.message || 'Failed to send password reset request.');
     }
-
-    return `Password reset link sent to ${email || 'your email'}. Check your inbox.`;
+    return `Password reset link sent to ${cleanEmail}. Check your inbox.`;
   }
 
   /**
-   * Sign Out
+   * Supabase sign out, clearing any stale local session keys.
    */
   async logout(): Promise<void> {
     try {
@@ -351,12 +274,7 @@ class AuthService {
     } catch (e) {
       console.warn('Supabase signOut note:', e);
     }
-    try {
-      await fetch(`${API_BASE_URL}/auth/logout`, { method: 'POST' });
-    } catch (e) {}
-
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem('tbquest_active_user');
+    clearLocalSession();
   }
 
   public isAuthenticated(): boolean {

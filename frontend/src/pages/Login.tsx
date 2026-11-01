@@ -2,6 +2,7 @@ import { useState, FormEvent } from 'react';
 import { UserRole } from '../types';
 import { Shield, Lock, Mail, ArrowRight, Sparkles, User as UserIcon, AlertCircle, CheckCircle2, Phone, GraduationCap } from 'lucide-react';
 import { authService } from '../services/authService';
+import { studentAuthService } from '../services/studentAuthService';
 import { soundService } from '../services/soundService';
 
 interface LoginProps {
@@ -17,6 +18,8 @@ export default function Login({ onLogin }: LoginProps) {
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
   const [college, setCollege] = useState('');
+  const [pin, setPin] = useState('');
+  const [confirmPin, setConfirmPin] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -29,6 +32,30 @@ export default function Login({ onLogin }: LoginProps) {
     setSuccessMsg(null);
 
     try {
+      // Students use name + phone + 4-digit key (no email, no OTP).
+      // Faculty/Admin fall through to the email + password flow below.
+      if (role === 'student') {
+        if (authMode === 'forgot') {
+          setErrorMsg('Students do not have a password to reset. If you forgot your 4-digit key, ask the TB Quest admin to remove your old account in Supabase, then register again.');
+          soundService.playLoginFail();
+          return;
+        }
+        if (authMode === 'login') {
+          const student = await studentAuthService.login(name, mobile, pin);
+          soundService.playLoginSuccess();
+          onLogin('student', '', student.name);
+        } else {
+          if (pin !== confirmPin) {
+            setErrorMsg('Keys do not match. Please re-enter your 4-digit key.');
+            soundService.playLoginFail();
+            return;
+          }
+          const student = await studentAuthService.register(name, mobile, college, pin);
+          soundService.playLoginSuccess();
+          onLogin('student', '', student.name);
+        }
+        return;
+      }
       if (authMode === 'login') {
         const { user } = await authService.login(email, password, role);
         soundService.playLoginSuccess();
@@ -80,7 +107,10 @@ export default function Login({ onLogin }: LoginProps) {
   const handleRoleSelect = (r: UserRole) => {
     setRole(r);
     setErrorMsg(null);
+    if (r === 'student' && authMode === 'forgot') setAuthMode('login');
   };
+
+  const isStudent = role === 'student';
 
   return (
     <div className="min-h-screen bg-[#060913] text-white flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
@@ -126,6 +156,7 @@ export default function Login({ onLogin }: LoginProps) {
             >
               Register
             </button>
+            {!isStudent && (
             <button
               type="button"
               onClick={() => { setAuthMode('forgot'); setErrorMsg(null); setSuccessMsg(null); }}
@@ -137,6 +168,7 @@ export default function Login({ onLogin }: LoginProps) {
             >
               Forgot Password
             </button>
+            )}
           </div>
         </div>
 
@@ -227,6 +259,40 @@ export default function Login({ onLogin }: LoginProps) {
                     onChange={(e) => setCollege(e.target.value)}
                     placeholder="e.g. Navodaya Institute of Technology / RMC"
                     className="w-full bg-slate-950/60 border border-slate-800 rounded-xl pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition-colors text-xs"
+                    required={!isStudent}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+
+          {isStudent && authMode === 'login' && (
+            <>
+              <div>
+                <label className="block text-xs uppercase font-mono text-slate-400 mb-1.5">Full Name</label>
+                <div className="relative">
+                  <UserIcon className="absolute left-3.5 top-3.5 text-slate-500" size={18} />
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Your full name, as registered"
+                    className="w-full bg-slate-950/60 border border-slate-800 rounded-xl pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition-colors text-xs"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs uppercase font-mono text-slate-400 mb-1.5">Mobile Number</label>
+                <div className="relative">
+                  <Phone className="absolute left-3.5 top-3.5 text-slate-500" size={18} />
+                  <input
+                    type="tel"
+                    value={mobile}
+                    onChange={(e) => setMobile(e.target.value)}
+                    placeholder="+91 98765 43210"
+                    className="w-full bg-slate-950/60 border border-slate-800 rounded-xl pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition-colors text-xs"
                     required
                   />
                 </div>
@@ -234,6 +300,7 @@ export default function Login({ onLogin }: LoginProps) {
             </>
           )}
 
+          {!isStudent && (
           <div>
             <label className="block text-xs uppercase font-mono text-slate-400 mb-1.5">Email Address</label>
             <div className="relative">
@@ -248,8 +315,9 @@ export default function Login({ onLogin }: LoginProps) {
               />
             </div>
           </div>
+          )}
 
-          {authMode !== 'forgot' && (
+          {!isStudent && authMode !== 'forgot' && (
             <div>
               <label className="block text-xs uppercase font-mono text-slate-400 mb-1.5">Password</label>
               <div className="relative">
@@ -266,7 +334,7 @@ export default function Login({ onLogin }: LoginProps) {
             </div>
           )}
 
-          {authMode === 'register' && (
+          {!isStudent && authMode === 'register' && (
             <div>
               <label className="block text-xs uppercase font-mono text-slate-400 mb-1.5">Confirm Password</label>
               <div className="relative">
@@ -284,7 +352,55 @@ export default function Login({ onLogin }: LoginProps) {
           )}
 
 
-          {authMode === 'login' && (
+          {isStudent && authMode !== 'forgot' && (
+            <>
+              <div>
+                <label className="block text-xs uppercase font-mono text-slate-400 mb-1.5">
+                  {authMode === 'register' ? 'Set Your 4-Digit Key' : '4-Digit Key'}
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3.5 top-3.5 text-slate-500" size={18} />
+                  <input
+                    type="password"
+                    inputMode="numeric"
+                    autoComplete={authMode === 'register' ? 'new-password' : 'current-password'}
+                    value={pin}
+                    onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                    placeholder="••••"
+                    className="w-full bg-slate-950/60 border border-slate-800 rounded-xl pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition-colors text-xs tracking-[0.5em]"
+                    required
+                  />
+                </div>
+                {authMode === 'register' && (
+                  <p className="text-[11px] text-slate-500 mt-1.5">Set this key once — you will use the same key every time you sign in. No OTP, no email needed. Keep it safe: it cannot be shown again.</p>
+                )}
+              </div>
+
+              {authMode === 'register' && (
+                <div>
+                  <label className="block text-xs uppercase font-mono text-slate-400 mb-1.5">Confirm 4-Digit Key</label>
+                  <div className="relative">
+                    <Lock className="absolute left-3.5 top-3.5 text-slate-500" size={18} />
+                    <input
+                      type="password"
+                      inputMode="numeric"
+                      value={confirmPin}
+                      onChange={(e) => setConfirmPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                      placeholder="••••"
+                      className="w-full bg-slate-950/60 border border-slate-800 rounded-xl pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition-colors text-xs tracking-[0.5em]"
+                      required
+                    />
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+
+          {isStudent && authMode === 'login' && (
+            <p className="text-[11px] text-slate-500">Forgot your key? Ask the TB Quest admin to remove your old account in Supabase, then register again with a new key.</p>
+          )}
+
+          {!isStudent && authMode === 'login' && (
             <div className="flex items-center justify-between text-xs text-slate-400">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" defaultChecked className="rounded bg-slate-800 border-slate-700 text-cyan-500 focus:ring-0" />
@@ -309,9 +425,9 @@ export default function Login({ onLogin }: LoginProps) {
               {isLoading
                 ? 'AUTHENTICATING...'
                 : authMode === 'login'
-                ? 'LOGIN TO TB QUEST'
+                ? (isStudent ? 'SIGN IN WITH 4-DIGIT KEY' : 'LOGIN TO TB QUEST')
                 : authMode === 'register'
-                ? 'CREATE ACCOUNT'
+                ? (isStudent ? 'CREATE STUDENT ACCOUNT' : 'CREATE ACCOUNT')
                 : 'SEND RESET LINK'}
             </span>
             <ArrowRight size={18} />
@@ -319,7 +435,7 @@ export default function Login({ onLogin }: LoginProps) {
         </form>
 
         {/* Divider */}
-        {authMode !== 'forgot' && (
+        {!isStudent && authMode !== 'forgot' && (
           <div className="my-4 sm:my-5 flex items-center gap-3 text-xs text-slate-500 font-mono">
             <div className="flex-1 h-px bg-slate-800"></div>
             <span>OR</span>
@@ -328,7 +444,7 @@ export default function Login({ onLogin }: LoginProps) {
         )}
 
         {/* Continue with Google Sign-In Button */}
-        {authMode !== 'forgot' && (
+        {!isStudent && authMode !== 'forgot' && (
           <button
             type="button"
             onClick={handleGoogleSignIn}

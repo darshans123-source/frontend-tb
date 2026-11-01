@@ -1,6 +1,7 @@
 import { supabase } from './supabase';
 import { UserRole } from '../types';
 import { supabaseData } from './supabaseData';
+import { studentAuthService, STUDENT_SESSION_KEY } from './studentAuthService';
 
 export interface AuthUser {
   id: string;
@@ -9,6 +10,8 @@ export interface AuthUser {
   mobile?: string;
   college?: string;
   role: UserRole;
+  /** 'student_pin' for name+phone+key students, otherwise Supabase Auth. */
+  loginType?: 'supabase' | 'student_pin';
   level: number;
   xp: number;
   accuracy: number;
@@ -243,6 +246,28 @@ class AuthService {
       console.warn('Supabase getSession note:', e);
     }
 
+    // Student PIN session (no Supabase Auth session). Verified against
+    // Supabase on every restore, so deleting the row signs the student out.
+    // A missing student-login setup returns null here and never breaks
+    // email login for faculty/admin.
+    const student = await studentAuthService.getSession();
+    if (student) {
+      return {
+        id: student.id,
+        name: student.name,
+        email: '',
+        mobile: student.phone,
+        college: student.college,
+        role: 'student',
+        level: student.level,
+        xp: student.xp,
+        accuracy: student.accuracy,
+        streak: student.streak,
+        completedCases: student.completedCases,
+        loginType: 'student_pin',
+      };
+    }
+
     clearLocalSession();
     return null;
   }
@@ -274,11 +299,12 @@ class AuthService {
     } catch (e) {
       console.warn('Supabase signOut note:', e);
     }
+    studentAuthService.logout();
     clearLocalSession();
   }
 
   public isAuthenticated(): boolean {
-    return !!localStorage.getItem(TOKEN_KEY);
+    return !!localStorage.getItem(TOKEN_KEY) || !!localStorage.getItem(STUDENT_SESSION_KEY);
   }
 }
 

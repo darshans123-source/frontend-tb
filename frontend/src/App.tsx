@@ -266,8 +266,11 @@ export default function App() {
       }));
       await loadUserDataFromSupabase(authUser.id);
     } else {
-      setUserRole(role);
-      setUserData(prev => ({ ...prev, email, name: name || 'Doctor' }));
+      // No real Supabase session — do not fake a login. Stay on the
+      // login screen so the user sees the real auth error / state.
+      setIsAuthenticated(false);
+      setAppStage('login');
+      return;
     }
 
     setIsAuthenticated(true);

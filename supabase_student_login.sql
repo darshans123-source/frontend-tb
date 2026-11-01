@@ -29,6 +29,13 @@
 --     determined attacker could try keys through the login function —
 --     that is inherent to any 4-digit code and why it must not be used
 --     for faculty/admin accounts.
+--   * NOTE: two Postgres gotchas, both fixed here:
+--     (1) pgcrypto digest() takes bytea, not text, so the salt+key string
+--         is cast to bytea before hashing.
+--     (2) In Supabase, pgcrypto lives in the extensions schema, not public.
+--         These functions therefore set search_path = public, extensions;
+--         with search_path = public alone, digest()/gen_random_bytes()
+--         are simply not found, no matter how the arguments are cast.
 --   * FORGOT KEY: there is no self-service reset (no OTP, by design).
 --     The owner deletes the student's row in Table Editor and the student
 --     registers again with the same phone number and a new key.
@@ -68,7 +75,7 @@ returns table (
 )
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
 declare
   v_salt text := encode(gen_random_bytes(16), 'hex');
@@ -90,7 +97,7 @@ begin
     raise exception 'phone already registered';
   end if;
 
-  v_hash := encode(digest(v_salt || p_pin, 'sha256'), 'hex');
+  v_hash := encode(digest((v_salt || p_pin)::bytea, 'sha256'), 'hex');
 
   insert into public.student_accounts (name, phone, college, pin_hash, pin_salt)
   values (btrim(p_name), p_phone, coalesce(nullif(btrim(p_college), ''), ''), v_hash, v_salt)
@@ -119,7 +126,7 @@ returns table (
 )
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
 declare
   v_id uuid; v_name text; v_phone text; v_college text;
@@ -133,7 +140,7 @@ begin
   from public.student_accounts s
   where s.phone = p_phone
     and lower(btrim(s.name)) = lower(btrim(p_name))
-    and s.pin_hash = encode(digest(s.pin_salt || p_pin, 'sha256'), 'hex');
+    and s.pin_hash = encode(digest((s.pin_salt || p_pin)::bytea, 'sha256'), 'hex');
 
   if not found then
     return;
@@ -159,7 +166,7 @@ returns table (
 language sql
 security definer
 stable
-set search_path = public
+set search_path = public, extensions
 as $$
   select s.id, s.name, s.phone, s.college, s.level, s.xp, s.accuracy,
          s.streak, s.completed_cases, s.created_at

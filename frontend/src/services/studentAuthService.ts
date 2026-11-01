@@ -46,9 +46,13 @@ export function normalizePhone(raw: string): string {
   return digits;
 }
 
+// A missing function comes back from PostgREST as PGRST202 ("Could not find
+// the function ..."). Do NOT treat Postgres 42883 as a setup error: 42883 is
+// also the code for a real error inside an existing function (e.g. a bad
+// digest() call), and masking it as "not set up yet" hides the real problem.
 function isSetupError(err: any): boolean {
   const msg = String(err?.message || '');
-  return err?.code === '42883' || msg.includes('Could not find the function') || msg.includes('does not exist');
+  return err?.code === 'PGRST202' || msg.includes('Could not find the function');
 }
 
 function friendlyError(err: any, fallback: string): Error {

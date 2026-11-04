@@ -41,6 +41,7 @@ import Level1InstructionsPage from './level1/Level1InstructionsPage';
 import Level1QuizPage from './level1/Level1QuizPage';
 import Level1ResultPage from './level1/Level1ResultPage';
 import SnakeLadderGame from './level1/SnakeLadderGame';
+import Level2Page from './level2/Level2Page';
 import { level1Service } from '../services/level1Service';
 import SpotTheTBClues from './SpotTheTBClues';
 import ErrorBoundary from './common/ErrorBoundary';
@@ -54,7 +55,7 @@ const modules = [
   { id: 'm1', title: 'Clinical Cases & Practice Exams', category: 'Clinical Practice', difficulty: 'All Levels', duration: '45 Mins', readTime: '30 Min Read', image: '/assets/awareness_banner.png', completion: 80, icon: CheckCircle, sub: ['Flashcards', 'Interactive Clinical Cases', 'Daily Challenge', 'Timed Quiz', 'Mock Exam', 'Quick Revision'] },
 ];
 
-export type SubViewType = 'main' | 'tb-intro' | 'level1-instructions' | 'level1-quiz' | 'level1-result' | 'mini-game-spot-tb-clues' | 'snake-and-ladder';
+export type SubViewType = 'main' | 'tb-intro' | 'level1-instructions' | 'level1-quiz' | 'level1-result' | 'mini-game-spot-tb-clues' | 'snake-and-ladder' | 'level2';
 
 interface LearningModulesProps {
   currentUserId?: string | null;
@@ -247,6 +248,19 @@ export default function LearningModules({
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
       />
+    );
+  }
+
+  if (activeSubView === 'level2') {
+    return (
+      <ErrorBoundary fallbackTitle="Level 2 — Investigate & Interpret">
+        <Level2Page
+          onBack={() => {
+            updateSubView('main');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+        />
+      </ErrorBoundary>
     );
   }
 
@@ -613,6 +627,37 @@ export default function LearningModules({
             >
               <Sparkles size={18} className="text-slate-950" />
               <span>Spot the TB Clues Mini Game 🏆</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Level 2 Hero Card — mirrors the Level 1 hero card above; Level 2 only */}
+      <div className="bg-white border border-[#E2E8F0] p-6 sm:p-8 rounded-2xl space-y-4 shadow-sm relative overflow-hidden">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div className="space-y-2 flex-1">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-cyan-50 text-[#0E7490] border border-cyan-200 rounded-full text-xs font-bold font-mono">
+              <Microscope size={15} /> Level 2 • Investigate &amp; Interpret
+            </div>
+            <h2 className="font-extrabold text-[#102A43] text-2xl sm:text-3xl">
+              🔬 TB Quest — Level 2: Investigate &amp; Interpret
+            </h2>
+            <p className="text-slate-600 text-xs sm:text-sm max-w-2xl leading-relaxed font-medium">
+              What does this test result mean, and what next? Play all 8 Detective Lab cases, the 17-question check, the Rapid Report Reader and the Pick First! first-test game. Achieve 80%+ case accuracy to unlock Level 3.
+            </p>
+            <p className="text-amber-700 text-xs font-bold">Teaching simulations only — not real patient records. Faculty validation pending before classroom use.</p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            <button
+              onClick={() => {
+                updateSubView('level2');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-[#1677FF] via-[#00B8A9] to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white font-black rounded-xl text-xs sm:text-sm shadow-lg shadow-blue-500/25 transition-all cursor-pointer hover:scale-105 active:scale-95"
+            >
+              <span className="text-base">🔬</span>
+              <span>PLAY LEVEL 2</span>
             </button>
           </div>
         </div>

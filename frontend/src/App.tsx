@@ -67,7 +67,7 @@ export default function App() {
   // Navigation & Tabs
   const [currentTab, setCurrentTab] = useState<'dashboard' | 'cases' | 'flowcharts' | 'ai-tutor' | 'modules' | 'leaderboard' | 'analytics' | 'certificate' | 'profile'>('dashboard');
   const [subView, setSubView] = useState<'none' | 'case-select' | 'case-engine' | 'snake-ladder'>('none');
-  const [moduleSubView, setModuleSubView] = useState<'main' | 'tb-intro' | 'level1-instructions' | 'level1-quiz' | 'level1-result' | 'mini-game-spot-tb-clues' | 'snake-and-ladder'>('main');
+  const [moduleSubView, setModuleSubView] = useState<'main' | 'tb-intro' | 'level1-instructions' | 'level1-quiz' | 'level1-result' | 'mini-game-spot-tb-clues' | 'snake-and-ladder' | 'level2'>('main');
   const [selectedCaseType, setSelectedCaseType] = useState<CaseType>('pulmonary');
 
   // Gamification state

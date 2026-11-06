@@ -12,7 +12,7 @@ export interface Level1ClinicalQuestion {
   correctIndex: number;
   clinicalInsight: string; // 💡 WHAT YOU LEARNED
   whyRationale: string;    // 💡 LEARNING MOMENT
-  marks: number;          // Standard 10 Marks, Final 30 Marks
+  marks: number;          // 10 marks per correct answer (score = correctAnswers * 10, max 250)
   xp: number;             // Standard 20 XP, Final 100 XP
   isRapid?: boolean;
   isBonus?: boolean;
@@ -30,7 +30,9 @@ export interface Level1ClinicalQuestion {
  * - TB Exposure: 2 Questions (Q17, Q18)
  * - Clinical Reasoning: 3 Questions (Q19, Q21, Q23)
  * - Presumptive TB: 2 Questions (Q24, Q25)
- * Total: 25 Questions = Maximum 250 Marks
+ * Total: 25 Questions = Maximum 250 Marks (25 x 10). Q25 gives +10 marks
+ * towards the score and +100 XP — its old marks value of 30 was never added
+ * to the score (score is derived as correctAnswers * 10), so it is fixed to 10.
  */
 export const LEVEL1_25_CLINICAL_QUESTIONS: Level1ClinicalQuestion[] = [
   // =========================================================================
@@ -562,7 +564,7 @@ export const LEVEL1_25_CLINICAL_QUESTIONS: Level1ClinicalQuestion[] = [
     correctIndex: 1,
     clinicalInsight: 'High clinical suspicion mandates rapid upfront molecular testing (CBNAAT) and chest radiography to achieve early microbiological diagnosis and drug susceptibility profiling.',
     whyRationale: 'Empiric antibiotic delays cause severe clinical worsening and ongoing community transmission, while toxic drug therapy without microbiological proof violates clinical safety standards.',
-    marks: 30,
+    marks: 10,
     xp: 100
   }
 ];

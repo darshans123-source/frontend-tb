@@ -591,7 +591,7 @@ export default function LearningModules({
               🐍 TB Quest — Level 1: Snake & Ladder Game
             </h2>
             <p className="text-slate-600 dark:text-slate-400 dark:text-slate-500 text-xs sm:text-sm max-w-2xl leading-relaxed font-medium">
-              Travel across the 100-square clinical board, roll the 3D dice, and answer 25 integrated clinical challenges. Achieve 80%+ mastery to unlock Level 2 Investigation Learning!
+              Travel across the 100-square clinical board, roll the 3D dice, and answer 50 questions from the faculty document. Achieve 80%+ mastery to unlock Level 2 Investigation Learning!
             </p>
           </div>
 

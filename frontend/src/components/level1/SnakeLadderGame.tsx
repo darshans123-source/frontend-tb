@@ -204,10 +204,33 @@ export default function SnakeLadderGame({
     earnedMarks: number;
     earnedXp: number;
     chosenIndex: number;
+    streak: number;
   } | null>(null);
 
   // Floating score feedback animation trigger
   const [showFloatingScore, setShowFloatingScore] = useState<boolean>(false);
+
+  // ---- Warm "feel-good" layer (presentation only: no scoring, question or
+  // Supabase change) — session streak, celebration toasts, token cheer. ----
+  const [streak, setStreak] = useState<number>(0);
+  const [celebration, setCelebration] = useState<{ id: number; emoji: string; title: string; sub?: string } | null>(null);
+  const [tokenCelebrate, setTokenCelebrate] = useState<boolean>(false);
+  const celebrationTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const tokenTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const prevStageRef = useRef<string | null>(null);
+  const prevSquareRef = useRef<number>(gameState.currentSquare);
+  // Simple, warm praise that rotates with the streak; gentle words for a miss.
+  const CORRECT_PRAISE = ['Brilliant!', 'You spotted it!', 'Great clinical thinking!', 'Exactly right — nice!', 'Sharp eye!', 'Nailed it!'];
+  const WRONG_ENCOURAGEMENT = [
+    'Not this one — and that is completely okay.',
+    'Good try — this one catches lots of people.',
+    'Close! Getting it wrong here is exactly how it sticks.'
+  ];
+  const showCelebration = (emoji: string, title: string, sub?: string) => {
+    if (celebrationTimerRef.current) clearTimeout(celebrationTimerRef.current);
+    setCelebration({ id: Date.now(), emoji, title, sub });
+    celebrationTimerRef.current = setTimeout(() => setCelebration(null), 3000);
+  };
 
   // Pending movement action after question modal is dismissed
   const [pendingAction, setPendingAction] = useState<{
@@ -651,10 +674,30 @@ export default function SnakeLadderGame({
     const earnedMarks = isCorrect ? activeChallenge.marks : 0;
     const earnedXp = isCorrect ? activeChallenge.xp : 0;
 
+    // Session streak (consecutive correct answers) — feel layer only, not saved.
+    const newStreak = isCorrect ? streak + 1 : 0;
+    setStreak(newStreak);
+
     if (isCorrect) {
       soundService.playCorrect();
       soundService.playXpEarned();
       setShowFloatingScore(true);
+      // Token does a happy bounce while the correct-answer card is open.
+      setTokenCelebrate(true);
+      if (tokenTimerRef.current) clearTimeout(tokenTimerRef.current);
+      tokenTimerRef.current = setTimeout(() => setTokenCelebrate(false), 1400);
+      if (newStreak === 1 && gameState.totalAnswered === 0) {
+        showCelebration('🎉', 'First correct answer!', 'Great start — keep going.');
+      } else if (newStreak === 3) {
+        soundService.playBonusEarned();
+        showCelebration('🔥', '3 in a row — you are on fire!', 'Your TB instincts are sharp today.');
+      } else if (newStreak === 5) {
+        soundService.playBonusEarned();
+        showCelebration('🌟', '5 in a row — unstoppable!', 'Seriously impressive clinical thinking.');
+      } else if (newStreak === 10) {
+        soundService.playBonusEarned();
+        showCelebration('🏆', '10 in a row — TB star!', 'You are flying through Level 1.');
+      }
     } else {
       soundService.playIncorrect();
       setShowFloatingScore(false);
@@ -664,7 +707,8 @@ export default function SnakeLadderGame({
       isCorrect,
       earnedMarks,
       earnedXp,
-      chosenIndex: chosenIdx
+      chosenIndex: chosenIdx,
+      streak: newStreak
     });
 
     if (pendingAction) {
@@ -923,6 +967,40 @@ export default function SnakeLadderGame({
   const currentStage = getLearnerStage(gameState.currentSquare);
   const stageDetails = getLearnerStageDetails(currentStage);
 
+  // Celebrate levelling up to a new clinical stage (only when moving up,
+  // never when a snake slides the student back down).
+  const STAGE_ORDER = ['TB Learner', 'TB Clue Finder', 'TB Investigator', 'TB Awareness Champion'];
+  useEffect(() => {
+    if (prevStageRef.current === null) { prevStageRef.current = currentStage; return; }
+    const prevIdx = STAGE_ORDER.indexOf(prevStageRef.current);
+    const nextIdx = STAGE_ORDER.indexOf(currentStage);
+    if (nextIdx > prevIdx) {
+      soundService.playBonusEarned();
+      showCelebration('🎉', `You levelled up to ${currentStage}!`, 'Your hard work is showing — keep climbing.');
+    }
+    prevStageRef.current = currentStage;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStage]);
+
+  // Milestone squares: a little cheer at 25 / 50 / 75 (only when passing them
+  // going up; loading a saved game past a milestone does not re-celebrate).
+  useEffect(() => {
+    const prev = prevSquareRef.current;
+    const milestones: Record<number, { emoji: string; title: string; sub: string }> = {
+      25: { emoji: '🎉', title: 'Quarter way there!', sub: '25 squares down — nice and steady.' },
+      50: { emoji: '🌟', title: 'Halfway to 100!', sub: 'Brilliant progress — the finish line is getting closer.' },
+      75: { emoji: '🚀', title: '75 squares — nearly there!', sub: 'Just 25 to go. You have got this.' }
+    };
+    (Object.keys(milestones).map(Number) as number[]).forEach(m => {
+      if (prev < m && gameState.currentSquare >= m) {
+        const c = milestones[m];
+        showCelebration(c.emoji, c.title, c.sub);
+      }
+    });
+    prevSquareRef.current = gameState.currentSquare;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameState.currentSquare]);
+
   // Score Ranking based ONLY on student's own score
   const getScoreRanking = (accuracyPct: number) => {
     if (accuracyPct >= 80) return 'TB Awareness Champion';
@@ -1083,14 +1161,25 @@ export default function SnakeLadderGame({
               </div>
             </div>
 
-            {/* 🟣 XP: Purple / Cyan */}
+            {/* 🟣 XP: Purple / Cyan — pops a little every time XP is earned */}
             <div className="flex items-center gap-2 bg-gradient-to-br from-purple-50 to-indigo-50/80 px-3.5 py-1.5 rounded-xl border border-purple-200 shadow-sm">
               <span className="text-base leading-none">🟣</span>
               <div>
                 <span className="text-[#64748B] text-[10px] uppercase block leading-none font-bold">XP</span>
-                <span className="text-sm font-black text-purple-900">{gameState.xp}</span>
+                <span key={gameState.xp} className="xp-pop text-sm font-black text-purple-900">{gameState.xp}</span>
               </div>
             </div>
+
+            {/* 🔥 STREAK: shows once the student gets 2+ correct in a row */}
+            {streak >= 2 && (
+              <div className="flex items-center gap-2 bg-gradient-to-br from-orange-50 to-amber-50/80 px-3.5 py-1.5 rounded-xl border border-orange-200 shadow-sm">
+                <span className="text-base leading-none">🔥</span>
+                <div>
+                  <span className="text-[#64748B] text-[10px] uppercase block leading-none font-bold">STREAK</span>
+                  <span className="text-sm font-black text-orange-800">{streak} in a row</span>
+                </div>
+              </div>
+            )}
 
             {/* 🟢 ACCURACY: Green */}
             <div className="flex items-center gap-2 bg-gradient-to-br from-emerald-50 to-teal-50/80 px-3.5 py-1.5 rounded-xl border border-emerald-200 shadow-sm">
@@ -1220,6 +1309,22 @@ export default function SnakeLadderGame({
           </div>
         </div>
       </header>
+
+      {/* 🎉 Warm celebration toast (streaks, milestones, level-ups) — auto-dismisses */}
+      {celebration && (
+        <div
+          key={celebration.id}
+          className="toast-pop fixed left-1/2 top-20 z-[100] -translate-x-1/2 pointer-events-none px-1 w-[calc(100%-2rem)] max-w-md"
+        >
+          <div className="flex items-start gap-3 rounded-2xl bg-white/95 backdrop-blur border-2 border-amber-300 shadow-xl shadow-amber-500/20 px-4 py-3">
+            <span className="text-2xl leading-none mt-0.5">{celebration.emoji}</span>
+            <div className="min-w-0">
+              <div className="text-sm font-black text-[#102A43] leading-snug">{celebration.title}</div>
+              {celebration.sub && <div className="text-xs font-medium text-slate-600 leading-snug mt-0.5">{celebration.sub}</div>}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ========================================================================= */}
       {/* MAIN GAME WORKSPACE */}
@@ -1549,7 +1654,7 @@ export default function SnakeLadderGame({
                   transform: 'translate(-50%, -50%)'
                 }}
               >
-                <div className={`relative flex items-center justify-center ${isMoving ? '-translate-y-3' : 'translate-y-0'} transition-transform duration-200`}>
+                <div className={`relative flex items-center justify-center ${isMoving ? '-translate-y-3' : 'translate-y-0'} ${tokenCelebrate ? 'animate-bounce' : ''} transition-transform duration-200`}>
                   {/* Soft Ground Contact Shadow */}
                   <div className="absolute top-7 w-8 h-2.5 bg-slate-900/35 rounded-full blur-[2px]" />
 
@@ -1886,6 +1991,12 @@ export default function SnakeLadderGame({
                       </div>
                     </div>
 
+                    <div className="text-sm font-black text-emerald-900">
+                      {CORRECT_PRAISE[(challengeResult.streak - 1) % CORRECT_PRAISE.length]}
+                      {challengeResult.streak >= 2 && (
+                        <span className="text-orange-600"> · 🔥 {challengeResult.streak} in a row!</span>
+                      )}
+                    </div>
                     <div className="text-xs font-mono font-bold text-emerald-800 uppercase tracking-wider mb-1">
                       Great TB clinical reasoning
                     </div>
@@ -1918,8 +2029,8 @@ export default function SnakeLadderGame({
                         <div className="w-7 h-7 rounded-full bg-rose-500 flex items-center justify-center text-white font-bold">
                           <X className="w-4 h-4 stroke-[3]" />
                         </div>
-                        <span className="text-lg font-black tracking-tight text-rose-900 uppercase">
-                          ❌ WRONG ANSWER
+                        <span className="text-lg font-black tracking-tight text-rose-900">
+                          Not quite — good try!
                         </span>
                       </div>
                       <div className="flex items-center gap-2 font-mono text-xs font-black">
@@ -1931,6 +2042,11 @@ export default function SnakeLadderGame({
                         </span>
                       </div>
                     </div>
+
+                    <p className="text-sm font-semibold text-rose-800 leading-relaxed">
+                      {WRONG_ENCOURAGEMENT[gameState.totalAnswered % WRONG_ENCOURAGEMENT.length]} Every
+                      doctor gets questions wrong while learning — what matters is the clue you take away.
+                    </p>
 
                     {/* Comparison: Selected vs Correct */}
                     <div className="space-y-2 my-3 text-xs sm:text-sm">
@@ -2085,6 +2201,9 @@ export default function SnakeLadderGame({
                 <div className="text-sm font-bold text-amber-700 font-mono mt-0.5">
                   🏆 TB AWARENESS CHAMPION
                 </div>
+                <p className="text-sm text-slate-600 max-w-md mx-auto mt-2 leading-relaxed font-medium">
+                  You played all the way to Square 100 — that is real TB awareness, and you earned every bit of it. Well done!
+                </p>
                 <div className="my-2.5 inline-block px-3.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300 font-mono text-xs font-bold shadow-sm">
                   +500 XP REWARD
                 </div>
@@ -2172,7 +2291,7 @@ export default function SnakeLadderGame({
                 </div>
 
                 <p className="text-sm text-slate-600 max-w-md mx-auto mt-2 leading-relaxed font-medium">
-                  "You are close! Review the TB concepts you missed and try again."
+                  "So close — and every question you got right still counts. Have another look at the ones you missed, then go again. You've got this!"
                 </p>
 
                 {/* Score & Accuracy Breakdown */}
@@ -2349,6 +2468,24 @@ export default function SnakeLadderGame({
         }
         .animate-shake {
           animation: shake 0.4s ease-in-out;
+        }
+
+        /* Feel-good layer: XP chip pops on every earn; celebration toast slides in */
+        @keyframes xp-pop {
+          0% { transform: scale(1); }
+          40% { transform: scale(1.4); }
+          100% { transform: scale(1); }
+        }
+        .xp-pop {
+          display: inline-block;
+          animation: xp-pop 0.45s ease;
+        }
+        @keyframes toast-pop {
+          0% { opacity: 0; transform: translate(-50%, -10px) scale(0.96); }
+          100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+        }
+        .toast-pop {
+          animation: toast-pop 0.3s ease-out;
         }
 
         /* Square 100 confetti — light CSS pieces, no library, no slowdown */

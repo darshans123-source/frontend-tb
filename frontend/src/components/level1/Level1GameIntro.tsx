@@ -60,9 +60,9 @@ export default function Level1GameIntro({
   const [isMiniRolling, setIsMiniRolling] = useState<boolean>(false);
 
   // Ladder / Snake simulation state
-  const [ladderSimPos, setLadderSimPos] = useState<number>(18);
+  const [ladderSimPos, setLadderSimPos] = useState<number>(4);
   const [ladderActive, setLadderActive] = useState<boolean>(false);
-  const [snakeSimPos, setSnakeSimPos] = useState<number>(52);
+  const [snakeSimPos, setSnakeSimPos] = useState<number>(96);
   const [snakeActive, setSnakeActive] = useState<boolean>(false);
 
   useEffect(() => {
@@ -84,19 +84,19 @@ export default function Level1GameIntro({
     if (currentScreen === 4) {
       const ladderInterval = setInterval(() => {
         setLadderActive(true);
-        setLadderSimPos(37);
+        setLadderSimPos(16);
         setTimeout(() => {
           setLadderActive(false);
-          setLadderSimPos(18);
+          setLadderSimPos(4);
         }, 1800);
       }, 3800);
 
       const snakeInterval = setInterval(() => {
         setSnakeActive(true);
-        setSnakeSimPos(31);
+        setSnakeSimPos(72);
         setTimeout(() => {
           setSnakeActive(false);
-          setSnakeSimPos(52);
+          setSnakeSimPos(96);
         }, 1800);
       }, 3800);
 
@@ -257,9 +257,9 @@ export default function Level1GameIntro({
                 <div className="grid grid-cols-5 gap-2 text-center text-xs font-mono font-bold">
                   {[
                     { num: 1, type: 'start', label: '🟢 Start' },
-                    { num: 18, type: 'ladder', label: '🪜 +19' },
+                    { num: 4, type: 'ladder', label: '🪜 +12' },
                     { num: 37, type: 'top', label: '⭐ Climb' },
-                    { num: 52, type: 'snake', label: '🐍 -21' },
+                    { num: 96, type: 'snake', label: '🐍 -24' },
                     { num: 100, type: 'final', label: '🏆 Finale' }
                   ].map((tile, i) => (
                     <div
@@ -285,7 +285,7 @@ export default function Level1GameIntro({
                 <div className="mt-3.5 pt-2.5 border-t border-slate-200 flex items-center justify-between text-xs font-mono text-slate-600">
                   <span>🎲 Physical 3D Dice</span>
                   <span>•</span>
-                  <span>🪜 7 Ladders</span>
+                  <span>🪜 8 Ladders</span>
                   <span>•</span>
                   <span>🐍 6 Snakes</span>
                   <span>•</span>
@@ -513,18 +513,18 @@ export default function Level1GameIntro({
                     </p>
                   </div>
 
-                  {/* Visual Demonstration: SQUARE 18 -> LADDER -> SQUARE 37 */}
+                  {/* Visual Demonstration: SQUARE 4 -> LADDER -> SQUARE 16 (real board mapping) */}
                   <div className="mt-4 p-3 rounded-xl bg-white border border-teal-200 text-center font-mono">
                     <div className="flex items-center justify-center gap-3 font-bold text-xs">
-                      <span className={`px-2.5 py-1 rounded-lg border transition-all ${ladderSimPos === 18 ? 'bg-teal-600 text-white shadow-md' : 'bg-slate-100 text-slate-700'}`}>
-                        SQUARE 18
+                      <span className={`px-2.5 py-1 rounded-lg border transition-all ${ladderSimPos === 4 ? 'bg-teal-600 text-white shadow-md' : 'bg-slate-100 text-slate-700'}`}>
+                        SQUARE 4
                       </span>
                       <span className={`text-base transition-transform ${ladderActive ? 'scale-125' : ''}`}>🪜 ➔</span>
-                      <span className={`px-2.5 py-1 rounded-lg border transition-all ${ladderSimPos === 37 ? 'bg-teal-600 text-white shadow-md' : 'bg-slate-100 text-slate-700'}`}>
-                        SQUARE 37
+                      <span className={`px-2.5 py-1 rounded-lg border transition-all ${ladderSimPos === 16 ? 'bg-teal-600 text-white shadow-md' : 'bg-slate-100 text-slate-700'}`}>
+                        SQUARE 16
                       </span>
                     </div>
-                    <span className="text-[11px] text-teal-700 block mt-2 font-bold">+19 Squares Climb!</span>
+                    <span className="text-[11px] text-teal-700 block mt-2 font-bold">+12 Squares Climb!</span>
                   </div>
                 </div>
 
@@ -544,18 +544,18 @@ export default function Level1GameIntro({
                     </p>
                   </div>
 
-                  {/* Visual Demonstration: SQUARE 52 -> SNAKE -> SQUARE 31 */}
+                  {/* Visual Demonstration: SQUARE 96 -> SNAKE -> SQUARE 72 (real board mapping) */}
                   <div className="mt-4 p-3 rounded-xl bg-white border border-rose-200 text-center font-mono">
                     <div className="flex items-center justify-center gap-3 font-bold text-xs">
-                      <span className={`px-2.5 py-1 rounded-lg border transition-all ${snakeSimPos === 52 ? 'bg-rose-600 text-white shadow-md' : 'bg-slate-100 text-slate-700'}`}>
-                        SQUARE 52
+                      <span className={`px-2.5 py-1 rounded-lg border transition-all ${snakeSimPos === 96 ? 'bg-rose-600 text-white shadow-md' : 'bg-slate-100 text-slate-700'}`}>
+                        SQUARE 96
                       </span>
                       <span className={`text-base transition-transform ${snakeActive ? 'scale-125' : ''}`}>🐍 ➔</span>
-                      <span className={`px-2.5 py-1 rounded-lg border transition-all ${snakeSimPos === 31 ? 'bg-rose-600 text-white shadow-md' : 'bg-slate-100 text-slate-700'}`}>
-                        SQUARE 31
+                      <span className={`px-2.5 py-1 rounded-lg border transition-all ${snakeSimPos === 72 ? 'bg-rose-600 text-white shadow-md' : 'bg-slate-100 text-slate-700'}`}>
+                        SQUARE 72
                       </span>
                     </div>
-                    <span className="text-[11px] text-rose-700 block mt-2 font-bold">-21 Squares Learning Moment</span>
+                    <span className="text-[11px] text-rose-700 block mt-2 font-bold">-24 Squares Learning Moment</span>
                   </div>
                 </div>
               </div>

@@ -24,7 +24,9 @@ import {
   Check,
   X,
   Stethoscope,
-  HeartPulse
+  HeartPulse,
+  Cloud,
+  CloudOff
 } from 'lucide-react';
 import {
   LEVEL1_25_CLINICAL_QUESTIONS,
@@ -42,8 +44,33 @@ import {
 } from '../../data/snakeLadderData';
 import { ChallengeCategory } from '../../types/snakeLadder';
 import { soundService } from '../../services/soundService';
-import { supabaseData } from '../../services/supabaseData';
+import {
+  saveSnakeProgressToSupabase,
+  loadSnakeProgressFromSupabase,
+  syncSnakeCompletionToSupabase
+} from '../../services/level1Service';
 import Level1HowToPlayModal from './Level1HowToPlayModal';
+
+// Small inline SVG glyphs — snakes and ladders are drawn, never emoji.
+function SnakeGlyph({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <path d="M6 20 C4 14, 10 13, 9 9 C8.5 6.5, 12 5, 14 6.5 C16 8, 13 9.5, 15 11 C17.5 13, 20 12, 19 15 C18 18, 13 17, 12 20" stroke="#e11d48" strokeWidth="2.4" strokeLinecap="round" />
+      <circle cx="15.5" cy="5.5" r="2.4" fill="#be123c" />
+      <circle cx="14.8" cy="4.8" r="0.55" fill="#fef08a" />
+      <circle cx="16.6" cy="4.8" r="0.55" fill="#fef08a" />
+    </svg>
+  );
+}
+
+function LadderGlyph({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <path d="M8 3 L6 21 M16 3 L18 21" stroke="#0d9488" strokeWidth="2.2" strokeLinecap="round" />
+      <path d="M7.6 7.5 H15.7 M7.2 12 H16.2 M6.8 16.5 H16.6" stroke="#06b6d4" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
 
 interface SnakeLadderGameProps {
   currentUserId?: string | null;
@@ -220,6 +247,31 @@ export default function SnakeLadderGame({
   const [highlightedSnake, setHighlightedSnake] = useState<number | null>(null);
   const [highlightedLadder, setHighlightedLadder] = useState<number | null>(null);
 
+  // Destination square highlight (set on the dice roll, cleared on arrival)
+  const [destinationSquare, setDestinationSquare] = useState<number | null>(null);
+
+  // Supabase progress sync status — 'saved' | 'saving' | 'local'
+  // ('local' = no Supabase row yet: table not migrated, or a PIN student
+  // with no auth.users row. The game always keeps localStorage.)
+  const [syncStatus, setSyncStatus] = useState<'saved' | 'saving' | 'local'>('local');
+  const [cloudReady, setCloudReady] = useState(false);
+  const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const gameStartRef = useRef<number>(Date.now());
+
+  // Confetti pieces for the Square 100 completion screen
+  const confettiPieces = useMemo(() => {
+    const colors = ['#1677FF', '#00B8A9', '#f59e0b', '#e11d48', '#22c55e', '#8b5cf6'];
+    return Array.from({ length: 48 }, (_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      delay: Math.random() * 1.6,
+      duration: 2.6 + Math.random() * 1.8,
+      size: 6 + Math.random() * 7,
+      color: colors[i % colors.length],
+      round: Math.random() > 0.5
+    }));
+  }, []);
+
   // Sync ambient music on mount & updates
   useEffect(() => {
     if (musicEnabled && !showHowToPlay) {
@@ -240,6 +292,83 @@ export default function SnakeLadderGame({
       console.error('Failed to save snake ladder state', e);
     }
   }, [gameState]);
+
+  // Load the student's real Supabase progress after login (once).
+  // Supabase wins only when it is further along than this device's
+  // localStorage (more questions answered, or a further square); otherwise
+  // the local game is kept. Until the snake_ladder_progress migration is
+  // run, loadSnakeProgressFromSupabase returns null and nothing changes.
+  useEffect(() => {
+    if (!currentUserId) {
+      setCloudReady(true);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      const saved = await loadSnakeProgressFromSupabase(currentUserId);
+      if (cancelled) return;
+      if (saved) {
+        setGameState(prev => {
+          const supabaseAhead =
+            saved.totalAnswered > prev.totalAnswered ||
+            (saved.totalAnswered === prev.totalAnswered && saved.currentSquare > prev.currentSquare);
+          if (!supabaseAhead) return prev;
+          return {
+            ...prev,
+            currentSquare: saved.currentSquare,
+            score: saved.score,
+            xp: saved.xp,
+            accuracy: saved.accuracy,
+            correctAnswers: saved.correctAnswers,
+            wrongAnswers: saved.wrongAnswers,
+            totalAnswered: saved.totalAnswered,
+            completedQuestionIds: saved.completedQuestionIds,
+            missedQuestionIds: saved.missedQuestionIds,
+            visitedSquares: Array.from(new Set([...prev.visitedSquares, saved.currentSquare])),
+            gameCompleted: saved.completed,
+            level2Unlocked: saved.completed && saved.accuracy >= 80 ? true : prev.level2Unlocked,
+            finalChallengePassed:
+              saved.completedQuestionIds.includes('t25') && !saved.missedQuestionIds.includes('t25')
+                ? true
+                : prev.finalChallengePassed
+          };
+        });
+        setSyncStatus('saved');
+      }
+      setCloudReady(true);
+    })();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUserId]);
+
+  // Save progress to Supabase (debounced, best-effort) whenever the game
+  // state changes — position, score, XP, accuracy, answers and completion.
+  // Never blocks gameplay: a failed save just shows "Local only".
+  useEffect(() => {
+    if (!currentUserId || !cloudReady) return;
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(async () => {
+      setSyncStatus('saving');
+      const ok = await saveSnakeProgressToSupabase(currentUserId, {
+        currentSquare: gameState.currentSquare,
+        score: gameState.score,
+        xp: gameState.xp,
+        accuracy: gameState.accuracy,
+        correctAnswers: gameState.correctAnswers,
+        wrongAnswers: gameState.wrongAnswers,
+        totalAnswered: gameState.totalAnswered,
+        completed: gameState.gameCompleted,
+        completedQuestionIds: gameState.completedQuestionIds,
+        missedQuestionIds: gameState.missedQuestionIds,
+        lastPlayedAt: new Date().toISOString()
+      });
+      setSyncStatus(ok ? 'saved' : 'local');
+    }, 900);
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameState, currentUserId, cloudReady]);
 
   // Dice face 3D angles
   const getFaceRotation = (face: number) => {
@@ -288,6 +417,8 @@ export default function SnakeLadderGame({
       setDiceRotation(finalRot);
       setDisplayedDice(roll);
       setIsRolling(false);
+      // Highlight the destination square while the token walks to it
+      setDestinationSquare(Math.min(100, gameState.currentSquare + roll));
 
       setRollAnnouncement({
         number: roll,
@@ -318,7 +449,27 @@ export default function SnakeLadderGame({
     }
 
     setIsMoving(false);
+    setDestinationSquare(null);
     await handleSquareArrival(target);
+  };
+
+  // Animated slide along a ladder or snake: the token walks square by
+  // square from -> to (up for a ladder, down for a snake) instead of
+  // jumping instantly, with a step sound on every square.
+  const movePieceAlongPath = async (from: number, to: number) => {
+    const step = to > from ? 1 : -1;
+    let pos = from;
+    while (pos !== to) {
+      await new Promise(r => setTimeout(r, 130));
+      pos += step;
+      soundService.playMoveStep();
+      const next = pos;
+      setGameState(prev => ({
+        ...prev,
+        currentSquare: next,
+        visitedSquares: Array.from(new Set([...prev.visitedSquares, next]))
+      }));
+    }
   };
 
   // Handle arrival at destination square
@@ -364,7 +515,7 @@ export default function SnakeLadderGame({
       setTimeout(async () => {
         setEventNotification(null);
         setHighlightedLadder(null);
-        await movePieceDirect(bonus.to);
+        await movePieceAlongPath(squareNum, bonus.to);
         checkSquareChallenge(bonus.to);
       }, 2200);
       return;
@@ -386,7 +537,7 @@ export default function SnakeLadderGame({
       setTimeout(async () => {
         setEventNotification(null);
         setHighlightedSnake(null);
-        await movePieceDirect(snake.to);
+        await movePieceAlongPath(squareNum, snake.to);
         checkSquareChallenge(snake.to);
       }, 2400);
       return;
@@ -424,14 +575,6 @@ export default function SnakeLadderGame({
 
     // 6. Direct question check or pacing check
     checkSquareChallenge(squareNum);
-  };
-
-  const movePieceDirect = async (toSquare: number) => {
-    setGameState(prev => ({
-      ...prev,
-      currentSquare: toSquare,
-      visitedSquares: Array.from(new Set([...prev.visitedSquares, toSquare]))
-    }));
   };
 
   // Check if square triggers an uncompleted challenge
@@ -482,11 +625,18 @@ export default function SnakeLadderGame({
     submitAnswer(-1);
   };
 
-  // Submit Answer
+  // Select an option (selection only — answering happens on Submit, so a
+  // student can change their mind before committing).
   const handleSelectOption = (index: number) => {
     if (challengeResult || !activeChallenge) return;
     setSelectedOptionIndex(index);
-    submitAnswer(index);
+  };
+
+  // Submit Answer — enabled only once an option is selected.
+  const handleSubmitAnswer = () => {
+    if (challengeResult || !activeChallenge) return;
+    if (selectedOptionIndex === null) return;
+    submitAnswer(selectedOptionIndex);
   };
 
   const submitAnswer = (chosenIdx: number) => {
@@ -574,7 +724,7 @@ export default function SnakeLadderGame({
       return;
     }
 
-    // 1. If on Ladder Square and Correct -> 🪜 LADDER ACTIVATED!
+    // 1. If on Ladder Square and Correct -> LADDER ACTIVATED!
     if (currentAction && currentAction.type === 'ladder' && wasCorrect) {
       setHighlightedLadder(currentAction.from);
       soundService.playLadderClimb();
@@ -582,7 +732,7 @@ export default function SnakeLadderGame({
         type: 'ladder',
         from: currentAction.from,
         to: currentAction.to,
-        title: '🪜 LADDER ACTIVATED!',
+        title: 'LADDER ACTIVATED!',
         description: LADDER_REASONS[currentAction.from] || 'Great TB Clinical Reasoning! Climbing upward!',
         marks: 10,
         xp: 20
@@ -591,13 +741,13 @@ export default function SnakeLadderGame({
       setTimeout(async () => {
         setEventNotification(null);
         setHighlightedLadder(null);
-        await movePieceDirect(currentAction.to);
+        await movePieceAlongPath(currentAction.from, currentAction.to);
         checkSquareChallenge(currentAction.to);
       }, 2300);
       return;
     }
 
-    // 2. If on Snake Square and Wrong -> 🐍 TB CLUE MISSED!
+    // 2. If on Snake Square and Wrong -> TB CLUE MISSED!
     if (currentAction && currentAction.type === 'snake' && !wasCorrect) {
       setHighlightedSnake(currentAction.from);
       soundService.playSnakeSlide();
@@ -605,7 +755,7 @@ export default function SnakeLadderGame({
         type: 'snake',
         from: currentAction.from,
         to: currentAction.to,
-        title: '🐍 TB CLUE MISSED!',
+        title: 'TB CLUE MISSED!',
         description: SNAKE_REASONS[currentAction.from] || 'Clinical pitfall encountered. Sliding down to reinforce concept.',
         marks: 0
       });
@@ -613,20 +763,20 @@ export default function SnakeLadderGame({
       setTimeout(async () => {
         setEventNotification(null);
         setHighlightedSnake(null);
-        await movePieceDirect(currentAction.to);
+        await movePieceAlongPath(currentAction.from, currentAction.to);
         checkSquareChallenge(currentAction.to);
       }, 2500);
       return;
     }
 
-    // 3. If on Snake Square and Correct -> 🛡️ Avoided Snake!
+    // 3. If on Snake Square and Correct -> Pitfall Avoided!
     if (currentAction && currentAction.type === 'snake' && wasCorrect) {
       soundService.playBonusEarned();
       setEventNotification({
         type: 'avoided',
         from: currentAction.from,
         to: currentAction.from,
-        title: '🛡️ PITFALL AVOIDED!',
+        title: 'PITFALL AVOIDED!',
         description: 'You correctly identified the clinical clue and safely avoided the snake trap!'
       });
 
@@ -667,12 +817,21 @@ export default function SnakeLadderGame({
                 level2Unlocked: true
               }));
               if (onUnlockLevel1) onUnlockLevel1();
-              if (currentUserId) {
-                supabaseData.updateUserProfile(currentUserId, {
-                  xp: gameState.xp + 500,
-                  level: 2
-                }).catch(() => {});
-              }
+              // Save the finished run to Supabase: quiz result, snake
+              // progress row, achievement and profile (+500 XP, Level 2).
+              void syncSnakeCompletionToSupabase(currentUserId, {
+                currentSquare: gameState.currentSquare,
+                score: gameState.score,
+                xp: gameState.xp,
+                accuracy: gameState.accuracy,
+                correctAnswers: gameState.correctAnswers,
+                wrongAnswers: gameState.wrongAnswers,
+                totalAnswered: gameState.totalAnswered,
+                completed: true,
+                completedQuestionIds: gameState.completedQuestionIds,
+                missedQuestionIds: gameState.missedQuestionIds,
+                lastPlayedAt: new Date().toISOString()
+              }, Math.round((Date.now() - gameStartRef.current) / 1000));
             }
           }, 800);
           return 5;
@@ -719,12 +878,19 @@ export default function SnakeLadderGame({
           level2Unlocked: true
         }));
         if (onUnlockLevel1) onUnlockLevel1();
-        if (currentUserId) {
-          supabaseData.updateUserProfile(currentUserId, {
-            xp: gameState.xp + 500,
-            level: 2
-          }).catch(() => {});
-        }
+        void syncSnakeCompletionToSupabase(currentUserId, {
+          currentSquare: gameState.currentSquare,
+          score: gameState.score,
+          xp: gameState.xp,
+          accuracy: gameState.accuracy,
+          correctAnswers: gameState.correctAnswers,
+          wrongAnswers: gameState.wrongAnswers,
+          totalAnswered: gameState.totalAnswered,
+          completed: true,
+          completedQuestionIds: gameState.completedQuestionIds,
+          missedQuestionIds: gameState.missedQuestionIds,
+          lastPlayedAt: new Date().toISOString()
+        }, Math.round((Date.now() - gameStartRef.current) / 1000));
       }
     }
   };
@@ -890,8 +1056,8 @@ export default function SnakeLadderGame({
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
           {/* Logo & Level Banner */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1677FF] via-[#00B8A9] to-teal-500 flex items-center justify-center shadow-md shadow-blue-500/25 border border-white text-xl">
-              🐍
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1677FF] via-[#00B8A9] to-teal-500 flex items-center justify-center shadow-md shadow-blue-500/25 border border-white">
+              <SnakeGlyph className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -1016,6 +1182,18 @@ export default function SnakeLadderGame({
                 Exit
               </button>
             )}
+
+            {/* Supabase sync status — honest: 'Local only' until the
+                snake_ladder_progress migration is run, or for PIN students */}
+            <span
+              title={syncStatus === 'saved' ? 'Progress saved to Supabase' : syncStatus === 'saving' ? 'Saving progress to Supabase…' : 'Progress saved on this device only — run supabase_level1_snake_progress.sql in Supabase to enable cloud save'}
+              className={`px-2.5 py-1.5 rounded-xl border text-[11px] font-mono font-bold flex items-center gap-1.5 shadow-sm ${
+                syncStatus === 'saved' ? 'bg-emerald-50 border-emerald-300 text-emerald-700' : syncStatus === 'saving' ? 'bg-blue-50 border-blue-300 text-blue-700' : 'bg-white border-slate-200 text-slate-500'
+              }`}
+            >
+              {syncStatus === 'saved' ? <Cloud className="w-3.5 h-3.5" /> : syncStatus === 'saving' ? <Cloud className="w-3.5 h-3.5 animate-pulse" /> : <CloudOff className="w-3.5 h-3.5" />}
+              <span className="hidden sm:inline">{syncStatus === 'saved' ? 'Cloud saved' : syncStatus === 'saving' ? 'Saving…' : 'Local only'}</span>
+            </span>
           </div>
         </div>
 
@@ -1064,6 +1242,7 @@ export default function SnakeLadderGame({
                 const squareNum = idx + 1;
                 const coords = getSquareCoordinates(squareNum);
                 const isCurrent = gameState.currentSquare === squareNum;
+                const isDestination = destinationSquare === squareNum;
                 const isVisited = gameState.visitedSquares.includes(squareNum);
                 const hasLadder = !!LADDERS[squareNum];
                 const hasSnake = !!SNAKES[squareNum];
@@ -1113,6 +1292,11 @@ export default function SnakeLadderGame({
                   squareStyle += ' ring-4 ring-blue-500/40 border-2 border-blue-600 shadow-[0_0_20px_rgba(22,119,255,0.45)] z-20';
                 }
 
+                // Destination highlight (the square the dice is taking you to)
+                if (isDestination && !isCurrent) {
+                  squareStyle += ' ring-4 ring-amber-400/60 border-2 border-amber-500 z-10';
+                }
+
                 return (
                   <div
                     key={squareNum}
@@ -1144,11 +1328,11 @@ export default function SnakeLadderGame({
                       ) : isAutoBonus ? (
                         <span className="text-[10px] text-amber-500 font-bold leading-none" title="Bonus Ladder">⭐</span>
                       ) : isAutoSnake ? (
-                        <span className="text-[10px] text-rose-500 font-bold leading-none" title="Snake Pitfall">🐍</span>
+                        <span title="Snake Pitfall"><SnakeGlyph className="w-3 h-3" /></span>
                       ) : hasLadder ? (
-                        <span className="text-[10px] text-teal-600 font-bold leading-none">🪜</span>
+                        <span title="Ladder"><LadderGlyph className="w-3 h-3" /></span>
                       ) : hasSnake ? (
-                        <span className="text-[10px] text-rose-600 font-bold leading-none">🐍</span>
+                        <span title="Snake"><SnakeGlyph className="w-3 h-3" /></span>
                       ) : isCompletedQuestion ? (
                         <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600" />
                       ) : isMissedQuestion ? (
@@ -1158,9 +1342,11 @@ export default function SnakeLadderGame({
                       ) : null}
                     </div>
 
-                    {/* Bottom Label for Ladder / Snake */}
+                    {/* Bottom Label for Ladder / Snake / Destination */}
                     <div className="text-[8px] sm:text-[9px] font-mono truncate leading-none">
-                      {hasLadder ? (
+                      {isDestination && !isCurrent ? (
+                        <span className="text-amber-600 font-extrabold">DEST</span>
+                      ) : hasLadder ? (
                         <span className="text-emerald-700 font-extrabold">+{LADDERS[squareNum]}</span>
                       ) : hasSnake ? (
                         <span className="text-rose-700 font-extrabold">-{SNAKES[squareNum]}</span>
@@ -1498,7 +1684,7 @@ export default function SnakeLadderGame({
             <button
               onClick={handleRollDice}
               disabled={isRolling || isMoving || !!activeChallenge || showGrandMastery}
-              className={`w-full mt-3 py-3.5 px-6 rounded-xl font-black tracking-wider uppercase text-sm flex items-center justify-center gap-2.5 transition-all shadow-md ${
+              className={`w-full mt-3 py-3.5 px-6 rounded-xl font-black tracking-wider uppercase text-sm flex items-center justify-center gap-2.5 transition-all shadow-md touch-manipulation min-h-[52px] ${
                 isRolling || isMoving || activeChallenge || showGrandMastery
                   ? 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed shadow-none'
                   : 'bg-gradient-to-r from-[#1677FF] via-[#00B8A9] to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white shadow-blue-500/25 active:scale-[0.98]'
@@ -1659,6 +1845,22 @@ export default function SnakeLadderGame({
               })}
             </div>
 
+            {/* Submit Answer — select first, then commit (no instant submit) */}
+            {!challengeResult && (
+              <button
+                onClick={handleSubmitAnswer}
+                disabled={selectedOptionIndex === null}
+                className={`w-full mt-4 py-3.5 rounded-xl font-black uppercase tracking-wider text-sm flex items-center justify-center gap-2 transition-all min-h-[52px] touch-manipulation ${
+                  selectedOptionIndex === null
+                    ? 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-[#1677FF] via-[#00B8A9] to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white shadow-lg shadow-blue-500/25 active:scale-[0.98]'
+                }`}
+              >
+                <Check className="w-4 h-4 stroke-[3]" />
+                <span>{selectedOptionIndex === null ? 'Select an answer first' : 'Submit Answer'}</span>
+              </button>
+            )}
+
             {/* Post-Submission Learning Card */}
             {challengeResult && (
               <div className="mt-5 animate-in fade-in duration-300">
@@ -1701,9 +1903,9 @@ export default function SnakeLadderGame({
                     <div className="mt-4 flex justify-end">
                       <button
                         onClick={handleChallengeDismiss}
-                        className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-mono text-xs font-black uppercase tracking-wider shadow-md shadow-emerald-600/25 flex items-center gap-2 transition-all active:scale-95"
+                        className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-mono text-xs font-black uppercase tracking-wider shadow-md shadow-emerald-600/25 flex items-center gap-2 transition-all active:scale-95 min-h-[44px]"
                       >
-                        <span>CONTINUE</span>
+                        <span>{activeChallenge?.questionNumber === 25 ? 'See Results' : 'Next Question'}</span>
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     </div>
@@ -1762,9 +1964,9 @@ export default function SnakeLadderGame({
                     <div className="mt-4 flex justify-end">
                       <button
                         onClick={handleChallengeDismiss}
-                        className="px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-mono text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all active:scale-95 shadow-sm"
+                        className="px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-mono text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all active:scale-95 shadow-sm min-h-[44px]"
                       >
-                        <span>CONTINUE</span>
+                        <span>{activeChallenge?.questionNumber === 25 ? 'See Results' : 'Next Question'}</span>
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     </div>
@@ -1789,7 +1991,7 @@ export default function SnakeLadderGame({
               : 'border-rose-400 shadow-rose-500/20'
           }`}>
             <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-3 text-3xl bg-slate-50 border border-slate-200 shadow-sm">
-              {eventNotification.type === 'ladder' ? '🪜' : eventNotification.type === 'avoided' ? '🛡️' : '🐍'}
+              {eventNotification.type === 'ladder' ? <LadderGlyph className="w-9 h-9" /> : eventNotification.type === 'avoided' ? <ShieldCheck className="w-9 h-9 text-blue-600" /> : <SnakeGlyph className="w-9 h-9" />}
             </div>
             <h3 className={`text-xl font-black tracking-tight ${
               eventNotification.type === 'ladder'
@@ -1820,9 +2022,9 @@ export default function SnakeLadderGame({
 
             <div className="mt-4 text-[11px] font-mono text-slate-500 font-bold">
               {eventNotification.type === 'ladder' 
-                ? `Climbing upward: Square ${eventNotification.from} 🪜 ➔ ${eventNotification.to}`
+                ? `Climbing upward: Square ${eventNotification.from} ➔ ${eventNotification.to}`
                 : eventNotification.type === 'snake'
-                ? `Moving downward: Square ${eventNotification.from} 🐍 ➔ ${eventNotification.to}`
+                ? `Moving downward: Square ${eventNotification.from} ➔ ${eventNotification.to}`
                 : `Holding position safely on Square ${eventNotification.from}`}
             </div>
           </div>
@@ -1834,6 +2036,26 @@ export default function SnakeLadderGame({
       {/* ========================================================================= */}
       {showGrandMastery && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-md animate-in fade-in duration-300 overflow-y-auto">
+          {/* Confetti when Level 1 is mastered at Square 100 */}
+          {gameState.correctAnswers >= 20 && gameState.finalChallengePassed && (
+            <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden>
+              {confettiPieces.map(p => (
+                <span
+                  key={p.id}
+                  className="confetti-piece"
+                  style={{
+                    left: `${p.left}%`,
+                    width: p.size,
+                    height: p.round ? p.size : p.size * 0.6,
+                    backgroundColor: p.color,
+                    borderRadius: p.round ? '50%' : '2px',
+                    animationDelay: `${p.delay}s`,
+                    animationDuration: `${p.duration}s`
+                  }}
+                />
+              ))}
+            </div>
+          )}
           <div className="w-full max-w-xl bg-white border border-slate-200 rounded-3xl shadow-2xl p-6 sm:p-8 text-center relative my-6 text-[#102A43]">
             {/* 5-Step Diagnostic Cascade Display */}
             <div className="flex items-center justify-center gap-1 sm:gap-2 mb-5 flex-wrap">
@@ -2127,6 +2349,19 @@ export default function SnakeLadderGame({
         }
         .animate-shake {
           animation: shake 0.4s ease-in-out;
+        }
+
+        /* Square 100 confetti — light CSS pieces, no library, no slowdown */
+        .confetti-piece {
+          position: absolute;
+          top: -14px;
+          animation-name: confetti-fall;
+          animation-timing-function: linear;
+          animation-iteration-count: infinite;
+          opacity: 0.95;
+        }
+        @keyframes confetti-fall {
+          to { transform: translateY(110vh) rotate(720deg); }
         }
       `}</style>
     </div>

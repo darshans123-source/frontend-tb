@@ -59,12 +59,12 @@ export default function EMRClinicalWorkflowCanvas({
   };
 
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-2xl space-y-5 text-white">
+    <div className="tq-card tq-fade-up max-w-full overflow-hidden p-5 shadow-2xl space-y-5 text-slate-900 dark:text-slate-100">
       {/* Workflow Header & Progress Summary */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200 dark:border-slate-700/60 pb-4">
         <div>
-          <span className="text-[10px] font-mono text-cyan-400 font-bold uppercase tracking-wider">Official NTEP / WHO Clinical Pathway</span>
-          <h3 className="text-lg font-black text-white flex items-center gap-2">
+          <span className="tq-eyebrow">Official NTEP / WHO Clinical Pathway</span>
+          <h3 className="tq-display text-lg text-slate-900 dark:text-white flex items-center gap-2">
             <Layers className="text-cyan-400" size={20} />
             Diagnostic & Clinical Progress Tracker
           </h3>
@@ -72,29 +72,29 @@ export default function EMRClinicalWorkflowCanvas({
 
         {/* Progress % Bar */}
         <div className="flex items-center gap-4 w-full sm:w-auto">
-          <div className="flex-1 sm:w-48 bg-slate-950 p-2 rounded-xl border border-slate-800 space-y-1">
-            <div className="flex justify-between items-center text-[10px] font-mono">
-              <span className="text-slate-400 font-bold">WORKFLOW PROGRESS</span>
-              <span className="text-cyan-300 font-bold">{progressPercent}%</span>
+          <div className="flex-1 sm:w-48 bg-slate-50 dark:bg-[#111c30] p-2 rounded-2xl border border-slate-200 dark:border-slate-700/60 space-y-1 min-w-0">
+            <div className="flex justify-between items-center gap-2 text-[10px] font-mono min-w-0">
+              <span className="text-slate-500 dark:text-slate-400 font-bold">WORKFLOW PROGRESS</span>
+              <span className="text-brand-teal dark:text-cyan-300 font-bold">{progressPercent}%</span>
             </div>
-            <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
+            <div className="tq-progress w-full">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${progressPercent}%` }}
-                className="h-full bg-gradient-to-r from-cyan-500 to-emerald-400 rounded-full"
+                className="tq-progress-bar"
               />
             </div>
           </div>
 
-          <div className="px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-center font-mono shrink-0">
-            <span className="text-[9px] text-slate-500 block">COMPLETED STEPS</span>
-            <span className="text-sm font-bold text-emerald-400">{completedStepIds.length} / 9</span>
+          <div className="px-3 py-2 bg-slate-50 dark:bg-[#111c30] border border-slate-200 dark:border-slate-700/60 rounded-2xl text-center font-mono shrink-0">
+            <span className="text-[9px] text-slate-500 dark:text-slate-400 block">COMPLETED STEPS</span>
+            <span className="text-sm font-bold text-brand-emerald dark:text-emerald-400">{completedStepIds.length} / 9</span>
           </div>
         </div>
       </div>
 
       {/* Horizontal Sequential Workflow Step Buttons */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-9 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-9 gap-2 max-w-full">
         {CANONICAL_WORKFLOW_STEPS.map((step, idx) => {
           const state = getStepState(step.id, idx);
           const isCompleted = state === 'completed';
@@ -106,12 +106,12 @@ export default function EMRClinicalWorkflowCanvas({
               key={step.id}
               onClick={() => onSelectStep(step.id)}
               disabled={isFuture && !completedStepIds.includes(CANONICAL_WORKFLOW_STEPS[Math.max(0, idx - 1)].id)}
-              className={`p-3 rounded-xl border transition-all text-left flex flex-col justify-between relative min-h-[90px] ${
+              className={`touch-target tq-lift p-3 rounded-2xl border transition-all text-left flex flex-col justify-between relative min-h-[90px] min-w-0 ${
                 isCompleted
-                  ? 'bg-emerald-950/80 border-emerald-500/60 text-emerald-300 hover:border-emerald-400 cursor-pointer'
+                  ? 'bg-emerald-50 dark:bg-emerald-950/80 border-emerald-400 dark:border-emerald-500/60 text-emerald-700 dark:text-emerald-300 hover:border-emerald-500 cursor-pointer'
                   : isActive
-                  ? 'bg-cyan-950/90 border-cyan-400 text-white font-extrabold shadow-[0_0_20px_rgba(6,182,212,0.4)] animate-pulse cursor-pointer ring-2 ring-cyan-400/40'
-                  : 'bg-slate-950/60 border-slate-800 text-slate-500 opacity-60 cursor-not-allowed'
+                  ? 'bg-teal-50 dark:bg-cyan-950/90 border-brand-teal dark:border-cyan-400 text-teal-900 dark:text-white font-extrabold shadow-[0_0_20px_rgba(13,148,136,0.35)] animate-pulse cursor-pointer ring-2 ring-teal-400/50 dark:ring-cyan-400/40'
+                  : 'bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500 opacity-60 cursor-not-allowed'
               }`}
             >
               <div className="flex justify-between items-start mb-1">
@@ -121,12 +121,12 @@ export default function EMRClinicalWorkflowCanvas({
                 ) : isActive ? (
                   <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping shrink-0" />
                 ) : (
-                  <span className="text-[9px] font-mono text-slate-600">Locked</span>
+                  <span className="text-[9px] font-mono text-slate-400 dark:text-slate-600">Locked</span>
                 )}
               </div>
 
               <span className="text-xs font-bold leading-tight line-clamp-2">{step.label}</span>
-              <span className="text-[9px] text-slate-400/80 line-clamp-1 mt-0.5">{step.subtitle}</span>
+              <span className="text-[9px] text-slate-500 dark:text-slate-400/80 line-clamp-1 mt-0.5">{step.subtitle}</span>
             </button>
           );
         })}

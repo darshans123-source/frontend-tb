@@ -60,27 +60,27 @@ export default function CaseSelection({
   ];
 
   return (
-    <div className="p-4 sm:p-8 max-w-7xl mx-auto min-h-[80vh] flex flex-col justify-center">
+    <div className="tq-fade-up overflow-hidden bg-alabaster p-4 font-sans dark:bg-[#0b1220] sm:p-8 max-w-7xl mx-auto min-h-[80vh] flex flex-col justify-center">
       <div className="text-center mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500 mb-2">
+        <h1 className="tq-display text-2xl sm:text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-brand-teal via-brand-emerald to-brand-royal mb-2">
           TB Quest – Case Selection
         </h1>
-        <p className="text-slate-400 text-xs sm:text-sm font-mono">Choose a TB Case Module to Begin Your Diagnostic Journey</p>
+        <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm font-mono">Choose a TB Case Module to Begin Your Diagnostic Journey</p>
       </div>
 
       {!isUnlocked && (
-        <div className="max-w-3xl mx-auto mb-8 bg-amber-950/80 border-2 border-amber-500/70 p-5 rounded-2xl text-center space-y-3 shadow-xl">
-          <div className="flex items-center justify-center gap-2 text-amber-400 font-bold text-base">
+        <div className="tq-card max-w-3xl mx-auto mb-8 border-2 border-brand-amber/60 bg-amber-50 dark:bg-amber-950/40 p-5 rounded-2xl text-center space-y-3 shadow-xl">
+          <div className="flex items-center justify-center gap-2 text-amber-600 dark:text-amber-400 font-bold text-base">
             <Lock size={20} />
             <span>Clinical Cases Locked</span>
           </div>
-          <p className="text-slate-200 text-xs sm:text-sm leading-relaxed font-semibold">
+          <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm leading-relaxed font-semibold">
             Complete the Learning Module and Quiz to unlock Clinical Cases.
           </p>
           {onOpenLearningModule && (
             <button
               onClick={onOpenLearningModule}
-              className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition-colors shadow-md"
+              className="tq-btn-coral touch-target px-5 py-2.5 text-xs uppercase tracking-wider shadow-md"
             >
               Launch Level 1 Learning & Quiz
             </button>
@@ -98,25 +98,26 @@ export default function CaseSelection({
           return (
             <div
               key={c.id}
-              className={`p-5 sm:p-8 bg-gradient-to-br ${c.color} border rounded-2xl sm:rounded-3xl shadow-lg flex flex-col justify-between group relative ${
+              className={`tq-card tq-lift max-w-full overflow-hidden p-5 sm:p-8 rounded-2xl sm:rounded-3xl flex flex-col justify-between group relative ${
                 isCardDisabled ? 'opacity-60 grayscale-[40%]' : ''
               }`}
             >
+              <div className="tq-accent-bar mb-4 shrink-0 sm:mb-6" />
               <button
                 onClick={() => onToggleBookmark(c.id)}
                 disabled={isCardDisabled}
-                className={`absolute top-4 right-4 p-2 rounded-full transition-colors ${
-                  isBookmarked ? 'text-amber-400 bg-amber-400/10' : 'text-slate-500 hover:text-slate-300'
+                className={`touch-target absolute top-4 right-4 p-2 rounded-full transition-colors ${
+                  isBookmarked ? 'text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-400/10' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'
                 }`}
               >
                 <Bookmark size={18} fill={isBookmarked ? 'currentColor' : 'none'} />
               </button>
               <div>
-                <div className="p-2.5 sm:p-3 w-12 sm:w-16 bg-slate-900/60 rounded-2xl mb-4 sm:mb-6 shadow-inner flex items-center justify-center">
+                <div className="p-2.5 sm:p-3 w-12 sm:w-16 rounded-2xl mb-4 sm:mb-6 shadow-inner flex items-center justify-center border border-teal-100 bg-teal-50 text-brand-teal dark:border-teal-800/60 dark:bg-teal-950/60 dark:text-teal-300">
                   <Icon size={28} className="sm:w-8 sm:h-8" />
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">{c.title}</h3>
-                <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">{c.desc}</p>
+                <h3 className="text-xl sm:text-2xl font-bold text-ink-900 dark:text-white mb-2">{c.title}</h3>
+                <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed">{c.desc}</p>
                 
                 {/* Difficulty Toggles */}
                 <div className="mt-4 flex flex-wrap gap-1.5 sm:gap-2">
@@ -125,8 +126,8 @@ export default function CaseSelection({
                       key={d}
                       disabled={isCardDisabled}
                       onClick={() => setSelectedDifficulty(prev => ({ ...prev, [c.id]: d }))}
-                      className={`px-2.5 sm:px-3 py-1 rounded-full text-[10px] font-mono border transition-all ${
-                        diff === d ? 'bg-cyan-500/20 border-cyan-400 text-cyan-200' : 'bg-slate-800 border-slate-700 text-slate-500'
+                      className={`min-h-9 px-2.5 sm:px-3 py-1 rounded-full text-[10px] font-mono border transition-all ${
+                        diff === d ? 'bg-teal-100 dark:bg-teal-950/70 border-brand-teal text-teal-700 dark:text-teal-200' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400'
                       }`}
                     >
                       {d}
@@ -146,8 +147,8 @@ export default function CaseSelection({
                 }}
                 className={`mt-5 sm:mt-6 flex items-center justify-center gap-2 p-3 rounded-xl text-xs sm:text-sm font-semibold transition-colors ${
                   isCardDisabled
-                    ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700'
-                    : 'bg-slate-900/60 text-cyan-300 hover:bg-slate-900'
+                    ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-slate-200 dark:border-slate-700'
+                    : 'tq-btn-primary touch-target text-white'
                 }`}
               >
                 {isCardDisabled ? (
@@ -170,7 +171,7 @@ export default function CaseSelection({
       <div className="mt-6 sm:mt-8 text-center">
         <button
           onClick={onBack}
-          className="px-5 sm:px-6 py-2 sm:py-2.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-slate-300 text-xs sm:text-sm font-medium transition-colors"
+          className="tq-btn-secondary touch-target px-5 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm dark:bg-[#111c30] dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-800"
         >
           ← Return to Dashboard
         </button>

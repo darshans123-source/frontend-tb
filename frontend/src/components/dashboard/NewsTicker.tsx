@@ -65,16 +65,16 @@ export default function NewsTicker({ onSelectNewsItem }: NewsTickerProps) {
   };
 
   return (
-    <div className="bg-[#0B1329] border border-slate-800/90 rounded-2xl text-white text-xs py-2.5 px-3 sm:px-4 flex items-center justify-between shadow-md overflow-hidden relative group backdrop-blur-md">
+    <div className="tq-glass bg-gradient-to-r from-brand-teal-deep/95 via-navy-900/95 to-brand-royal/90 dark:from-[#0b1220]/95 dark:via-[#111c30]/95 dark:to-navy-900/95 border border-teal-500/40 dark:border-teal-500/30 rounded-2xl text-white text-xs py-2.5 px-3 sm:px-4 flex items-center justify-between shadow-md overflow-hidden relative group backdrop-blur-md min-w-0">
       {/* Fixed Left Badge */}
-      <div className="flex items-center gap-1.5 px-3 py-1 bg-red-600/20 border border-red-500/40 text-red-400 font-extrabold rounded-full text-[10px] uppercase tracking-wider shrink-0 z-20 shadow-xs backdrop-blur-md">
-        <Megaphone size={13} className="text-red-400 animate-pulse" />
+      <div className="tq-chip tq-chip-coral flex items-center gap-1.5 px-3 py-1 border border-red-500/40 font-extrabold text-[10px] uppercase tracking-wider shrink-0 z-20 shadow-xs backdrop-blur-md">
+        <Megaphone size={13} className="animate-pulse" />
         <span>LIVE UPDATES</span>
       </div>
 
       {/* Edge Vignette Fades */}
-      <div className="pointer-events-none absolute inset-y-0 left-[125px] sm:left-[140px] w-6 sm:w-10 bg-gradient-to-r from-[#0B1329] to-transparent z-10" />
-      <div className="pointer-events-none absolute inset-y-0 right-[150px] sm:right-[175px] w-6 sm:w-10 bg-gradient-to-l from-[#0B1329] to-transparent z-10" />
+      <div className="pointer-events-none absolute inset-y-0 left-[125px] sm:left-[140px] w-6 sm:w-10 bg-gradient-to-r from-brand-teal-deep to-transparent z-10" />
+      <div className="pointer-events-none absolute inset-y-0 right-[150px] sm:right-[175px] w-6 sm:w-10 bg-gradient-to-l from-brand-royal to-transparent z-10" />
 
       {/* Center Scrolling Track (Right to Left Continuous Loop) */}
       <div
@@ -99,7 +99,7 @@ export default function NewsTicker({ onSelectNewsItem }: NewsTickerProps) {
       <button
         type="button"
         onClick={() => onSelectNewsItem(primaryText)}
-        className="text-[11px] font-extrabold text-cyan-400 hover:text-cyan-300 flex items-center gap-1 shrink-0 z-20 cursor-pointer bg-slate-900/90 hover:bg-slate-800 border border-cyan-500/40 px-3 py-1 rounded-full shadow-xs hover:scale-105 transition-all"
+        className="touch-target min-h-11 text-[11px] font-extrabold text-teal-200 hover:text-teal-100 flex items-center gap-1 shrink-0 z-20 cursor-pointer bg-slate-900/90 dark:bg-[#111c30]/90 hover:bg-slate-800 border border-teal-400/40 px-3 py-1 rounded-full shadow-xs hover:scale-105 transition-all"
       >
         <span>Read Announcement</span>
         <ChevronRight size={14} />

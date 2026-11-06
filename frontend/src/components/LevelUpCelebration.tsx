@@ -14,12 +14,12 @@ export default function LevelUpCelebration({ onComplete }: { onComplete: () => v
   if (!animationData) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+    <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none bg-gradient-to-br from-brand-teal/20 via-brand-royal/20 to-brand-coral/20 tq-fade-in">
       <Lottie
         animationData={animationData}
         loop={false}
         onComplete={onComplete}
-        className="w-full h-full max-w-lg"
+        className="w-full h-full max-w-lg tq-fade-up"
       />
     </div>
   );

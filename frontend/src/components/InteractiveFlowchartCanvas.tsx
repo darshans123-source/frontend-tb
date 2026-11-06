@@ -57,61 +57,61 @@ export default function InteractiveFlowchartCanvas({
     const isDiagnosis = node.category === 'treatment' || node.category === 'referral';
 
     if (isCurrent) {
-      return 'bg-blue-950/90 border-cyan-400 text-cyan-100 ring-2 ring-cyan-400 shadow-[0_0_25px_rgba(6,182,212,0.4)] animate-pulse';
+      return 'bg-blue-50 dark:bg-blue-950/90 border-blue-500 dark:border-cyan-400 text-blue-900 dark:text-cyan-100 ring-2 ring-blue-400/60 dark:ring-cyan-400 shadow-[0_0_25px_rgba(37,99,235,0.35)] animate-pulse';
     }
     if (isWrong) {
-      return 'bg-rose-950/80 border-rose-500 text-rose-200 ring-1 ring-rose-500/50 shadow-[0_0_15px_rgba(244,63,94,0.3)]';
+      return 'bg-rose-50 dark:bg-rose-950/80 border-rose-400 dark:border-rose-500 text-rose-700 dark:text-rose-200 ring-1 ring-rose-500/50 shadow-[0_0_15px_rgba(244,63,94,0.3)]';
     }
     if (isVisited && isDiagnosis) {
-      return 'bg-emerald-950/90 border-emerald-400 text-emerald-100 ring-2 ring-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.3)]';
+      return 'bg-emerald-50 dark:bg-emerald-950/90 border-emerald-500 dark:border-emerald-400 text-emerald-800 dark:text-emerald-100 ring-2 ring-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.3)]';
     }
     if (isVisited) {
-      return 'bg-emerald-950/70 border-emerald-500/70 text-emerald-200 shadow-[0_0_12px_rgba(16,185,129,0.2)]';
+      return 'bg-emerald-50 dark:bg-emerald-950/70 border-emerald-400 dark:border-emerald-500/70 text-emerald-700 dark:text-emerald-200 shadow-[0_0_12px_rgba(16,185,129,0.2)]';
     }
-    return 'bg-slate-900/80 border-slate-800 hover:border-cyan-500/50 text-slate-300 hover:bg-slate-900';
+    return 'bg-white dark:bg-slate-900/80 border-slate-200 dark:border-slate-800 hover:border-teal-400 dark:hover:border-cyan-500/50 text-slate-600 dark:text-slate-300 hover:bg-teal-50 dark:hover:bg-slate-900';
   };
 
   const getCategoryBadgeClass = (category: AlgorithmNode['category']) => {
     switch (category) {
       case 'presumptive':
-        return 'bg-amber-950/80 border-amber-500/50 text-amber-300';
+        return 'bg-amber-100 dark:bg-amber-950/80 border-amber-300 dark:border-amber-500/50 text-amber-800 dark:text-amber-300';
       case 'plhiv':
-        return 'bg-violet-950/80 border-violet-500/50 text-violet-300';
+        return 'bg-violet-100 dark:bg-violet-950/80 border-violet-300 dark:border-violet-500/50 text-violet-800 dark:text-violet-300';
       case 'investigation':
-        return 'bg-cyan-950/80 border-cyan-500/50 text-cyan-300';
+        return 'bg-teal-100 dark:bg-cyan-950/80 border-teal-300 dark:border-cyan-500/50 text-teal-800 dark:text-cyan-300';
       case 'cbnaat':
-        return 'bg-blue-950/80 border-blue-400 text-blue-300';
+        return 'bg-blue-100 dark:bg-blue-950/80 border-blue-300 dark:border-blue-400 text-blue-800 dark:text-blue-300';
       case 'dr-pathway':
-        return 'bg-rose-950/80 border-rose-500/50 text-rose-300';
+        return 'bg-rose-100 dark:bg-rose-950/80 border-rose-300 dark:border-rose-500/50 text-rose-800 dark:text-rose-300';
       case 'clinical-pathway':
-        return 'bg-orange-950/80 border-orange-500/50 text-orange-300';
+        return 'bg-orange-100 dark:bg-orange-950/80 border-orange-300 dark:border-orange-500/50 text-orange-800 dark:text-orange-300';
       case 'result':
-        return 'bg-purple-950/80 border-purple-500/50 text-purple-300';
+        return 'bg-violet-100 dark:bg-purple-950/80 border-violet-300 dark:border-purple-500/50 text-violet-800 dark:text-purple-300';
       case 'treatment':
-        return 'bg-emerald-950/80 border-emerald-500/50 text-emerald-300';
+        return 'bg-emerald-100 dark:bg-emerald-950/80 border-emerald-300 dark:border-emerald-500/50 text-emerald-800 dark:text-emerald-300';
       case 'referral':
-        return 'bg-rose-950/80 border-rose-400 text-rose-200';
+        return 'bg-rose-100 dark:bg-rose-950/80 border-rose-300 dark:border-rose-400 text-rose-800 dark:text-rose-200';
       default:
-        return 'bg-slate-800 border-slate-700 text-slate-300';
+        return 'bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300';
     }
   };
 
   return (
-    <div className="relative w-full bg-slate-950 border border-cyan-500/30 rounded-3xl overflow-hidden shadow-[0_0_30px_rgba(6,182,212,0.15)] min-h-[550px] flex flex-col">
+    <div className="tq-card tq-fade-up relative w-full rounded-3xl overflow-auto shadow-[0_0_30px_rgba(13,148,136,0.15)] min-h-[550px] flex flex-col max-w-full">
       {/* Canvas Controls Bar */}
-      <div className="flex flex-wrap items-center justify-between p-4 bg-slate-900/90 border-b border-slate-800 z-10 gap-3">
+      <div className="tq-glass flex flex-wrap items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800 z-10 gap-3">
         <div className="flex items-center gap-2">
           <span className="flex h-2.5 w-2.5 rounded-full bg-cyan-400 animate-ping" />
-          <span className="text-xs font-mono font-bold text-cyan-300 uppercase tracking-wider">
+          <span className="tq-eyebrow">
             Interactive Flowchart Canvas
           </span>
-          <span className="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full font-mono">
+          <span className="tq-chip tq-chip-slate">
             {nodes.length} Nodes Loaded
           </span>
         </div>
 
         {/* Legend */}
-        <div className="hidden sm:flex items-center gap-3 text-[11px] font-mono text-slate-400">
+        <div className="hidden sm:flex items-center gap-3 text-[11px] font-mono text-slate-500 dark:text-slate-400">
           <span className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 ring-2 ring-cyan-400/50" /> Current Node
           </span>
@@ -124,27 +124,27 @@ export default function InteractiveFlowchartCanvas({
         </div>
 
         {/* Zoom Controls */}
-        <div className="flex items-center bg-slate-950 border border-slate-800 rounded-xl p-1 gap-1">
+        <div className="flex items-center bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-1 gap-1">
           <button
             onClick={handleZoomIn}
-            className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all"
+            className="touch-target p-1.5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all"
             title="Zoom In"
           >
             <ZoomIn size={16} />
           </button>
-          <span className="text-[11px] font-mono text-cyan-400 px-2 font-bold min-w-[42px] text-center">
+          <span className="text-[11px] font-mono text-brand-teal dark:text-cyan-400 px-2 font-bold min-w-[42px] text-center">
             {Math.round(zoomLevel * 100)}%
           </span>
           <button
             onClick={handleZoomOut}
-            className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all"
+            className="touch-target p-1.5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all"
             title="Zoom Out"
           >
             <ZoomOut size={16} />
           </button>
           <button
             onClick={handleResetZoom}
-            className="p-1.5 text-slate-400 hover:text-cyan-300 hover:bg-slate-800 rounded-lg transition-all"
+            className="touch-target p-1.5 text-slate-500 dark:text-slate-400 hover:text-brand-teal dark:hover:text-cyan-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all"
             title="Reset Pan & Zoom"
           >
             <RotateCcw size={16} />
@@ -159,7 +159,7 @@ export default function InteractiveFlowchartCanvas({
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
-        className={`relative flex-1 overflow-hidden p-6 select-none bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px] ${
+        className={`relative flex-1 overflow-hidden p-6 select-none bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px] ${
           isDragging ? 'cursor-grabbing' : 'cursor-grab'
         }`}
       >
@@ -235,17 +235,17 @@ export default function InteractiveFlowchartCanvas({
               >
                 <button
                   onClick={() => onNodeClick(node)}
-                  className={`w-full p-4 rounded-2xl border text-left transition-all relative group flex flex-col justify-between backdrop-blur-md cursor-pointer ${getNodeColor(
+                  className={`tq-lift w-full p-4 rounded-2xl border text-left transition-all relative group flex flex-col justify-between backdrop-blur-md cursor-pointer min-h-11 ${getNodeColor(
                     node
                   )}`}
                 >
                   <div className="flex justify-between items-center mb-2.5">
-                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-mono uppercase font-bold border ${getCategoryBadgeClass(node.category)}`}>
+                    <span className={`tq-chip px-2 py-0.5 rounded-full text-[9px] font-mono uppercase font-bold border ${getCategoryBadgeClass(node.category)}`}>
                       {node.category}
                     </span>
 
                     {isCurrent && (
-                      <span className="flex items-center gap-1 text-[10px] font-bold text-cyan-300 bg-cyan-950/80 px-2 py-0.5 rounded-full border border-cyan-400">
+                      <span className="tq-chip tq-chip-teal">
                         <Eye size={10} /> Active
                       </span>
                     )}
@@ -257,14 +257,14 @@ export default function InteractiveFlowchartCanvas({
                     )}
                   </div>
 
-                  <h3 className="font-bold text-xs sm:text-sm text-white mb-1.5 group-hover:text-cyan-300 transition-colors line-clamp-2">
+                  <h3 className="font-display font-bold text-xs sm:text-sm text-slate-900 dark:text-white mb-1.5 group-hover:text-brand-teal dark:group-hover:text-cyan-300 transition-colors line-clamp-2">
                     {node.label}
                   </h3>
-                  <p className="text-slate-400 text-[11px] line-clamp-2 leading-snug">
+                  <p className="text-slate-500 dark:text-slate-400 text-[11px] line-clamp-2 leading-snug">
                     {node.description}
                   </p>
 
-                  <div className="mt-3 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-cyan-400 font-mono">
+                  <div className="mt-3 pt-2 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between text-[10px] text-brand-teal dark:text-cyan-400 font-mono">
                     <span>Inspect Guidelines</span>
                     <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
                   </div>

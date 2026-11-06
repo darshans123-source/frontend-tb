@@ -78,7 +78,7 @@ export default function StudentDashboard({
   const isUnlocked = isQuizPassed || progressData.miniGameUnlocked || progressData.quizCompleted || (profile?.xp && profile.xp >= 80) || (typeof window !== 'undefined' && localStorage.getItem('tbquest_level1_quiz_passed') === 'true');
 
   return (
-    <div className="space-y-6 pb-20 px-4 sm:px-6 md:px-8 max-w-[1600px] mx-auto font-sans">
+    <div className="space-y-6 pb-20 px-4 sm:px-6 md:px-8 max-w-[1600px] mx-auto font-sans bg-alabaster dark:bg-ink-950 min-w-0 overflow-hidden tq-fade-up">
       {/* Top Scrolling Dark Navy News Ribbon */}
       <NewsTicker
         onSelectNewsItem={(itemText) => {
@@ -141,7 +141,7 @@ export default function StudentDashboard({
       {/* 🐍 TB QUEST LEVEL 1 — SNAKE & LADDER & LEVEL 2 HERO SECTION */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
         {/* Card 1: 🐍 TB QUEST - PATH TO TB AWARENESS */}
-        <div className="lg:col-span-7 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-2 border-emerald-500/50 rounded-2xl p-6 shadow-xl relative overflow-hidden text-white flex flex-col justify-between">
+        <div className="lg:col-span-7 tq-card tq-lift bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 dark:from-navy-900 dark:via-[#111c30] dark:to-navy-900 border-2 border-emerald-500/50 rounded-2xl p-6 shadow-xl relative overflow-hidden text-white flex flex-col justify-between min-w-0">
           <div className="absolute -top-20 -right-20 w-48 h-48 rounded-full bg-emerald-500/15 blur-2xl pointer-events-none" />
           <div className="space-y-3 relative z-10">
             <div className="flex items-center gap-2.5">
@@ -152,18 +152,18 @@ export default function StudentDashboard({
                 <span className="text-[11px] font-mono font-bold text-emerald-400 uppercase tracking-widest block">
                   LEVEL 1 LEARNING MODE
                 </span>
-                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                <h3 className="tq-display text-xl sm:text-2xl font-black text-white tracking-tight">
                   TB QUEST: PATH TO TB AWARENESS
                 </h3>
               </div>
             </div>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium">
+            <p className="text-xs sm:text-sm text-slate-300 dark:text-slate-300 leading-relaxed font-medium">
               Learn clinical TB awareness through gameplay! Journey from <strong>🧑‍🎓 TB Learner</strong> to <strong>🛡️ Awareness Champion</strong> on a 100-square board. Climb ladders with clinical reasoning, avoid distraction snakes, and master presumptive TB diagnosis.
             </p>
           </div>
 
           <div className="pt-4 flex flex-wrap items-center justify-between gap-3 relative z-10 border-t border-slate-700/60 mt-3">
-            <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 font-bold">
+            <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-emerald-400 font-bold">
               <span>🎯 100 Squares</span>
               <span>•</span>
               <span>🪜 Ladders</span>
@@ -179,7 +179,7 @@ export default function StudentDashboard({
                 soundService.playClick();
                 if (onStartSnakeLadder) onStartSnakeLadder();
               }}
-              className="px-6 py-3 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black rounded-xl text-xs sm:text-sm shadow-lg shadow-emerald-500/25 transition-all cursor-pointer hover:scale-105 flex items-center gap-2"
+              className="tq-btn-primary touch-target min-h-11 px-6 py-3 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black rounded-xl text-xs sm:text-sm shadow-lg shadow-emerald-500/25 transition-all cursor-pointer hover:scale-105 flex items-center gap-2"
             >
               <Sparkles size={18} className="text-slate-950" />
               <span>PLAY LEVEL 1</span>
@@ -205,7 +205,7 @@ export default function StudentDashboard({
                 CLINICAL CASES
               </span>
             </div>
-            <h3 className="text-xl sm:text-2xl font-black tracking-tight">
+            <h3 className="tq-display text-xl sm:text-2xl font-black tracking-tight">
               LEVEL 2: INVESTIGATION LEARNING
             </h3>
             <p className="text-xs sm:text-sm leading-relaxed">
@@ -223,13 +223,13 @@ export default function StudentDashboard({
                   soundService.playClick();
                   onStartCase();
                 }}
-                className="w-full py-3.5 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-blue-500 text-white font-black rounded-xl text-xs sm:text-sm shadow-lg shadow-blue-500/25 transition-all cursor-pointer hover:scale-105 flex items-center justify-center gap-2"
+                className="tq-btn-primary touch-target min-h-11 w-full py-3.5 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-blue-500 text-white font-black rounded-xl text-xs sm:text-sm shadow-lg shadow-blue-500/25 transition-all cursor-pointer hover:scale-105 flex items-center justify-center gap-2"
               >
                 <span>START LEVEL 2 →</span>
                 <ArrowRight size={18} />
               </button>
             ) : (
-              <div className="flex items-center justify-between gap-2 p-3 bg-slate-100 rounded-xl text-slate-500 text-xs font-bold font-mono">
+              <div className="flex items-center justify-between gap-2 p-3 bg-slate-100 dark:bg-[#111c30] dark:border dark:border-slate-700 rounded-xl text-slate-500 dark:text-slate-300 text-xs font-bold font-mono">
                 <span className="flex items-center gap-1.5"><Lock size={16} /> LOCKED</span>
                 <span>Requires Level 1 (≥80%)</span>
               </div>
@@ -239,7 +239,7 @@ export default function StudentDashboard({
       </div>
 
       {/* 🎮 MINI GAME CARD (Directly on Student Dashboard) */}
-      <div className="bg-white border border-[#D8E9FF] rounded-2xl p-5 sm:p-6 shadow-[0_10px_30px_rgba(15,111,255,0.06)] hover:shadow-[0_20px_40px_rgba(15,111,255,0.12)] hover:border-[#0F6FFF]/35 transition-all duration-300 relative overflow-hidden">
+      <div className="tq-card tq-lift rounded-2xl p-5 sm:p-6 relative overflow-hidden min-w-0">
         {/* Ambient Glow */}
         <div className="absolute -top-20 -right-20 w-48 h-48 rounded-full bg-amber-400/10 blur-2xl pointer-events-none" />
 
@@ -253,13 +253,13 @@ export default function StudentDashboard({
                 <span className="text-[11px] font-mono font-bold text-amber-700 uppercase tracking-wider block">
                   🎮 Interactive Challenge
                 </span>
-                <h3 className="text-lg sm:text-2xl font-extrabold text-[#1E293B] flex items-center gap-2">
+                <h3 className="tq-display text-lg sm:text-2xl font-extrabold text-ink-900 dark:text-slate-100 flex flex-wrap items-center gap-2">
                   <span>Mini Game</span>
                   <span className="text-[#2563EB] font-bold">• Spot the TB Clues</span>
                 </h3>
               </div>
             </div>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-2xl font-medium">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl font-medium">
               Test your TB knowledge by identifying the correct clinical clues through an interactive challenge.
             </p>
           </div>
@@ -272,7 +272,7 @@ export default function StudentDashboard({
                   soundService.playClick();
                   if (onStartMiniGame) onStartMiniGame();
                 }}
-                className="w-full md:w-auto px-7 py-3.5 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-black rounded-xl text-xs sm:text-sm shadow-md transition-all cursor-pointer hover:scale-105 flex items-center justify-center gap-2"
+                className="tq-btn-coral touch-target min-h-11 w-full md:w-auto px-7 py-3.5 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-black rounded-xl text-xs sm:text-sm shadow-md transition-all cursor-pointer hover:scale-105 flex items-center justify-center gap-2"
               >
                 <Sparkles size={18} className="text-slate-950" />
                 <span>Start Mini Game</span>
@@ -283,7 +283,7 @@ export default function StudentDashboard({
                 <button
                   type="button"
                   disabled
-                  className="w-full md:w-auto px-6 py-3.5 bg-slate-100 border border-slate-300 text-slate-400 font-bold rounded-xl text-xs sm:text-sm cursor-not-allowed flex items-center justify-center gap-2 shadow-xs"
+                  className="touch-target min-h-11 w-full md:w-auto px-6 py-3.5 bg-slate-100 dark:bg-[#111c30] dark:border-slate-700 border border-slate-300 text-slate-400 dark:text-slate-500 font-bold rounded-xl text-xs sm:text-sm cursor-not-allowed flex items-center justify-center gap-2 shadow-xs"
                 >
                   <Lock size={16} />
                   <span>🔒 Complete the Quiz to Unlock</span>

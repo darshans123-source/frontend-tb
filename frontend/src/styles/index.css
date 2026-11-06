@@ -1,106 +1,390 @@
 @import "tailwindcss";
 
+/* ============================================================
+   TB QUEST — PREMIUM DESIGN SYSTEM (visual-only redesign)
+   Fonts are loaded in index.html (Inter + Plus Jakarta Sans).
+   Tailwind v4 CSS-first config. Class-based dark mode: the app
+   toggles a `dark` class on <html> (see ThemeContext).
+   ============================================================ */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* Clinical / SDG brand palette */
+  --color-alabaster: #fafaf7;
+  --color-ink-950: #0b1220;
+  --color-ink-900: #0f172a;
+  --color-ink-800: #1e293b;
+  --color-navy-900: #0c1b33;
+  --color-navy-800: #12294d;
+  --color-brand-teal: #0d9488;
+  --color-brand-teal-deep: #0f766e;
+  --color-brand-teal-soft: #ccfbf1;
+  --color-brand-emerald: #059669;
+  --color-brand-emerald-soft: #d1fae5;
+  --color-brand-royal: #2563eb;
+  --color-brand-royal-deep: #1d4ed8;
+  --color-brand-coral: #ff6f61;
+  --color-brand-coral-deep: #e85d4a;
+  --color-brand-coral-soft: #ffe4e0;
+  --color-brand-amber: #f59e0b;
+  --color-brand-amber-deep: #d97706;
+  --color-brand-amber-soft: #fef3c7;
+
+  --shadow-card: 0 4px 6px -1px rgb(15 23 42 / 0.06), 0 2px 4px -1px rgb(15 23 42 / 0.04);
+  --shadow-lift: 0 16px 32px -12px rgb(13 148 136 / 0.28), 0 8px 16px -8px rgb(15 23 42 / 0.12);
+  --shadow-glow-teal: 0 8px 24px -6px rgb(13 148 136 / 0.45);
+
+  --animate-fade-up: fade-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade-in: fade-in 0.4s ease both;
+  --animate-float: float 5s ease-in-out infinite;
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+}
+
 @layer base {
   :root {
-    --bg-main: #F8FAFC;
-    --bg-card: #FFFFFF;
-    --bg-subtle: #EFF6FF;
-    --text-main: #1E293B;
-    --text-muted: #64748B;
-    --border-main: #E2E8F0;
-    --color-primary: #2563EB;
-    --color-primary-hover: #1D4ED8;
-    --color-secondary: #0284C7;
+    --bg-main: #fafaf7;
+    --bg-card: #ffffff;
+    --bg-subtle: #eff6ff;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --border-main: #e2e8f0;
+    --color-primary: #0d9488;
+    --color-primary-hover: #0f766e;
+    --color-secondary: #2563eb;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  html,
+  body {
+    overflow-x: clip;
   }
 
   body {
-    background-color: #F8FAFC;
-    color: #1E293B;
-    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    font-family: var(--font-sans);
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    line-height: 1.6;
+  }
+
+  html.dark body {
+    background-color: #0b1220;
+    color: #f1f5f9;
+  }
+
+  ::selection {
+    background: rgb(13 148 136 / 0.25);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  :focus-visible {
+    outline: 2px solid #0d9488;
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  img {
+    max-width: 100%;
   }
 }
 
-/* Premium Clean White Medical Theme Utility Classes */
+/* ---------- Legacy utility classes (kept, restyled to new palette) ---------- */
 .bg-medical-main {
-  background-color: #F8FAFC;
+  background-color: var(--bg-main);
 }
 
 .medical-card-white {
-  background-color: #FFFFFF;
-  border: 1px solid #E2E8F0;
-  border-radius: 16px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-  transition: all 0.25s ease-in-out;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  box-shadow: var(--shadow-card);
+  transition: all 0.2s ease-in-out;
 }
-
 .medical-card-white:hover {
-  box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.1), 0 8px 10px -6px rgba(37, 99, 235, 0.05);
-  border-color: #CBD5E1;
+  box-shadow: var(--shadow-lift);
+  border-color: #99f6e4;
   transform: translateY(-2px);
 }
 
 .btn-primary-blue {
-  background-color: #2563EB;
-  color: #FFFFFF;
-  border-radius: 12px;
+  background: linear-gradient(135deg, #0d9488, #2563eb);
+  color: #ffffff;
+  border-radius: 14px;
   font-weight: 700;
   transition: all 0.2s ease-in-out;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 4px 12px rgb(13 148 136 / 0.3);
 }
-
 .btn-primary-blue:hover {
-  background-color: #1D4ED8;
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+  filter: brightness(1.07);
+  box-shadow: var(--shadow-glow-teal);
   transform: translateY(-1px);
 }
 
 .btn-secondary-white {
-  background-color: #FFFFFF;
-  color: #1E293B;
-  border: 1px solid #E2E8F0;
-  border-radius: 12px;
+  background-color: #ffffff;
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
   font-weight: 600;
   transition: all 0.2s ease-in-out;
 }
-
 .btn-secondary-white:hover {
-  background-color: #F8FAFC;
-  border-color: #CBD5E1;
+  background-color: #f0fdfa;
+  border-color: #5eead4;
 }
 
-/* Custom Scrollbars */
+/* ---------- TB Quest premium component classes ---------- */
+@layer components {
+  /* Elevated Bento card with subtle gradient border */
+  .tq-card {
+    background: linear-gradient(#ffffff, #ffffff) padding-box,
+      linear-gradient(135deg, rgb(13 148 136 / 0.35), rgb(37 99 235 / 0.25), rgb(255 111 97 / 0.25)) border-box;
+    border: 1px solid transparent;
+    border-radius: 20px;
+    box-shadow: var(--shadow-card);
+    transition: all 0.2s ease-in-out;
+  }
+  html.dark .tq-card {
+    background: linear-gradient(#111c30, #111c30) padding-box,
+      linear-gradient(135deg, rgb(45 212 191 / 0.4), rgb(96 165 250 / 0.35), rgb(255 111 97 / 0.3)) border-box;
+  }
+
+  /* Hover lift for interactive cards and buttons */
+  .tq-lift {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  }
+  .tq-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lift);
+  }
+  .tq-lift:active {
+    transform: translateY(-1px) scale(0.99);
+  }
+
+  /* Subtle glassmorphism panel */
+  .tq-glass {
+    background: rgb(255 255 255 / 0.72);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgb(255 255 255 / 0.6);
+    box-shadow: 0 8px 24px -8px rgb(15 23 42 / 0.15);
+  }
+  html.dark .tq-glass {
+    background: rgb(15 23 42 / 0.72);
+    border: 1px solid rgb(255 255 255 / 0.12);
+  }
+
+  /* Buttons */
+  .tq-btn-primary {
+    background: linear-gradient(135deg, #0d9488, #059669 55%, #2563eb);
+    color: #fff;
+    font-weight: 700;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgb(13 148 136 / 0.35);
+    transition: all 0.2s ease-in-out;
+  }
+  .tq-btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); box-shadow: var(--shadow-glow-teal); }
+  .tq-btn-primary:active { transform: translateY(0) scale(0.99); }
+
+  .tq-btn-coral {
+    background: linear-gradient(135deg, #ff6f61, #f59e0b);
+    color: #fff;
+    font-weight: 700;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgb(255 111 97 / 0.35);
+    transition: all 0.2s ease-in-out;
+  }
+  .tq-btn-coral:hover { filter: brightness(1.07); transform: translateY(-1px); }
+  .tq-btn-coral:active { transform: translateY(0) scale(0.99); }
+
+  .tq-btn-secondary {
+    background: #fff;
+    color: #0f172a;
+    border: 1px solid #e2e8f0;
+    font-weight: 600;
+    border-radius: 14px;
+    transition: all 0.2s ease-in-out;
+  }
+  .tq-btn-secondary:hover { background: #f0fdfa; border-color: #5eead4; transform: translateY(-1px); }
+
+  .tq-btn-ghost {
+    background: transparent;
+    color: #0f766e;
+    font-weight: 600;
+    border-radius: 12px;
+    transition: all 0.2s ease-in-out;
+  }
+  .tq-btn-ghost:hover { background: rgb(13 148 136 / 0.1); }
+
+  /* Touch-friendly target: min 44x44px */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Chips / badges */
+  .tq-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    border-radius: 9999px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .tq-chip-teal { background: #ccfbf1; color: #0f766e; }
+  .tq-chip-amber { background: #fef3c7; color: #b45309; }
+  .tq-chip-coral { background: #ffe4e0; color: #c2410c; }
+  .tq-chip-royal { background: #dbeafe; color: #1d4ed8; }
+  .tq-chip-slate { background: #f1f5f9; color: #475569; }
+  html.dark .tq-chip-teal { background: rgb(13 148 136 / 0.25); color: #5eead4; }
+  html.dark .tq-chip-amber { background: rgb(245 158 11 / 0.2); color: #fcd34d; }
+  html.dark .tq-chip-coral { background: rgb(255 111 97 / 0.2); color: #fda4af; }
+  html.dark .tq-chip-royal { background: rgb(37 99 235 / 0.25); color: #93c5fd; }
+  html.dark .tq-chip-slate { background: rgb(148 163 184 / 0.2); color: #cbd5e1; }
+
+  /* Progress bars */
+  .tq-progress {
+    height: 0.625rem;
+    border-radius: 9999px;
+    background: #e2e8f0;
+    overflow: hidden;
+  }
+  html.dark .tq-progress { background: #1e293b; }
+  .tq-progress-bar {
+    height: 100%;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, #14b8a6, #059669 55%, #2563eb);
+    transition: width 0.4s ease-in-out;
+  }
+  .tq-progress-bar-amber {
+    background: linear-gradient(90deg, #fbbf24, #f59e0b 55%, #ff6f61);
+  }
+
+  /* Images: cover, rounded, elevated, smooth fade-in on mount */
+  .tq-img {
+    object-fit: cover;
+    border-radius: 1rem;
+    box-shadow: 0 10px 24px -10px rgb(15 23 42 / 0.25);
+    animation: fade-in 0.5s ease both;
+    background: linear-gradient(135deg, #f0fdfa, #eff6ff);
+  }
+  .tq-img-hero {
+    border-radius: 1.5rem;
+    box-shadow: 0 20px 40px -16px rgb(13 148 136 / 0.35);
+  }
+
+  /* Inputs */
+  .tq-input {
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  }
+  .tq-input:focus {
+    border-color: #14b8a6;
+    box-shadow: 0 0 0 3px rgb(20 184 166 / 0.2);
+    outline: none;
+  }
+  html.dark .tq-input { background: #111c30; border-color: #334155; color: #f1f5f9; }
+
+  /* Sticky top navigation */
+  .tq-nav {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: rgb(250 250 247 / 0.85);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgb(226 232 240 / 0.8);
+  }
+  html.dark .tq-nav {
+    background: rgb(11 18 32 / 0.85);
+    border-bottom-color: rgb(51 65 85 / 0.8);
+  }
+
+  /* Gradient accent bar for quest cards */
+  .tq-accent-bar {
+    height: 4px;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, #14b8a6, #2563eb, #ff6f61);
+  }
+
+  /* Section eyebrow + display title */
+  .tq-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #0f766e;
+  }
+  html.dark .tq-eyebrow { color: #5eead4; }
+  .tq-display {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  /* Entrance animation helpers */
+  .tq-fade-up { animation: fade-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .tq-fade-in { animation: fade-in 0.4s ease both; }
+}
+
+/* ---------- Custom Scrollbars ---------- */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
-
 ::-webkit-scrollbar-track {
-  background: #F1F5F9;
+  background: #f1f5f9;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
+  background: #cbd5e1;
   border-radius: 9999px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8;
+  background: #94a3b8;
 }
 
-/* Marquee Animations */
+/* ---------- Marquee Animations (kept) ---------- */
 @keyframes marquee-scroll-rtl {
   0% { transform: translateX(0%); }
   100% { transform: translateX(-33.333333%); }
 }
-
 .animate-marquee-rtl {
   animation: marquee-scroll-rtl 28s linear infinite;
   display: flex;
   width: max-content;
   will-change: transform;
 }
-
 .animate-marquee-rtl:hover {
   animation-play-state: paused;
 }
@@ -109,14 +393,12 @@
   0% { transform: translateX(100%); }
   100% { transform: translateX(-100%); }
 }
-
 .animate-live-ticker {
   animation: live-ticker-scroll 28s linear infinite;
   display: inline-block;
   white-space: nowrap;
   will-change: transform;
 }
-
 .animate-live-ticker:hover {
   animation-play-state: paused;
 }

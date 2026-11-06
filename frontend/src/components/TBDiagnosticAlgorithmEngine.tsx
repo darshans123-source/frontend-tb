@@ -172,30 +172,30 @@ export default function TBDiagnosticAlgorithmEngine({
   };
 
   return (
-    <div className="p-3 sm:p-6 pb-24 max-w-7xl mx-auto min-h-[85vh] flex flex-col justify-between text-white font-sans space-y-4">
+    <div className="tq-fade-up overflow-hidden bg-alabaster p-3 font-sans dark:bg-[#0b1220] sm:p-6 pb-24 max-w-7xl mx-auto min-h-[85vh] flex flex-col justify-between text-ink-900 dark:text-white space-y-4">
       {/* Dashboard Top Header Bar (Preserved Styling) */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
         <div>
           <div className="flex flex-wrap items-center gap-2 mb-1.5">
-            <span className="px-2.5 py-0.5 bg-cyan-950 text-cyan-400 border border-cyan-500/30 rounded-full text-[10px] sm:text-xs font-mono uppercase font-bold">
+            <span className="tq-chip tq-chip-teal px-2.5 py-0.5 text-[10px] sm:text-xs font-mono uppercase font-bold">
               {activeCase.difficulty}
             </span>
-            <span className="px-2.5 py-0.5 bg-purple-950 text-purple-300 border border-purple-500/30 rounded-full text-[10px] sm:text-xs font-mono">
+            <span className="tq-chip tq-chip-royal px-2.5 py-0.5 text-[10px] sm:text-xs font-mono">
               Case ID: {activeCase.id}
             </span>
-            <span className="px-2.5 py-0.5 bg-emerald-950 text-emerald-300 border border-emerald-500/30 rounded-full text-[10px] sm:text-xs font-mono font-bold">
+            <span className="tq-chip tq-chip-teal px-2.5 py-0.5 text-[10px] sm:text-xs font-mono font-bold">
               NTEP Official Interactive Flowchart Engine
             </span>
           </div>
-          <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
-            <Stethoscope className="text-cyan-400 shrink-0" size={24} />
+          <h1 className="tq-display text-xl sm:text-2xl font-black text-ink-900 dark:text-white flex items-center gap-2">
+            <Stethoscope className="text-brand-teal shrink-0" size={24} />
             {activeCase.title}
           </h1>
-          <p className="text-slate-400 text-xs mt-0.5">{activeCase.subtitle}</p>
+          <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">{activeCase.subtitle}</p>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-900 border border-cyan-500/30 rounded-xl text-xs font-mono text-cyan-300 font-bold">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-[#111c30] border border-teal-200 dark:border-teal-500/30 rounded-xl text-xs font-mono text-teal-700 dark:text-teal-300 font-bold">
             <Award size={16} />
             <span>SCORE: {score}</span>
           </div>
@@ -204,7 +204,7 @@ export default function TBDiagnosticAlgorithmEngine({
               soundService.playClick();
               onBack();
             }}
-            className="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold shrink-0 flex items-center gap-1.5"
+            className="tq-btn-secondary touch-target px-3.5 py-1.5 rounded-xl text-xs font-semibold shrink-0 flex items-center gap-1.5 dark:bg-[#111c30] dark:text-slate-200 dark:border-slate-700"
           >
             <ArrowLeft size={14} />
             <span>Exit Case</span>

@@ -29,13 +29,18 @@ import {
   CloudOff
 } from 'lucide-react';
 import {
-  LEVEL1_25_CLINICAL_QUESTIONS,
-  Level1ClinicalQuestion,
-  getChallengeForSquareNumber,
-  getChallengeById,
-  CATEGORY_TOTALS,
-  CATEGORY_LABELS
-} from '../../data/level1_25_questions';
+  DOCUMENT_50_QUESTIONS,
+  DocumentLevel1Question,
+  getDocumentQuestionById,
+  getDocumentFinalQuestion,
+  getNextDocumentQuestion,
+  getSimilarCaseQuestion,
+  DOCUMENT_CATEGORY_TOTALS,
+  DOCUMENT_CATEGORY_LABELS,
+  getDocumentPerformanceCategory,
+  DOCUMENT_LEVEL2_UNLOCK_CORRECT,
+} from '../../data/level1_document_50_questions';
+import Level1StudyTabs from './Level1StudyTabs';
 import {
   LADDERS,
   SNAKES,
@@ -79,13 +84,13 @@ interface SnakeLadderGameProps {
   onUnlockLevel1?: () => void;
 }
 
-const STORAGE_KEY = 'tbquest_snake_ladder_progress_v4';
+const STORAGE_KEY = 'tbquest_snake_ladder_progress_v5';
 
 interface SavedGameState {
   currentSquare: number;
   score: number; // Marks: max 250 (correctAnswers * 10)
   xp: number;
-  accuracy: number; // (correctAnswers / 25) * 100
+  accuracy: number; // (correctAnswers / totalAnswered) * 100
   correctAnswers: number;
   wrongAnswers: number;
   totalAnswered: number;
@@ -128,23 +133,23 @@ const AUTOMATIC_SNAKES: Record<number, { to: number; title: string }> = {
 
 // Detailed descriptions for ladder accelerations
 const LADDER_REASONS: Record<number, string> = {
-  4: 'Early Sputum Acid-Fast Recognition',
+  4: 'Symptom recognition — you spotted the clue',
   9: 'TB Knowledge Boost • Healthy Lung Awareness',
-  12: 'Airborne Aerosol Containment Protocol',
-  25: 'Prompt Hemoptysis Recognition & Diagnostic Triage',
-  37: 'Molecular CBNAAT Rifampicin Resistance Detection',
-  54: 'Pre-Biologic Immunosuppressive TB Screening',
-  69: 'Airborne Droplet Nuclei Containment Adherence',
+  12: 'Risk-factor recognition — climb on',
+  25: 'Correct clinical reasoning — climb on',
+  37: 'TB contact recognised — climb on',
+  54: 'Correct clinical reasoning — climb on',
+  69: 'TB contact recognised — climb on',
   78: 'Prioritizing Cardinal Signs Over Distractors'
 };
 
 // Detailed descriptions for snake pitfalls
 const SNAKE_REASONS: Record<number, string> = {
-  28: 'Overlooked Cervical Scrofula Clue',
-  44: 'Dismissed Diabetes Comorbidity Risk Factor',
-  62: 'Ignored Intimate Household Exposure Contact',
-  74: 'Sub-Standard Mask Leakage in Airborne Isolation Ward',
-  88: 'Inappropriate Therapy Cessation for Benign Drug Tinting',
+  28: 'A symptom clue was missed — slide down and re-learn it',
+  44: 'A risk-factor clue was missed — slide down and re-learn it',
+  62: 'A TB contact clue was missed — slide down and re-learn it',
+  74: 'A clinical clue was missed — slide down and re-learn it',
+  88: 'A clinical clue was missed — slide down and re-learn it',
   96: 'Clinical Clue Missed • Returning for Reinforcement'
 };
 
@@ -197,7 +202,7 @@ export default function SnakeLadderGame({
   });
 
   // Active Clinical Challenge Modal
-  const [activeChallenge, setActiveChallenge] = useState<Level1ClinicalQuestion | null>(null);
+  const [activeChallenge, setActiveChallenge] = useState<DocumentLevel1Question | null>(null);
   const [selectedOptionIndex, setSelectedOptionIndex] = useState<number | null>(null);
   const [challengeResult, setChallengeResult] = useState<{
     isCorrect: boolean;
@@ -258,6 +263,17 @@ export default function SnakeLadderGame({
   // Square 100 Grand Finale & Diagnostic Cascade State
   const [cascadeStep, setCascadeStep] = useState<number>(0);
   const [showGrandMastery, setShowGrandMastery] = useState(false);
+
+  // Level 1 study tabs (scenarios, clues, distractors, Spot the Clues, re-learning)
+  const [showStudy, setShowStudy] = useState(false);
+  // TB Detective Badge — earned at 5 consecutive correct answers (document rule)
+  const [badgeEarned, setBadgeEarned] = useState(false);
+  // Section F rule: confusing relevant / non-relevant information loses one turn
+  const [loseNextTurn, setLoseNextTurn] = useState(false);
+  const [loseTurnNotice, setLoseTurnNotice] = useState(false);
+  // "Try a Similar Case" — re-learning retry on the same section
+  const [trySimilarCase, setTrySimilarCase] = useState(false);
+  const [sectionWrongCounts, setSectionWrongCounts] = useState<Record<string, number>>({});
 
   // Replay Weak Areas Mode
   const [isReplayingWeakAreas, setIsReplayingWeakAreas] = useState(false);
@@ -351,7 +367,7 @@ export default function SnakeLadderGame({
             gameCompleted: saved.completed,
             level2Unlocked: saved.completed && saved.accuracy >= 80 ? true : prev.level2Unlocked,
             finalChallengePassed:
-              saved.completedQuestionIds.includes('t25') && !saved.missedQuestionIds.includes('t25')
+              saved.completedQuestionIds.includes('d50') && !saved.missedQuestionIds.includes('d50')
                 ? true
                 : prev.finalChallengePassed
           };
@@ -420,6 +436,15 @@ export default function SnakeLadderGame({
   // Roll Dice Logic
   const handleRollDice = async () => {
     if (isRolling || isMoving || activeChallenge || showGrandMastery) return;
+
+    // Section F rule (document): confusing relevant / non-relevant
+    // information loses one turn.
+    if (loseNextTurn) {
+      setLoseNextTurn(false);
+      setLoseTurnNotice(true);
+      setTimeout(() => setLoseTurnNotice(false), 2600);
+      return;
+    }
 
     setIsRolling(true);
     setRollAnnouncement(null);
@@ -499,8 +524,8 @@ export default function SnakeLadderGame({
   const handleSquareArrival = async (squareNum: number) => {
     // 1. Check for Square 100 (Grand Finale)
     if (squareNum === 100) {
-      const uncompletedPrior = LEVEL1_25_CLINICAL_QUESTIONS.filter(
-        q => q.questionNumber < 25 && !gameState.completedQuestionIds.includes(q.id)
+      const uncompletedPrior = DOCUMENT_50_QUESTIONS.filter(
+        q => q.questionNumber < 50 && !gameState.completedQuestionIds.includes(q.id)
       );
 
       if (uncompletedPrior.length > 0) {
@@ -509,10 +534,7 @@ export default function SnakeLadderGame({
         return;
       }
 
-      const q25 = getChallengeForSquareNumber(100);
-      if (q25) {
-        triggerClinicalChallenge(q25);
-      }
+      triggerClinicalChallenge(getDocumentFinalQuestion());
       return;
     }
 
@@ -566,17 +588,20 @@ export default function SnakeLadderGame({
       return;
     }
 
-    // 4. Check for Ladder with Question
+    // 4. Check for Ladder with Question — the question comes from the
+    // document bank in section order, not from the square number.
     if (LADDERS[squareNum]) {
       const ladderTo = LADDERS[squareNum];
-      const challenge = getChallengeForSquareNumber(squareNum);
-      if (challenge && !gameState.completedQuestionIds.includes(challenge.id)) {
+      const hasUncompleted = DOCUMENT_50_QUESTIONS.some(
+        q => q.questionNumber < 50 && !gameState.completedQuestionIds.includes(q.id)
+      );
+      if (hasUncompleted) {
         setPendingAction({
           type: 'ladder',
           from: squareNum,
           to: ladderTo
         });
-        triggerClinicalChallenge(challenge);
+        triggerClinicalChallenge(getNextDocumentQuestion(gameState.completedQuestionIds));
         return;
       }
     }
@@ -584,14 +609,16 @@ export default function SnakeLadderGame({
     // 5. Check for Snake with Question
     if (SNAKES[squareNum]) {
       const snakeTo = SNAKES[squareNum];
-      const challenge = getChallengeForSquareNumber(squareNum);
-      if (challenge && !gameState.completedQuestionIds.includes(challenge.id)) {
+      const hasUncompleted = DOCUMENT_50_QUESTIONS.some(
+        q => q.questionNumber < 50 && !gameState.completedQuestionIds.includes(q.id)
+      );
+      if (hasUncompleted) {
         setPendingAction({
           type: 'snake',
           from: squareNum,
           to: snakeTo
         });
-        triggerClinicalChallenge(challenge);
+        triggerClinicalChallenge(getNextDocumentQuestion(gameState.completedQuestionIds));
         return;
       }
     }
@@ -600,26 +627,15 @@ export default function SnakeLadderGame({
     checkSquareChallenge(squareNum);
   };
 
-  // Check if square triggers an uncompleted challenge
-  const checkSquareChallenge = (squareNum: number) => {
-    const directChallenge = getChallengeForSquareNumber(squareNum);
-    if (directChallenge && !gameState.completedQuestionIds.includes(directChallenge.id)) {
-      setPendingAction(null);
-      triggerClinicalChallenge(directChallenge);
-      return;
-    }
-
-    const uncompleted = LEVEL1_25_CLINICAL_QUESTIONS.find(
-      q => !gameState.completedQuestionIds.includes(q.id) && q.squareNumber <= squareNum
-    );
-    if (uncompleted) {
-      setPendingAction(null);
-      triggerClinicalChallenge(uncompleted);
-    }
+  // Every landing asks the next document question in bank order
+  // (Q1-Q49, section order); when all 49 are done it wraps to Q1.
+  const checkSquareChallenge = (_squareNum: number) => {
+    setPendingAction(null);
+    triggerClinicalChallenge(getNextDocumentQuestion(gameState.completedQuestionIds));
   };
 
   // Launch Question Modal
-  const triggerClinicalChallenge = (challenge: Level1ClinicalQuestion) => {
+  const triggerClinicalChallenge = (challenge: DocumentLevel1Question) => {
     setActiveChallenge(challenge);
     setSelectedOptionIndex(null);
     setChallengeResult(null);
@@ -677,6 +693,15 @@ export default function SnakeLadderGame({
     // Session streak (consecutive correct answers) — feel layer only, not saved.
     const newStreak = isCorrect ? streak + 1 : 0;
     setStreak(newStreak);
+    if (!isCorrect) {
+      setSectionWrongCounts(prev => ({
+        ...prev,
+        [activeChallenge.section]: (prev[activeChallenge.section] || 0) + 1
+      }));
+      // Document game-action mapping: confusing relevant / non-relevant
+      // information (Section F) loses one turn.
+      if (activeChallenge.section === 'F') setLoseNextTurn(true);
+    }
 
     if (isCorrect) {
       soundService.playCorrect();
@@ -693,7 +718,8 @@ export default function SnakeLadderGame({
         showCelebration('🔥', '3 in a row — you are on fire!', 'Your TB instincts are sharp today.');
       } else if (newStreak === 5) {
         soundService.playBonusEarned();
-        showCelebration('🌟', '5 in a row — unstoppable!', 'Seriously impressive clinical thinking.');
+        setBadgeEarned(true);
+        showCelebration('🔍', 'TB Detective Badge earned!', '5 correct in a row — you are a TB Detective.');
       } else if (newStreak === 10) {
         soundService.playBonusEarned();
         showCelebration('🏆', '10 in a row — TB star!', 'You are flying through Level 1.');
@@ -720,7 +746,7 @@ export default function SnakeLadderGame({
       const nextWrong = prev.wrongAnswers + (isCorrect ? 0 : 1);
       const nextTotal = prev.totalAnswered + 1;
       const nextScore = nextCorrect * 10;
-      const nextAccuracy = Math.round((nextCorrect / 25) * 100);
+      const nextAccuracy = Math.round((nextCorrect / nextTotal) * 100);
       const nextXp = prev.xp + earnedXp;
 
       const completedIds = Array.from(new Set([...prev.completedQuestionIds, activeChallenge.id]));
@@ -728,7 +754,7 @@ export default function SnakeLadderGame({
         ? prev.missedQuestionIds.filter(id => id !== activeChallenge.id)
         : Array.from(new Set([...prev.missedQuestionIds, activeChallenge.id]));
 
-      const isFinal = activeChallenge.questionNumber === 25;
+      const isFinal = activeChallenge.questionNumber === 50;
 
       return {
         ...prev,
@@ -753,19 +779,35 @@ export default function SnakeLadderGame({
   };
 
   // Dismiss challenge modal after review & trigger ladder/snake
-  const handleChallengeDismiss = async () => {
-    const isFinalChallenge = activeChallenge?.questionNumber === 25;
+  const handleChallengeDismiss = async (opts?: { similar?: boolean }) => {
+    const isFinalChallenge = activeChallenge?.questionNumber === 50;
     const wasCorrect = challengeResult?.isCorrect;
     const currentAction = pendingAction;
+    const dismissedChallenge = activeChallenge;
+    const wantsSimilar = opts?.similar ?? trySimilarCase;
 
     setActiveChallenge(null);
     setChallengeResult(null);
     setPendingAction(null);
     setShowFloatingScore(false);
+    setTrySimilarCase(false);
 
     if (isReplayingWeakAreas) {
       handleNextWeakAreaQuestion();
       return;
+    }
+
+    // Re-learning retry: another case on the same concept/section.
+    if (wantsSimilar && !wasCorrect && dismissedChallenge) {
+      const similar = getSimilarCaseQuestion(
+        dismissedChallenge.section,
+        gameState.completedQuestionIds,
+        dismissedChallenge.id
+      );
+      if (similar) {
+        triggerClinicalChallenge(similar);
+        return;
+      }
     }
 
     // 1. If on Ladder Square and Correct -> LADDER ACTIVATED!
@@ -779,7 +821,7 @@ export default function SnakeLadderGame({
         title: 'LADDER ACTIVATED!',
         description: LADDER_REASONS[currentAction.from] || 'Great TB Clinical Reasoning! Climbing upward!',
         marks: 10,
-        xp: 20
+        xp: 4
       });
 
       setTimeout(async () => {
@@ -851,7 +893,7 @@ export default function SnakeLadderGame({
             soundService.playQuizComplete();
             setShowGrandMastery(true);
 
-            const passed = gameState.correctAnswers >= 20;
+            const passed = gameState.correctAnswers >= DOCUMENT_LEVEL2_UNLOCK_CORRECT;
             if (passed) {
               soundService.playLevelUnlock();
               setGameState(st => ({
@@ -894,7 +936,7 @@ export default function SnakeLadderGame({
 
     if (gameState.missedQuestionIds.length > 0) {
       const firstMissedId = gameState.missedQuestionIds[0];
-      const q = getChallengeById(firstMissedId);
+      const q = getDocumentQuestionById(firstMissedId);
       if (q) {
         triggerClinicalChallenge(q);
       }
@@ -905,7 +947,7 @@ export default function SnakeLadderGame({
     const nextIdx = weakQueueIndex + 1;
     if (nextIdx < gameState.missedQuestionIds.length) {
       setWeakQueueIndex(nextIdx);
-      const q = getChallengeById(gameState.missedQuestionIds[nextIdx]);
+      const q = getDocumentQuestionById(gameState.missedQuestionIds[nextIdx]);
       if (q) {
         triggerClinicalChallenge(q);
       }
@@ -913,7 +955,7 @@ export default function SnakeLadderGame({
       setIsReplayingWeakAreas(false);
       setShowGrandMastery(true);
 
-      if (gameState.correctAnswers >= 20) {
+      if (gameState.correctAnswers >= DOCUMENT_LEVEL2_UNLOCK_CORRECT) {
         soundService.playLevelUnlock();
         setGameState(st => ({
           ...st,
@@ -1001,13 +1043,8 @@ export default function SnakeLadderGame({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState.currentSquare]);
 
-  // Score Ranking based ONLY on student's own score
-  const getScoreRanking = (accuracyPct: number) => {
-    if (accuracyPct >= 80) return 'TB Awareness Champion';
-    if (accuracyPct >= 70) return 'TB Investigator';
-    if (accuracyPct >= 50) return 'TB Clue Finder';
-    return 'TB Learner';
-  };
+  // Document performance category (results screen), from accuracy.
+  const getScoreRanking = (accuracyPct: number) => getDocumentPerformanceCategory(accuracyPct);
 
   // SVG Ladders definition
   const renderedLadders = useMemo(() => {
@@ -1032,17 +1069,17 @@ export default function SnakeLadderGame({
   // Category counts calculation for final screen
   const categoryStats = useMemo(() => {
     const stats: Record<ChallengeCategory, { correct: number; total: number }> = {
-      symptoms: { correct: 0, total: 7 },
-      clinicalClues: { correct: 0, total: 4 },
-      riskFactors: { correct: 0, total: 4 },
-      patientHistory: { correct: 0, total: 3 },
-      exposure: { correct: 0, total: 2 },
-      clinicalReasoning: { correct: 0, total: 3 },
-      presumptiveTB: { correct: 0, total: 2 }
+      symptoms: { correct: 0, total: DOCUMENT_CATEGORY_TOTALS.symptoms },
+      clinicalClues: { correct: 0, total: DOCUMENT_CATEGORY_TOTALS.clinicalClues },
+      riskFactors: { correct: 0, total: DOCUMENT_CATEGORY_TOTALS.riskFactors },
+      patientHistory: { correct: 0, total: DOCUMENT_CATEGORY_TOTALS.patientHistory },
+      exposure: { correct: 0, total: DOCUMENT_CATEGORY_TOTALS.exposure },
+      clinicalReasoning: { correct: 0, total: DOCUMENT_CATEGORY_TOTALS.clinicalReasoning },
+      presumptiveTB: { correct: 0, total: DOCUMENT_CATEGORY_TOTALS.presumptiveTB }
     };
 
     const answers = gameState.userAnswers || {};
-    LEVEL1_25_CLINICAL_QUESTIONS.forEach(q => {
+    DOCUMENT_50_QUESTIONS.forEach(q => {
       const ans = answers[q.id];
       if (ans && ans.isCorrect && stats[q.category]) {
         stats[q.category].correct += 1;
@@ -1089,6 +1126,10 @@ export default function SnakeLadderGame({
   };
 
   const stageStyle = getStageHeaderStyles(stageDetails.stage);
+
+  if (showStudy) {
+    return <Level1StudyTabs onBack={() => setShowStudy(false)} />;
+  }
 
   return (
     <div className="min-h-screen bg-alabaster dark:bg-[#0b1220] text-ink-900 dark:text-slate-100 font-sans selection:bg-blue-500/20 selection:text-blue-900 relative overflow-hidden flex flex-col">
@@ -1156,7 +1197,7 @@ export default function SnakeLadderGame({
               <div>
                 <span className="text-slate-500 dark:text-slate-400 dark:text-slate-400 text-[10px] uppercase block leading-none font-bold">SCORE</span>
                 <span className="text-sm font-black text-amber-900">
-                  {gameState.score} <span className="text-[11px] text-amber-600/80 font-normal">/ 250</span>
+                  {gameState.score} <span className="text-[11px] text-amber-600/80 font-normal">/ 500</span>
                 </span>
               </div>
             </div>
@@ -1203,13 +1244,24 @@ export default function SnakeLadderGame({
               </div>
             </div>
 
+            {/* 🔍 TB DETECTIVE BADGE: earned at 5 correct in a row */}
+            {badgeEarned && (
+              <div className="tq-chip tq-chip-teal px-3.5 py-1.5 rounded-xl">
+                <span className="text-base leading-none">🔍</span>
+                <div>
+                  <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase block leading-none font-bold">BADGE</span>
+                  <span className="text-sm font-black text-teal-800">TB Detective</span>
+                </div>
+              </div>
+            )}
+
             {/* 🟣 QUESTIONS: Purple */}
             <div className="tq-chip tq-chip-royal px-3.5 py-1.5 rounded-xl">
               <span className="text-base leading-none">🟣</span>
               <div>
                 <span className="text-slate-500 dark:text-slate-400 dark:text-slate-400 text-[10px] uppercase block leading-none font-bold">QUESTIONS</span>
                 <span className="text-sm font-black text-indigo-900">
-                  {(gameState.completedQuestionIds || []).length} <span className="text-[11px] text-indigo-600/80 font-normal">/ 25</span>
+                  {(gameState.completedQuestionIds || []).length} <span className="text-[11px] text-indigo-600/80 font-normal">/ 50</span>
                 </span>
               </div>
             </div>
@@ -1217,6 +1269,16 @@ export default function SnakeLadderGame({
 
           {/* Controls: How to Play, Sound, Music, Reset, Exit */}
           <div className="flex items-center gap-2">
+            {/* Study Tabs Button */}
+            <button
+              onClick={() => setShowStudy(true)}
+              title="Level 1 study tabs: scenarios, clues, distractors, Spot the Clues"
+              className="px-3 py-1.5 rounded-xl tq-card text-xs font-mono font-bold text-ink-900 dark:text-slate-100 hover:text-brand-teal hover:border-teal-300 shadow-sm transition-all flex items-center gap-1.5 active:scale-95"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-brand-teal" />
+              <span className="hidden sm:inline">Study</span>
+            </button>
+
             {/* How to Play Guide Button */}
             <button
               onClick={() => setShowHowToPlay(true)}
@@ -1286,6 +1348,21 @@ export default function SnakeLadderGame({
           </div>
         </div>
 
+        <div className="max-w-7xl mx-auto mt-2 text-center">
+          <span className="text-[11px] font-bold text-amber-700">
+            Teaching simulation — content pending faculty validation
+          </span>
+          <span className="mx-2 text-slate-300">•</span>
+          <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
+            Presumptive TB ≠ confirmed TB
+          </span>
+          {loseTurnNotice && (
+            <div className="mt-1 text-[11px] font-black text-rose-700">
+              Turn lost — confusing relevant / non-relevant information loses one turn.
+            </div>
+          )}
+        </div>
+
         {/* ========================================================================= */}
         {/* 8. PROGRESS BAR: VIBRANT GRADIENT WITH MOVING SHINE */}
         {/* ========================================================================= */}
@@ -1353,7 +1430,7 @@ export default function SnakeLadderGame({
                 const hasSnake = !!SNAKES[squareNum];
                 const isAutoBonus = !!AUTOMATIC_LADDERS[squareNum];
                 const isAutoSnake = !!AUTOMATIC_SNAKES[squareNum];
-                const challenge = getChallengeForSquareNumber(squareNum);
+                const challenge = squareNum === 100 ? getDocumentFinalQuestion() : null;
                 const isCompletedQuestion = challenge && gameState.completedQuestionIds.includes(challenge.id);
                 const isMissedQuestion = challenge && gameState.missedQuestionIds.includes(challenge.id);
 
@@ -1803,15 +1880,15 @@ export default function SnakeLadderGame({
           {/* 25 QUESTIONS CURRICULUM SYLLABUS TRACKER */}
           <div className="tq-card rounded-2xl p-4.5 shadow-sm">
             <div className="flex items-center justify-between mb-3 font-mono">
-              <span className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 dark:text-slate-400 font-extrabold">25 TB CLINICAL QUESTIONS</span>
+              <span className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-extrabold">50 TB CLINICAL QUESTIONS</span>
               <span className="text-xs font-black text-blue-600">
-                {(gameState.completedQuestionIds || []).length} / 25 DONE
+                {(gameState.completedQuestionIds || []).length} / 50 DONE
               </span>
             </div>
 
             {/* Questions Progress Grid (5x5) */}
             <div className="grid grid-cols-5 gap-1.5 font-mono text-xs font-bold">
-              {LEVEL1_25_CLINICAL_QUESTIONS.map(q => {
+              {DOCUMENT_50_QUESTIONS.map(q => {
                 const isDone = (gameState.completedQuestionIds || []).includes(q.id);
                 const isMissed = (gameState.missedQuestionIds || []).includes(q.id);
                 return (
@@ -1832,7 +1909,7 @@ export default function SnakeLadderGame({
               })}
             </div>
             <div className="mt-3 flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400 dark:text-slate-400 font-semibold">
-              <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500" /> Correct (+10)</span>
+              <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500" /> Correct (+10 score · +4 XP)</span>
               <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-rose-500" /> Review</span>
               <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-slate-300" /> Pending</span>
             </div>
@@ -1851,9 +1928,9 @@ export default function SnakeLadderGame({
               <div className="absolute top-8 right-8 pointer-events-none animate-bounce flex items-center gap-2 font-mono text-sm font-black px-3 py-1 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-800 shadow-lg">
                 <Sparkles className="w-4 h-4 text-emerald-600" />
                 <span>
-                  {activeChallenge?.questionNumber === 25
-                    ? '+30 BONUS MARKS • +100 XP'
-                    : '+10 MARKS • +20 XP'}
+                  {activeChallenge?.questionNumber === 50
+                    ? '+30 BONUS MARKS • +4 XP'
+                    : '+10 MARKS • +4 XP'}
                 </span>
               </div>
             )}
@@ -1863,10 +1940,16 @@ export default function SnakeLadderGame({
               <div className="flex items-center gap-2.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-brand-royal animate-pulse" />
                 <span className="text-xs font-mono font-black tracking-wider text-brand-royal dark:text-blue-400 uppercase">
-                  TB CLINICAL QUESTION #{activeChallenge.questionNumber} / 25
+                  TB CLINICAL QUESTION #{activeChallenge.questionNumber} / 50
                 </span>
                 <span className="tq-chip tq-chip-royal px-2.5 py-0.5 font-mono">
-                  {CATEGORY_LABELS[activeChallenge.category] || activeChallenge.categoryLabel}
+                  {DOCUMENT_CATEGORY_LABELS[activeChallenge.category] || activeChallenge.categoryLabel}
+                </span>
+                <span className="tq-chip tq-chip-teal px-2.5 py-0.5 font-mono">
+                  {activeChallenge.typeLabel}
+                </span>
+                <span className="tq-chip tq-chip-amber px-2.5 py-0.5 font-mono">
+                  {activeChallenge.difficultyDoc}
                 </span>
               </div>
 
@@ -1883,7 +1966,7 @@ export default function SnakeLadderGame({
             <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-blue-50/60 to-cyan-50/60 border border-blue-200/80 shadow-sm">
               <div className="text-[11px] font-mono uppercase tracking-widest text-blue-700 mb-1.5 flex items-center gap-1.5 font-black">
                 <Activity className="w-3.5 h-3.5 text-blue-600" />
-                PATIENT CLUE
+                SECTION
               </div>
               <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 leading-relaxed">
                 {activeChallenge.patientClue}
@@ -2000,6 +2083,9 @@ export default function SnakeLadderGame({
                     <div className="text-xs font-mono font-bold text-emerald-800 uppercase tracking-wider mb-1">
                       Great TB clinical reasoning
                     </div>
+                    <p className="text-sm font-semibold text-emerald-900 leading-relaxed mt-1">
+                      ✓ Correct! You identified an important clue for TB. Key learning: {activeChallenge.correctFeedback}
+                    </p>
 
                     {/* 💡 WHAT YOU LEARNED */}
                     <div className="tq-glass mt-2.5 p-3.5 rounded-xl border border-emerald-200 dark:border-emerald-500/40">
@@ -2007,16 +2093,20 @@ export default function SnakeLadderGame({
                         <span>💡</span> WHAT YOU LEARNED
                       </div>
                       <p className="text-sm text-slate-800 dark:text-slate-200 leading-relaxed font-semibold">
-                        "{activeChallenge.clinicalInsight}"
+                        {activeChallenge.explanation}
+                      </p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5">
+                        {activeChallenge.learningPoint}
+                        {activeChallenge.referencesDoc?.length ? ` · Refs ${activeChallenge.referencesDoc.join(' ')}` : ''}
                       </p>
                     </div>
 
                     <div className="mt-4 flex justify-end">
                       <button
-                        onClick={handleChallengeDismiss}
+                        onClick={() => handleChallengeDismiss()}
                         className="tq-btn-primary touch-target px-6 py-2.5 rounded-xl text-white font-mono text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all active:scale-95 min-h-[44px]"
                       >
-                        <span>{activeChallenge?.questionNumber === 25 ? 'See Results' : 'Next Question'}</span>
+                        <span>{activeChallenge?.questionNumber === 50 ? 'See Results' : 'Next Question'}</span>
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     </div>
@@ -2046,6 +2136,9 @@ export default function SnakeLadderGame({
                     <p className="text-sm font-semibold text-rose-800 leading-relaxed">
                       {WRONG_ENCOURAGEMENT[gameState.totalAnswered % WRONG_ENCOURAGEMENT.length]} Every
                       doctor gets questions wrong while learning — what matters is the clue you take away.
+                    </p>
+                    <p className="text-sm font-semibold text-rose-900 leading-relaxed mt-2">
+                      ✗ Not quite. {activeChallenge.incorrectFeedback} Remember: {activeChallenge.learningPoint}
                     </p>
 
                     {/* Comparison: Selected vs Correct */}
@@ -2077,12 +2170,41 @@ export default function SnakeLadderGame({
                       </p>
                     </div>
 
+                    {/* Re-learning screen (document mechanism) */}
+                    <div className="mt-3 p-3.5 rounded-xl bg-amber-50 border border-amber-200">
+                      <div className="text-[11px] font-mono font-black text-amber-800 uppercase tracking-widest mb-1.5">
+                        ✗ Let&apos;s learn from this mistake — why was my answer wrong?
+                      </div>
+                      <dl className="space-y-1.5 text-xs sm:text-sm text-slate-700 dark:text-slate-200">
+                        <div><dt className="font-black text-emerald-800 inline">Correct answer: </dt><dd className="inline font-semibold">{activeChallenge.correctAnswerText}</dd></div>
+                        <div><dt className="font-black inline">Why it is correct: </dt><dd className="inline">{activeChallenge.explanation}</dd></div>
+                        <div><dt className="font-black inline">Why your answer was wrong: </dt><dd className="inline">{activeChallenge.incorrectFeedback}</dd></div>
+                        <div><dt className="font-black text-amber-800 inline">Key learning: </dt><dd className="inline font-semibold">{activeChallenge.learningPoint}</dd></div>
+                      </dl>
+                      {(sectionWrongCounts[activeChallenge.section] || 0) >= 2 && (
+                        <p className="mt-2 text-xs font-black text-rose-700">
+                          Retry Challenge — this concept has tripped you up more than once. Here is another case on the same concept.
+                        </p>
+                      )}
+                      {activeChallenge.section === 'F' && (
+                        <p className="mt-2 text-xs font-black text-rose-700">
+                          Confusing relevant / non-relevant information loses your next turn.
+                        </p>
+                      )}
+                      <button
+                        onClick={() => handleChallengeDismiss({ similar: true })}
+                        className="mt-3 min-h-[44px] rounded-xl bg-amber-600 px-4 py-2 text-xs font-black uppercase text-white shadow-sm active:scale-95"
+                      >
+                        Try a Similar Case
+                      </button>
+                    </div>
+
                     <div className="mt-4 flex justify-end">
                       <button
-                        onClick={handleChallengeDismiss}
+                        onClick={() => handleChallengeDismiss()}
                         className="tq-btn-secondary touch-target px-6 py-2.5 rounded-xl font-mono text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all active:scale-95 shadow-sm min-h-[44px]"
                       >
-                        <span>{activeChallenge?.questionNumber === 25 ? 'See Results' : 'Next Question'}</span>
+                        <span>{activeChallenge?.questionNumber === 50 ? 'See Results' : 'Next Question'}</span>
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     </div>
@@ -2153,7 +2275,7 @@ export default function SnakeLadderGame({
       {showGrandMastery && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-md animate-in fade-in duration-300 overflow-y-auto">
           {/* Confetti when Level 1 is mastered at Square 100 */}
-          {gameState.correctAnswers >= 20 && gameState.finalChallengePassed && (
+          {gameState.correctAnswers >= DOCUMENT_LEVEL2_UNLOCK_CORRECT && gameState.finalChallengePassed && (
             <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden>
               {confettiPieces.map(p => (
                 <span
@@ -2189,8 +2311,8 @@ export default function SnakeLadderGame({
               ))}
             </div>
 
-            {/* Check if 80% Mastery condition met: correctAnswers >= 20 */}
-            {gameState.correctAnswers >= 20 && gameState.finalChallengePassed ? (
+            {/* Check if 80% Mastery condition met: correctAnswers >= 40 (80% of 50) */}
+            {gameState.correctAnswers >= DOCUMENT_LEVEL2_UNLOCK_CORRECT && gameState.finalChallengePassed ? (
               <div>
                 <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/30 mb-3 text-3xl">
                   🏆
@@ -2212,7 +2334,7 @@ export default function SnakeLadderGame({
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 my-4 text-left font-mono">
                   <div className="tq-glass p-3 rounded-2xl border border-amber-200 dark:border-amber-500/40">
                     <span className="text-[10px] text-slate-500 dark:text-slate-400 dark:text-slate-400 uppercase block font-bold">SCORE</span>
-                    <span className="text-base font-black text-amber-900">{gameState.score} / 250</span>
+                    <span className="text-base font-black text-amber-900">{gameState.score} / 500</span>
                   </div>
                   <div className="tq-glass p-3 rounded-2xl border border-emerald-200 dark:border-emerald-500/40">
                     <span className="text-[10px] text-slate-500 dark:text-slate-400 dark:text-slate-400 uppercase block font-bold">ACCURACY</span>
@@ -2220,7 +2342,7 @@ export default function SnakeLadderGame({
                   </div>
                   <div className="tq-glass p-3 rounded-2xl border border-blue-200 dark:border-blue-500/40">
                     <span className="text-[10px] text-slate-500 dark:text-slate-400 dark:text-slate-400 uppercase block font-bold">CORRECT</span>
-                    <span className="text-base font-black text-blue-900">{gameState.correctAnswers} / 25</span>
+                    <span className="text-base font-black text-blue-900">{gameState.correctAnswers} / 50</span>
                   </div>
                   <div className="p-3 rounded-2xl bg-purple-50 border border-purple-200">
                     <span className="text-[10px] text-slate-500 dark:text-slate-400 dark:text-slate-400 uppercase block font-bold">TOTAL XP</span>
@@ -2235,7 +2357,7 @@ export default function SnakeLadderGame({
                     <span>PERFORMANCE</span>
                   </div>
                   <div className="space-y-1.5">
-                    {Object.entries(CATEGORY_LABELS).map(([catKey, label]) => {
+                    {Object.entries(DOCUMENT_CATEGORY_LABELS).map(([catKey, label]) => {
                       const stat = categoryStats[catKey as ChallengeCategory];
                       const isGood = stat.correct >= Math.ceil(stat.total * 0.7);
                       return (
@@ -2252,9 +2374,12 @@ export default function SnakeLadderGame({
                 </div>
 
                 {/* Unlock Level 2 Banner */}
-                <div className="my-5 p-4 rounded-2xl bg-gradient-to-r from-blue-50 via-teal-50 to-emerald-50 border border-blue-200 flex items-center justify-center gap-3 text-blue-900 font-mono text-sm font-bold shadow-sm">
-                  <Unlock className="w-5 h-5 text-blue-600" />
-                  <span>🔓 LEVEL 2 UNLOCKED — INVESTIGATION LEARNING</span>
+                <div className="my-5 p-4 rounded-2xl bg-gradient-to-r from-blue-50 via-teal-50 to-emerald-50 border border-blue-200 flex flex-col items-center justify-center gap-1 text-blue-900 font-mono text-sm font-bold shadow-sm">
+                  <span className="flex items-center gap-2"><Unlock className="w-5 h-5 text-blue-600" />🔓 LEVEL 2 UNLOCKED — INVESTIGATION LEARNING</span>
+                  <span className="text-xs font-semibold text-blue-800">
+                    {getDocumentPerformanceCategory(gameState.accuracy)} · ~80% accuracy unlocks Level 2
+                  </span>
+                  <span className="text-xs font-semibold text-slate-600">Presumptive TB ≠ confirmed TB. Recognize → Assess → Test → Interpret → Diagnose.</span>
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -2287,7 +2412,7 @@ export default function SnakeLadderGame({
                   🔒 LEVEL 2 LOCKED
                 </h2>
                 <div className="tq-chip tq-chip-amber my-2 inline-block px-3.5 py-1 font-mono">
-                  {gameState.correctAnswers} / 25 • {gameState.accuracy}% (80% REQUIRED)
+                  {gameState.correctAnswers} / 50 • {gameState.accuracy}% (80% REQUIRED)
                 </div>
 
                 <p className="text-sm text-slate-600 dark:text-slate-400 max-w-md mx-auto mt-2 leading-relaxed font-medium">
@@ -2298,7 +2423,7 @@ export default function SnakeLadderGame({
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 my-4 text-left font-mono">
                   <div className="tq-glass p-3 rounded-2xl border border-amber-200 dark:border-amber-500/40">
                     <span className="text-[10px] text-slate-500 dark:text-slate-400 dark:text-slate-400 uppercase block font-bold">SCORE</span>
-                    <span className="text-base font-black text-amber-900">{gameState.score} / 250</span>
+                    <span className="text-base font-black text-amber-900">{gameState.score} / 500</span>
                   </div>
                   <div className="tq-glass p-3 rounded-2xl border border-rose-200 dark:border-rose-500/40">
                     <span className="text-[10px] text-slate-500 dark:text-slate-400 dark:text-slate-400 uppercase block font-bold">ACCURACY</span>
@@ -2306,7 +2431,7 @@ export default function SnakeLadderGame({
                   </div>
                   <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 dark:border-slate-700">
                     <span className="text-[10px] text-slate-500 dark:text-slate-400 dark:text-slate-400 uppercase block font-bold">CORRECT</span>
-                    <span className="text-base font-black text-slate-800 dark:text-slate-200">{gameState.correctAnswers} / 25</span>
+                    <span className="text-base font-black text-slate-800 dark:text-slate-200">{gameState.correctAnswers} / 50</span>
                   </div>
                   <div className="tq-glass p-3 rounded-2xl border border-blue-200 dark:border-blue-500/40">
                     <span className="text-[10px] text-slate-500 dark:text-slate-400 dark:text-slate-400 uppercase block font-bold">ACHIEVEMENT</span>
@@ -2321,7 +2446,7 @@ export default function SnakeLadderGame({
                     <span>PERFORMANCE</span>
                   </div>
                   <div className="space-y-1.5">
-                    {Object.entries(CATEGORY_LABELS).map(([catKey, label]) => {
+                    {Object.entries(DOCUMENT_CATEGORY_LABELS).map(([catKey, label]) => {
                       const stat = categoryStats[catKey as ChallengeCategory];
                       const isGood = stat.correct >= Math.ceil(stat.total * 0.7);
                       return (

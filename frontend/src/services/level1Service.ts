@@ -207,7 +207,7 @@ export async function loadSnakeProgressFromSupabase(
  * Save a finished Snake & Ladders run to Supabase: quiz result row, the
  * snake progress row, the completion achievement, and the profile
  * (XP + level). Existing behaviour preserved: +500 XP completion reward
- * and Level 2 unlock when the student passed (20+ correct answers).
+ * and Level 2 unlock when the student passed (40+ correct answers, 80% of 50).
  */
 export async function syncSnakeCompletionToSupabase(
   userId: string | null | undefined,
@@ -218,7 +218,7 @@ export async function syncSnakeCompletionToSupabase(
   try {
     await supabaseData.saveQuizResult(userId, 'level1-snake', state.score, state.xp, durationSeconds);
     await saveSnakeProgressToSupabase(userId, state);
-    if (state.completed && state.correctAnswers >= 20) {
+    if (state.completed && state.correctAnswers >= 40) { // 80% of the 50 document questions
       await supabaseData.saveAchievement(userId, 'Level 1: TB Awareness Champion');
       const existingProfile = await supabaseData.fetchUserProfile(userId);
       // Same as the previous inline behaviour: profile XP becomes the

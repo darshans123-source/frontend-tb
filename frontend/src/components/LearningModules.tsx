@@ -290,7 +290,7 @@ export default function LearningModules({
   // Detailed Comprehensive Learning Page
   if (selectedModule) {
     return (
-      <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto space-y-6 sm:space-y-8 text-white">
+      <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto space-y-6 sm:space-y-8 bg-alabaster dark:bg-[#0b1220] text-ink-900 dark:text-slate-100 min-h-screen max-w-full overflow-hidden">
         {/* Back navigation button */}
         <Button
           startIcon={<ArrowLeft size={18} />}
@@ -302,20 +302,20 @@ export default function LearningModules({
         </Button>
 
         {/* Header Hero Banner */}
-        <Paper className="p-4 sm:p-8 bg-gradient-to-r from-slate-900 via-cyan-950 to-slate-900 border border-cyan-500/40 rounded-2xl sm:rounded-3xl space-y-4">
+        <Paper className="tq-card p-4 sm:p-8 sm:rounded-3xl space-y-4">
           <div className="flex justify-between items-start flex-wrap gap-4">
             <div>
               <Chip label="CDC & NTEP Certified Content" color="primary" size="small" className="mb-2 font-mono" />
-              <Typography variant="h3" className="font-bold text-white mb-2 text-2xl sm:text-4xl">
+              <Typography variant="h3" className="font-bold text-ink-900 dark:text-slate-100 mb-2 text-2xl sm:text-4xl tq-display">
                 {selectedModule.title}
               </Typography>
-              <Typography variant="body1" className="text-slate-300 max-w-3xl text-xs sm:text-base">
+              <Typography variant="body1" className="text-slate-600 dark:text-slate-300 max-w-3xl text-xs sm:text-base">
                 {selectedModule.overview}
               </Typography>
             </div>
-            <div className="bg-slate-950/80 p-4 rounded-2xl border border-cyan-500/30 text-center font-mono w-full sm:w-auto">
-              <Typography variant="caption" className="text-slate-400 uppercase">Module Progress</Typography>
-              <Typography variant="h5" className="text-cyan-400 font-bold">{progress}%</Typography>
+            <div className="tq-glass p-4 rounded-2xl text-center font-mono w-full sm:w-auto">
+              <Typography variant="caption" className="text-slate-400 dark:text-slate-500 uppercase">Module Progress</Typography>
+              <Typography variant="h5" className="text-brand-teal-deep dark:text-teal-300 font-bold">{progress}%</Typography>
               <LinearProgress variant="determinate" value={progress} className="mt-2 rounded-full h-2 w-full sm:w-32" />
             </div>
           </div>
@@ -326,14 +326,14 @@ export default function LearningModules({
           {/* Main Content Column */}
           <Grid size={{ xs: 12, lg: 8 }} className="space-y-4 sm:space-y-6">
             {/* Learning Objectives */}
-            <Card className="bg-slate-900 border border-slate-800 text-white rounded-2xl p-4 sm:p-6">
-              <Typography variant="h6" className="font-bold text-cyan-400 mb-3 flex items-center gap-2 text-base sm:text-lg">
+            <Card className="tq-card tq-lift text-ink-900 dark:text-slate-100 p-4 sm:p-6">
+              <Typography variant="h6" className="font-bold text-brand-teal-deep dark:text-teal-300 mb-3 flex items-center gap-2 text-base sm:text-lg">
                 <Sparkles size={20} /> Learning Objectives
               </Typography>
-              <ul className="space-y-2 text-slate-300 text-xs sm:text-sm">
+              <ul className="space-y-2 text-slate-600 dark:text-slate-300 text-xs sm:text-sm">
                 {selectedModule.learningObjectives.map((obj, i) => (
                   <li key={i} className="flex items-start gap-2">
-                    <CheckCircle2 size={16} className="text-emerald-400 mt-0.5 shrink-0" />
+                    <CheckCircle2 size={16} className="text-emerald-600 dark:text-emerald-300 mt-0.5 shrink-0" />
                     <span>{obj}</span>
                   </li>
                 ))}
@@ -341,27 +341,27 @@ export default function LearningModules({
             </Card>
 
             {/* Introduction */}
-            <Card className="bg-slate-900 border border-slate-800 text-white rounded-2xl p-4 sm:p-6 space-y-3">
-              <Typography variant="h6" className="font-bold text-white text-base sm:text-lg">Introduction</Typography>
-              <Typography variant="body2" className="text-slate-300 leading-relaxed text-xs sm:text-sm">{selectedModule.introduction}</Typography>
+            <Card className="tq-card tq-lift text-ink-900 dark:text-slate-100 p-4 sm:p-6 space-y-3">
+              <Typography variant="h6" className="font-bold text-ink-900 dark:text-slate-100 text-base sm:text-lg">Introduction</Typography>
+              <Typography variant="body2" className="text-slate-600 dark:text-slate-300 leading-relaxed text-xs sm:text-sm">{selectedModule.introduction}</Typography>
             </Card>
 
             {/* Epidemiology & Causes */}
-            <Card className="bg-slate-900 border border-slate-800 text-white rounded-2xl p-4 sm:p-6 space-y-4">
-              <Typography variant="h6" className="font-bold text-white text-base sm:text-lg">Epidemiology & Etiology</Typography>
-              <Typography variant="body2" className="text-slate-300 leading-relaxed text-xs sm:text-sm">{selectedModule.epidemiology}</Typography>
-              <Divider className="bg-slate-800" />
-              <Typography variant="subtitle2" className="font-bold text-cyan-400">Microbiological Cause (Causative Agent):</Typography>
-              <Typography variant="body2" className="text-slate-300 text-xs sm:text-sm">{selectedModule.causes}</Typography>
+            <Card className="tq-card tq-lift text-ink-900 dark:text-slate-100 p-4 sm:p-6 space-y-4">
+              <Typography variant="h6" className="font-bold text-ink-900 dark:text-slate-100 text-base sm:text-lg">Epidemiology & Etiology</Typography>
+              <Typography variant="body2" className="text-slate-600 dark:text-slate-300 leading-relaxed text-xs sm:text-sm">{selectedModule.epidemiology}</Typography>
+              <Divider className="bg-slate-200 dark:bg-slate-700" />
+              <Typography variant="subtitle2" className="font-bold text-brand-teal-deep dark:text-teal-300">Microbiological Cause (Causative Agent):</Typography>
+              <Typography variant="body2" className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm">{selectedModule.causes}</Typography>
             </Card>
 
             {/* Risk Factors */}
-            <Card className="bg-slate-900 border border-slate-800 text-white rounded-2xl p-4 sm:p-6 space-y-3">
-              <Typography variant="h6" className="font-bold text-amber-400 text-base sm:text-lg">Risk Factors & High-Risk Stratification</Typography>
+            <Card className="tq-card tq-lift text-ink-900 dark:text-slate-100 p-4 sm:p-6 space-y-3">
+              <Typography variant="h6" className="font-bold text-amber-600 dark:text-amber-400 text-base sm:text-lg">Risk Factors & High-Risk Stratification</Typography>
               <Grid container spacing={2}>
                 {selectedModule.riskFactors.map((rf, i) => (
                   <Grid size={{ xs: 12, sm: 6 }} key={i}>
-                    <Paper className="p-3 bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl flex items-center gap-2">
+                    <Paper className="tq-glass p-3 rounded-xl text-xs flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0"></span>
                       <span>{rf}</span>
                     </Paper>
@@ -371,51 +371,51 @@ export default function LearningModules({
             </Card>
 
             {/* Signs & Symptoms */}
-            <Card className="bg-slate-900 border border-slate-800 text-white rounded-2xl p-4 sm:p-6 space-y-4">
-              <Typography variant="h6" className="font-bold text-white text-base sm:text-lg">Signs & Symptoms</Typography>
+            <Card className="tq-card tq-lift text-ink-900 dark:text-slate-100 p-4 sm:p-6 space-y-4">
+              <Typography variant="h6" className="font-bold text-ink-900 dark:text-slate-100 text-base sm:text-lg">Signs & Symptoms</Typography>
               
-              <Typography variant="subtitle2" className="text-cyan-400 font-bold">1. Pulmonary TB Manifestations:</Typography>
-              <ul className="space-y-1.5 text-slate-300 text-xs pl-4 list-disc">
+              <Typography variant="subtitle2" className="text-brand-teal-deep dark:text-teal-300 font-bold">1. Pulmonary TB Manifestations:</Typography>
+              <ul className="space-y-1.5 text-slate-600 dark:text-slate-300 text-xs pl-4 list-disc">
                 {selectedModule.signsAndSymptoms.pulmonary.map((s, i) => <li key={i}>{s}</li>)}
               </ul>
 
-              <Typography variant="subtitle2" className="text-purple-400 font-bold mt-3">2. Extrapulmonary TB Manifestations:</Typography>
-              <ul className="space-y-1.5 text-slate-300 text-xs pl-4 list-disc">
+              <Typography variant="subtitle2" className="text-purple-600 dark:text-purple-300 font-bold mt-3">2. Extrapulmonary TB Manifestations:</Typography>
+              <ul className="space-y-1.5 text-slate-600 dark:text-slate-300 text-xs pl-4 list-disc">
                 {selectedModule.signsAndSymptoms.extrapulmonary.map((s, i) => <li key={i}>{s}</li>)}
               </ul>
 
-              <Typography variant="subtitle2" className="text-emerald-400 font-bold mt-3">3. Pediatric Specific Symptoms:</Typography>
-              <ul className="space-y-1.5 text-slate-300 text-xs pl-4 list-disc">
+              <Typography variant="subtitle2" className="text-emerald-600 dark:text-emerald-300 font-bold mt-3">3. Pediatric Specific Symptoms:</Typography>
+              <ul className="space-y-1.5 text-slate-600 dark:text-slate-300 text-xs pl-4 list-disc">
                 {selectedModule.signsAndSymptoms.pediatric.map((s, i) => <li key={i}>{s}</li>)}
               </ul>
             </Card>
 
             {/* Diagnostic Approach & Lab Investigations */}
-            <Card className="bg-slate-900 border border-slate-800 text-white rounded-2xl p-4 sm:p-6 space-y-4">
-              <Typography variant="h6" className="font-bold text-white text-base sm:text-lg">Diagnostic Approach & Laboratory Investigations</Typography>
-              <Typography variant="body2" className="text-slate-300 text-xs sm:text-sm">{selectedModule.diagnosticApproach}</Typography>
+            <Card className="tq-card tq-lift text-ink-900 dark:text-slate-100 p-4 sm:p-6 space-y-4">
+              <Typography variant="h6" className="font-bold text-ink-900 dark:text-slate-100 text-base sm:text-lg">Diagnostic Approach & Laboratory Investigations</Typography>
+              <Typography variant="body2" className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm">{selectedModule.diagnosticApproach}</Typography>
 
               <div className="space-y-3 mt-4">
                 {selectedModule.laboratoryInvestigations.map((lab, i) => (
-                  <Paper key={i} className="p-3 sm:p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-1">
-                    <Typography variant="subtitle2" className="font-bold text-cyan-400">{lab.name}</Typography>
-                    <Typography variant="body2" className="text-slate-300 text-xs">{lab.description}</Typography>
-                    <Typography variant="caption" className="text-emerald-400 font-mono block">Interpretation: {lab.interpretation}</Typography>
+                  <Paper key={i} className="tq-glass p-3 sm:p-4 rounded-xl space-y-1">
+                    <Typography variant="subtitle2" className="font-bold text-brand-teal-deep dark:text-teal-300">{lab.name}</Typography>
+                    <Typography variant="body2" className="text-slate-600 dark:text-slate-300 text-xs">{lab.description}</Typography>
+                    <Typography variant="caption" className="text-emerald-600 dark:text-emerald-300 font-mono block">Interpretation: {lab.interpretation}</Typography>
                   </Paper>
                 ))}
               </div>
             </Card>
 
             {/* Imaging Findings & Differential Diagnosis */}
-            <Card className="bg-slate-900 border border-slate-800 text-white rounded-2xl p-4 sm:p-6 space-y-4">
-              <Typography variant="h6" className="font-bold text-white text-base sm:text-lg">Chest Imaging & Differential Diagnosis</Typography>
+            <Card className="tq-card tq-lift text-ink-900 dark:text-slate-100 p-4 sm:p-6 space-y-4">
+              <Typography variant="h6" className="font-bold text-ink-900 dark:text-slate-100 text-base sm:text-lg">Chest Imaging & Differential Diagnosis</Typography>
               
-              <Typography variant="subtitle2" className="text-indigo-400 font-bold">Chest Radiograph (CXR) Key Findings:</Typography>
-              <ul className="space-y-1 text-slate-300 text-xs pl-4 list-disc">
+              <Typography variant="subtitle2" className="text-indigo-600 dark:text-indigo-300 font-bold">Chest Radiograph (CXR) Key Findings:</Typography>
+              <ul className="space-y-1 text-slate-600 dark:text-slate-300 text-xs pl-4 list-disc">
                 {selectedModule.imagingFindings.map((img, i) => <li key={i}>{img}</li>)}
               </ul>
 
-              <Typography variant="subtitle2" className="text-rose-400 font-bold mt-3">Differential Diagnosis to Rule Out:</Typography>
+              <Typography variant="subtitle2" className="text-rose-600 dark:text-rose-300 font-bold mt-3">Differential Diagnosis to Rule Out:</Typography>
               <div className="flex flex-wrap gap-2 mt-2">
                 {selectedModule.differentialDiagnosis.map((dd, i) => (
                   <Chip key={i} label={dd} variant="outlined" size="small" sx={{ color: '#fda4af', borderColor: '#f43f5e' }} />
@@ -424,62 +424,62 @@ export default function LearningModules({
             </Card>
 
             {/* Treatment & Drug Regimens */}
-            <Card className="bg-slate-900 border border-slate-800 text-white rounded-2xl p-4 sm:p-6 space-y-4">
-              <Typography variant="h6" className="font-bold text-emerald-400 text-base sm:text-lg">Treatment & Recommended Drug Regimens</Typography>
-              <Typography variant="body2" className="text-slate-300 text-xs sm:text-sm">{selectedModule.treatment}</Typography>
+            <Card className="tq-card tq-lift text-ink-900 dark:text-slate-100 p-4 sm:p-6 space-y-4">
+              <Typography variant="h6" className="font-bold text-emerald-600 dark:text-emerald-300 text-base sm:text-lg">Treatment & Recommended Drug Regimens</Typography>
+              <Typography variant="body2" className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm">{selectedModule.treatment}</Typography>
 
               <div className="space-y-3 mt-3">
                 {selectedModule.drugRegimens.map((reg, i) => (
-                  <Paper key={i} className="p-3 sm:p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-1 font-mono text-xs">
-                    <Typography variant="subtitle2" className="font-bold text-emerald-400">{reg.regimen}</Typography>
-                    <Typography variant="body2" className="text-cyan-300">Drugs: {reg.drugs}</Typography>
-                    <Typography variant="caption" className="text-slate-400 block">Duration: {reg.duration} | Note: {reg.notes}</Typography>
+                  <Paper key={i} className="tq-glass p-3 sm:p-4 rounded-xl space-y-1 font-mono text-xs">
+                    <Typography variant="subtitle2" className="font-bold text-emerald-600 dark:text-emerald-300">{reg.regimen}</Typography>
+                    <Typography variant="body2" className="text-brand-teal-deep dark:text-teal-300">Drugs: {reg.drugs}</Typography>
+                    <Typography variant="caption" className="text-slate-400 dark:text-slate-500 block">Duration: {reg.duration} | Note: {reg.notes}</Typography>
                   </Paper>
                 ))}
               </div>
             </Card>
 
             {/* Follow-up & Infection Control */}
-            <Card className="bg-slate-900 border border-slate-800 text-white rounded-2xl p-4 sm:p-6 space-y-4">
-              <Typography variant="h6" className="font-bold text-white text-base sm:text-lg">Follow-up Care & Airborne Infection Control</Typography>
-              <Typography variant="body2" className="text-slate-300 text-xs">{selectedModule.followUp}</Typography>
+            <Card className="tq-card tq-lift text-ink-900 dark:text-slate-100 p-4 sm:p-6 space-y-4">
+              <Typography variant="h6" className="font-bold text-ink-900 dark:text-slate-100 text-base sm:text-lg">Follow-up Care & Airborne Infection Control</Typography>
+              <Typography variant="body2" className="text-slate-600 dark:text-slate-300 text-xs">{selectedModule.followUp}</Typography>
 
-              <Typography variant="subtitle2" className="text-amber-400 font-bold mt-2">Infection Control Standards:</Typography>
-              <ul className="space-y-1.5 text-slate-300 text-xs pl-4 list-disc">
+              <Typography variant="subtitle2" className="text-amber-600 dark:text-amber-400 font-bold mt-2">Infection Control Standards:</Typography>
+              <ul className="space-y-1.5 text-slate-600 dark:text-slate-300 text-xs pl-4 list-disc">
                 {selectedModule.infectionControl.map((ic, i) => <li key={i}>{ic}</li>)}
               </ul>
             </Card>
 
             {/* Interactive Embedded Flowchart */}
-            <Card className="bg-slate-900 border border-slate-800 text-white rounded-2xl p-4 sm:p-6 space-y-4">
-              <Typography variant="h6" className="font-bold text-amber-400 flex items-center gap-2 text-base sm:text-lg">
+            <Card className="tq-card tq-lift text-ink-900 dark:text-slate-100 p-4 sm:p-6 space-y-4">
+              <Typography variant="h6" className="font-bold text-amber-600 dark:text-amber-400 flex items-center gap-2 text-base sm:text-lg">
                 <FileText size={20} /> Interactive Diagnostic Flowchart
               </Typography>
               <AlgorithmFlowchart interactiveMode={true} />
             </Card>
 
             {/* Case-Based Learning */}
-            <Card className="bg-slate-900 border border-cyan-500/40 text-white rounded-2xl p-4 sm:p-6 space-y-4">
-              <Typography variant="h6" className="font-bold text-cyan-300 flex items-center gap-2 text-base sm:text-lg">
+            <Card className="tq-card tq-lift text-ink-900 dark:text-slate-100 p-4 sm:p-6 space-y-4">
+              <Typography variant="h6" className="font-bold text-brand-teal-deep dark:text-teal-300 flex items-center gap-2 text-base sm:text-lg">
                 <Brain size={20} /> Clinical Case-Based Scenario
               </Typography>
-              <Typography variant="subtitle2" className="font-bold text-white">{selectedModule.caseScenario.patient}</Typography>
-              <Typography variant="body2" className="text-slate-300 text-xs">{selectedModule.caseScenario.presentation}</Typography>
-              <Typography variant="body2" className="text-cyan-400 font-semibold text-xs mt-2">{selectedModule.caseScenario.question}</Typography>
+              <Typography variant="subtitle2" className="font-bold text-ink-900 dark:text-slate-100">{selectedModule.caseScenario.patient}</Typography>
+              <Typography variant="body2" className="text-slate-600 dark:text-slate-300 text-xs">{selectedModule.caseScenario.presentation}</Typography>
+              <Typography variant="body2" className="text-brand-teal-deep dark:text-teal-300 font-semibold text-xs mt-2">{selectedModule.caseScenario.question}</Typography>
               
               <div className="space-y-2">
                 {selectedModule.caseScenario.options.map((opt, i) => (
-                  <Paper key={i} className="p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200">
+                  <Paper key={i} className="tq-glass p-3 rounded-xl text-xs">
                     <p className="font-bold">{opt.label}</p>
-                    <p className="text-[11px] text-slate-400 mt-1">{opt.rationale}</p>
+                    <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">{opt.rationale}</p>
                   </Paper>
                 ))}
               </div>
             </Card>
 
             {/* Interactive Quiz with Explanations */}
-            <Card className="bg-slate-900 border border-purple-500/40 text-white rounded-2xl p-4 sm:p-6 space-y-4 sm:space-y-6">
-              <Typography variant="h6" className="font-bold text-purple-400 flex items-center gap-2 text-base sm:text-lg">
+            <Card className="tq-card tq-lift text-ink-900 dark:text-slate-100 p-4 sm:p-6 space-y-4 sm:space-y-6">
+              <Typography variant="h6" className="font-bold text-purple-600 dark:text-purple-300 flex items-center gap-2 text-base sm:text-lg">
                 <HelpCircle size={20} /> Interactive Self-Assessment Quiz
               </Typography>
 
@@ -488,8 +488,8 @@ export default function LearningModules({
                 const showFeedback = showQuizFeedback[qIdx];
 
                 return (
-                  <div key={qIdx} className="space-y-3 p-3.5 sm:p-4 bg-slate-950 rounded-xl border border-slate-800">
-                    <Typography variant="subtitle2" className="font-bold text-white text-xs">
+                  <div key={qIdx} className="tq-glass space-y-3 p-3.5 sm:p-4 rounded-xl">
+                    <Typography variant="subtitle2" className="font-bold text-ink-900 dark:text-slate-100 text-xs">
                       Q{qIdx + 1}: {q.question}
                     </Typography>
 
@@ -502,12 +502,12 @@ export default function LearningModules({
                           <button
                             key={oIdx}
                             onClick={() => handleAnswerSelect(qIdx, oIdx)}
-                            className={`w-full p-2.5 sm:p-3 text-left rounded-xl border text-xs transition-all ${
+                            className={`w-full p-2.5 sm:p-3 text-left rounded-xl border text-xs transition-all touch-target min-h-11 ${
                               showFeedback && isChosen
                                 ? isCorrect
-                                  ? 'bg-emerald-950 border-emerald-500 text-emerald-200 font-bold'
-                                  : 'bg-rose-950 border-rose-500 text-rose-200'
-                                : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-cyan-500/50'
+                                  ? 'bg-emerald-100 dark:bg-emerald-900/50 border-emerald-500 text-emerald-800 dark:text-emerald-200 font-bold ring-2 ring-emerald-500'
+                                  : 'bg-rose-100 dark:bg-rose-900/50 border-rose-500 text-rose-800 dark:text-rose-200 ring-2 ring-rose-500'
+                                : 'bg-white dark:bg-[#111c30] border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-400'
                             }`}
                           >
                             {opt}
@@ -517,7 +517,7 @@ export default function LearningModules({
                     </div>
 
                     {showFeedback && (
-                      <div className="p-3 bg-slate-900 border border-slate-800 rounded-lg text-[11px] text-cyan-300 font-mono">
+                      <div className="tq-glass p-3 rounded-lg text-[11px] font-mono">
                         Explanation: {q.explanation}
                       </div>
                     )}
@@ -530,13 +530,13 @@ export default function LearningModules({
           {/* Right Sidebar Column */}
           <Grid size={{ xs: 12, lg: 4 }} className="space-y-4 sm:space-y-6">
             {/* Clinical Pearls */}
-            <Card className="bg-slate-900 border border-amber-500/40 text-white rounded-2xl p-4 sm:p-6 space-y-3">
-              <Typography variant="h6" className="font-bold text-amber-400 flex items-center gap-2 text-base sm:text-lg">
+            <Card className="tq-card tq-lift text-ink-900 dark:text-slate-100 p-4 sm:p-6 space-y-3">
+              <Typography variant="h6" className="font-bold text-amber-600 dark:text-amber-400 flex items-center gap-2 text-base sm:text-lg">
                 <Sparkles size={20} /> High-Yield Clinical Pearls
               </Typography>
-              <ul className="space-y-2 text-slate-200 text-xs">
+              <ul className="space-y-2 text-slate-700 dark:text-slate-200 text-xs">
                 {selectedModule.clinicalPearls.map((pearl, i) => (
-                  <li key={i} className="p-2.5 bg-slate-950 rounded-xl border border-slate-800 leading-relaxed">
+                  <li key={i} className="tq-glass p-2.5 rounded-xl leading-relaxed">
                     💡 {pearl}
                   </li>
                 ))}
@@ -544,12 +544,12 @@ export default function LearningModules({
             </Card>
 
             {/* Key Takeaways */}
-            <Card className="bg-slate-900 border border-emerald-500/40 text-white rounded-2xl p-4 sm:p-6 space-y-3">
-              <Typography variant="h6" className="font-bold text-emerald-400 text-base sm:text-lg">Key Takeaways</Typography>
-              <ul className="space-y-2 text-slate-200 text-xs">
+            <Card className="tq-card tq-lift text-ink-900 dark:text-slate-100 p-4 sm:p-6 space-y-3">
+              <Typography variant="h6" className="font-bold text-emerald-600 dark:text-emerald-300 text-base sm:text-lg">Key Takeaways</Typography>
+              <ul className="space-y-2 text-slate-700 dark:text-slate-200 text-xs">
                 {selectedModule.keyTakeaways.map((kt, i) => (
                   <li key={i} className="flex items-start gap-2">
-                    <CheckCircle2 size={16} className="text-emerald-400 mt-0.5 shrink-0" />
+                    <CheckCircle2 size={16} className="text-emerald-600 dark:text-emerald-300 mt-0.5 shrink-0" />
                     <span>{kt}</span>
                   </li>
                 ))}
@@ -557,17 +557,17 @@ export default function LearningModules({
             </Card>
 
             {/* WHO / CDC Summary */}
-            <Card className="bg-slate-900 border border-slate-800 text-white rounded-2xl p-4 sm:p-6 space-y-3">
-              <Typography variant="h6" className="font-bold text-cyan-400 text-base sm:text-lg">WHO / CDC Guideline Summary</Typography>
-              <Typography variant="body2" className="text-slate-300 text-xs leading-relaxed">
+            <Card className="tq-card tq-lift text-ink-900 dark:text-slate-100 p-4 sm:p-6 space-y-3">
+              <Typography variant="h6" className="font-bold text-brand-teal-deep dark:text-teal-300 text-base sm:text-lg">WHO / CDC Guideline Summary</Typography>
+              <Typography variant="body2" className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
                 {selectedModule.guidelineSummary}
               </Typography>
             </Card>
 
             {/* References */}
-            <Card className="bg-slate-900 border border-slate-800 text-white rounded-2xl p-4 sm:p-6 space-y-3">
-              <Typography variant="h6" className="font-bold text-slate-400 text-base sm:text-lg">References & Guidelines</Typography>
-              <ul className="space-y-1.5 text-slate-400 text-[11px] font-mono list-disc pl-4">
+            <Card className="tq-card tq-lift text-ink-900 dark:text-slate-100 p-4 sm:p-6 space-y-3">
+              <Typography variant="h6" className="font-bold text-slate-400 dark:text-slate-500 text-base sm:text-lg">References & Guidelines</Typography>
+              <ul className="space-y-1.5 text-slate-400 dark:text-slate-500 text-[11px] font-mono list-disc pl-4">
                 {selectedModule.references.map((ref, i) => <li key={i}>{ref}</li>)}
               </ul>
             </Card>
@@ -579,18 +579,18 @@ export default function LearningModules({
 
   // Original UI Grid layout preserved + Added Level 1 Hero Banner
   return (
-    <div className="bg-[#F8FAFC] p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 text-[#1E293B] font-sans">
+    <div className="bg-alabaster dark:bg-[#0b1220] p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 text-ink-900 dark:text-slate-100 font-sans">
       {/* Prominent Level 1 Hero Card */}
-      <div className="bg-white border border-[#E2E8F0] p-6 sm:p-8 rounded-2xl space-y-4 shadow-sm relative overflow-hidden">
+      <div className="tq-card p-6 sm:p-8 rounded-2xl space-y-4 shadow-sm relative overflow-hidden">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div className="space-y-2 flex-1">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-[#1677FF] border border-blue-200 rounded-full text-xs font-bold font-mono">
+            <div className="tq-chip tq-chip-royal px-3 py-1 text-xs">
               <ShieldCheck size={15} /> Level 1 • TB Awareness Journey
             </div>
-            <h2 className="font-extrabold text-[#102A43] text-2xl sm:text-3xl">
+            <h2 className="font-extrabold text-ink-900 dark:text-slate-100 text-2xl sm:text-3xl">
               🐍 TB Quest — Level 1: Snake & Ladder Game
             </h2>
-            <p className="text-slate-600 text-xs sm:text-sm max-w-2xl leading-relaxed font-medium">
+            <p className="text-slate-600 dark:text-slate-400 dark:text-slate-500 text-xs sm:text-sm max-w-2xl leading-relaxed font-medium">
               Travel across the 100-square clinical board, roll the 3D dice, and answer 25 integrated clinical challenges. Achieve 80%+ mastery to unlock Level 2 Investigation Learning!
             </p>
           </div>
@@ -601,7 +601,7 @@ export default function LearningModules({
                 updateSubView('level1-instructions');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-[#1677FF] via-[#00B8A9] to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white font-black rounded-xl text-xs sm:text-sm shadow-lg shadow-blue-500/25 transition-all cursor-pointer hover:scale-105 active:scale-95"
+              className="flex items-center gap-2 px-6 py-3.5 tq-btn-primary text-white font-black rounded-xl text-xs sm:text-sm shadow-lg shadow-blue-500/25 transition-all cursor-pointer hover:scale-105 active:scale-95"
             >
               <span className="text-base">🎲</span>
               <span>PLAY LEVEL 1</span>
@@ -612,9 +612,9 @@ export default function LearningModules({
                 updateSubView('tb-intro');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="flex items-center gap-2 px-5 py-3.5 bg-white border-2 border-slate-200 hover:border-blue-300 text-slate-700 font-extrabold rounded-xl text-xs sm:text-sm shadow-sm transition-all cursor-pointer"
+              className="tq-btn-secondary touch-target flex items-center gap-2 px-5 py-3.5 font-extrabold rounded-xl text-xs sm:text-sm shadow-sm transition-all cursor-pointer"
             >
-              <BookOpen size={18} className="text-[#1677FF]" />
+              <BookOpen size={18} className="text-brand-royal dark:text-blue-400" />
               <span>Curriculum Reading</span>
             </button>
 
@@ -623,7 +623,7 @@ export default function LearningModules({
                 updateSubView('mini-game-spot-tb-clues');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="flex items-center gap-2 px-5 py-3.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold rounded-xl text-xs sm:text-sm shadow-sm transition-all cursor-pointer"
+              className="tq-btn-coral touch-target flex items-center gap-2 px-5 py-3.5 font-extrabold rounded-xl text-xs sm:text-sm shadow-sm transition-all cursor-pointer"
             >
               <Sparkles size={18} className="text-slate-950" />
               <span>Spot the TB Clues Mini Game 🏆</span>
@@ -633,16 +633,16 @@ export default function LearningModules({
       </div>
 
       {/* Level 2 Hero Card — mirrors the Level 1 hero card above; Level 2 only */}
-      <div className="bg-white border border-[#E2E8F0] p-6 sm:p-8 rounded-2xl space-y-4 shadow-sm relative overflow-hidden">
+      <div className="tq-card p-6 sm:p-8 rounded-2xl space-y-4 shadow-sm relative overflow-hidden">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div className="space-y-2 flex-1">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-cyan-50 text-[#0E7490] border border-cyan-200 rounded-full text-xs font-bold font-mono">
+            <div className="tq-chip tq-chip-teal px-3 py-1 text-xs">
               <Microscope size={15} /> Level 2 • Investigate &amp; Interpret
             </div>
-            <h2 className="font-extrabold text-[#102A43] text-2xl sm:text-3xl">
+            <h2 className="font-extrabold text-ink-900 dark:text-slate-100 text-2xl sm:text-3xl">
               🔬 TB Quest — Level 2: Investigate &amp; Interpret
             </h2>
-            <p className="text-slate-600 text-xs sm:text-sm max-w-2xl leading-relaxed font-medium">
+            <p className="text-slate-600 dark:text-slate-400 dark:text-slate-500 text-xs sm:text-sm max-w-2xl leading-relaxed font-medium">
               What does this test result mean, and what next? Play all 8 Detective Lab cases, the 17-question check, the Rapid Report Reader and the Pick First! first-test game. Achieve 80%+ case accuracy to unlock Level 3.
             </p>
             <p className="text-amber-700 text-xs font-bold">Teaching simulations only — not real patient records. Faculty validation pending before classroom use.</p>
@@ -654,7 +654,7 @@ export default function LearningModules({
                 updateSubView('level2');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-[#1677FF] via-[#00B8A9] to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white font-black rounded-xl text-xs sm:text-sm shadow-lg shadow-blue-500/25 transition-all cursor-pointer hover:scale-105 active:scale-95"
+              className="flex items-center gap-2 px-6 py-3.5 tq-btn-primary text-white font-black rounded-xl text-xs sm:text-sm shadow-lg shadow-blue-500/25 transition-all cursor-pointer hover:scale-105 active:scale-95"
             >
               <span className="text-base">🔬</span>
               <span>PLAY LEVEL 2</span>
@@ -665,8 +665,8 @@ export default function LearningModules({
 
       {/* Header Title */}
       <div className="flex items-center justify-between">
-        <h2 className="text-xl sm:text-3xl font-extrabold text-[#1E293B]">All Learning Modules</h2>
-        <span className="text-xs font-semibold text-slate-500 font-mono">6 Curriculum Modules</span>
+        <h2 className="text-xl sm:text-3xl font-extrabold text-ink-900 dark:text-slate-100">All Learning Modules</h2>
+        <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 dark:text-slate-500 font-mono">6 Curriculum Modules</span>
       </div>
 
       {/* Grid of Clean White Module Cards */}
@@ -676,20 +676,20 @@ export default function LearningModules({
 
           return (
             <Grid size={{ xs: 12, md: 6, lg: 4 }} key={`${module.title}_${idx}`}>
-              <div className="bg-white border border-[#E2E8F0] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between h-full group">
+              <div className="tq-card rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between h-full group">
                 {/* Module Header Image */}
-                <div className="relative h-44 overflow-hidden bg-slate-100 border-b border-[#E2E8F0]">
+                <div className="relative h-44 overflow-hidden bg-slate-100 border-b border-slate-200 dark:border-slate-700">
                   <img
                     src={module.image}
                     alt={module.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="tq-img w-full h-full object-cover aspect-[16/9] group-hover:scale-105 transition-transform duration-300"
                     loading="lazy"
                   />
                   <div className="absolute top-3 left-3 flex items-center gap-2">
-                    <span className="px-2.5 py-1 bg-white/90 backdrop-blur-xs text-[#2563EB] border border-blue-200 rounded-md text-[11px] font-bold font-mono shadow-xs">
+                    <span className="px-2.5 py-1 bg-white/90 backdrop-blur-xs text-brand-royal dark:text-blue-400 border border-blue-200 rounded-md text-[11px] font-bold font-mono shadow-xs">
                       {module.category}
                     </span>
-                    <span className="px-2.5 py-1 bg-slate-900/80 text-white rounded-md text-[11px] font-semibold font-mono">
+                    <span className="tq-chip tq-chip-slate px-2.5 py-1">
                       {module.difficulty}
                     </span>
                   </div>
@@ -698,13 +698,13 @@ export default function LearningModules({
                 {/* Card Content Body */}
                 <div className="p-5 space-y-4 flex-1 flex flex-col justify-between">
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs text-slate-500 font-mono">
+                    <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 font-mono">
                       <span>⏳ {module.duration}</span>
                       <span>📖 {module.readTime}</span>
                     </div>
 
                     <h3
-                      className="font-bold text-base text-[#1E293B] group-hover:text-[#2563EB] transition-colors cursor-pointer line-clamp-2"
+                      className="font-bold text-base text-ink-900 dark:text-slate-100 group-hover:text-brand-royal dark:text-blue-400 transition-colors cursor-pointer line-clamp-2"
                       onClick={() => handleOpenModule(module.id)}
                     >
                       {module.title}
@@ -713,34 +713,34 @@ export default function LearningModules({
 
                   {/* Animated Progress Bar */}
                   <div className="space-y-1 pt-1">
-                    <div className="flex justify-between items-center text-[11px] font-mono text-slate-600">
+                    <div className="flex justify-between items-center text-[11px] font-mono text-slate-600 dark:text-slate-400 dark:text-slate-500">
                       <span>Completion</span>
-                      <strong className="text-[#2563EB] font-bold">{module.completion}%</strong>
+                      <strong className="text-brand-royal dark:text-blue-400 font-bold">{module.completion}%</strong>
                     </div>
-                    <div className="w-full bg-[#F1F5F9] h-2 rounded-full overflow-hidden border border-[#E2E8F0]">
+                    <div className="tq-progress w-full border border-slate-200 dark:border-slate-700">
                       <div
-                        className="bg-[#2563EB] h-full rounded-full transition-all duration-500"
+                        className="tq-progress-bar"
                         style={{ width: `${module.completion}%` }}
                       />
                     </div>
                   </div>
 
                   {/* Subtopics Accordion Summary */}
-                  <div className="pt-2 border-t border-[#E2E8F0] space-y-2">
-                    <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block font-mono">
+                  <div className="pt-2 border-t border-slate-200 dark:border-slate-700 space-y-2">
+                    <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 dark:text-slate-500 uppercase tracking-wider block font-mono">
                       Included Topics ({module.sub.length}):
                     </span>
                     <div className="flex flex-wrap gap-1.5">
                       {module.sub.slice(0, 4).map((subItem) => (
                         <span
                           key={subItem}
-                          className="px-2 py-0.5 bg-[#F8FAFC] border border-[#E2E8F0] text-slate-700 text-[11px] rounded-md font-medium"
+                          className="px-2 py-0.5 bg-alabaster dark:bg-[#0b1220] border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-[11px] rounded-md font-medium"
                         >
                           {subItem}
                         </span>
                       ))}
                       {module.sub.length > 4 && (
-                        <span className="px-2 py-0.5 bg-blue-50 border border-blue-200 text-[#2563EB] text-[11px] rounded-md font-bold">
+                        <span className="px-2 py-0.5 bg-blue-50 border border-blue-200 text-brand-royal dark:text-blue-400 text-[11px] rounded-md font-bold">
                           +{module.sub.length - 4} more
                         </span>
                       )}
@@ -751,7 +751,7 @@ export default function LearningModules({
                   <div className="pt-3">
                     <button
                       onClick={() => handleOpenModule(module.id)}
-                      className="w-full py-2.5 bg-white hover:bg-[#EFF6FF] border border-[#E2E8F0] hover:border-blue-300 text-[#2563EB] font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                      className="w-full py-2.5 bg-white hover:bg-blue-50 dark:bg-[#111c30] border border-slate-200 dark:border-slate-700 hover:border-blue-300 text-brand-royal dark:text-blue-400 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                     >
                       <span>Read Module Guidelines</span>
                       <ArrowRight size={14} />

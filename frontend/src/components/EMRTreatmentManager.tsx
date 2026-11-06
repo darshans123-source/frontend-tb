@@ -30,18 +30,18 @@ export default function EMRTreatmentManager({
   };
 
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 sm:p-7 shadow-2xl space-y-6 text-white">
-      <div className="flex justify-between items-start border-b border-slate-800 pb-4">
+    <div className="tq-card tq-fade-up max-w-full overflow-hidden p-5 sm:p-7 shadow-2xl space-y-6 text-slate-900 dark:text-slate-100">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-200 dark:border-slate-700/60 pb-4">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-purple-950 border border-purple-500/40 flex items-center justify-center text-purple-400 font-bold shrink-0">
+          <div className="w-12 h-12 rounded-2xl bg-violet-50 dark:bg-purple-950 border border-violet-200 dark:border-purple-500/40 flex items-center justify-center text-violet-600 dark:text-purple-400 font-bold shrink-0">
             <Pill size={26} />
           </div>
           <div>
-            <span className="text-[10px] font-mono text-purple-400 font-bold uppercase tracking-wider">NTEP Clinical Treatment Protocols</span>
-            <h2 className="text-xl sm:text-2xl font-black text-white">Treatment Assignment & Prescription Generator</h2>
+            <span className="tq-eyebrow">NTEP Clinical Treatment Protocols</span>
+            <h2 className="tq-display text-xl sm:text-2xl text-slate-900 dark:text-white">Treatment Assignment & Prescription Generator</h2>
           </div>
         </div>
-        <span className="px-3 py-1 bg-purple-950 border border-purple-500/40 text-purple-300 rounded-full text-xs font-mono font-bold">
+        <span className="tq-chip tq-chip-royal">
           PATIENT: {patient.name} ({patient.patientCode})
         </span>
       </div>
@@ -54,15 +54,15 @@ export default function EMRTreatmentManager({
             setDoctorNotes(STANDARD_TREATMENT_REGIMENS.ds_tb.doctorNotes);
             soundService.playClick();
           }}
-          className={`p-4 rounded-xl border text-left transition-all space-y-1 ${
+          className={`touch-target tq-lift p-4 rounded-2xl border text-left transition-all space-y-1 min-w-0 ${
             selectedRegimenKey === 'ds_tb'
-              ? 'bg-emerald-950/90 border-emerald-500 text-emerald-200 ring-2 ring-emerald-500/40 shadow-lg'
-              : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
+              ? 'bg-emerald-50 dark:bg-emerald-950/90 border-emerald-500 text-emerald-800 dark:text-emerald-200 ring-2 ring-emerald-500/40 shadow-lg'
+              : 'bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:border-teal-300 dark:hover:border-slate-700'
           }`}
         >
-          <span className="text-[10px] font-mono font-bold uppercase block text-emerald-400">Standard 1st Line ATT</span>
-          <h4 className="text-sm font-bold text-white">Drug-Sensitive TB Regimen (2HRZE / 4HRE)</h4>
-          <p className="text-xs text-slate-400">Daily weight-banded FDCs for 6 months.</p>
+          <span className="text-[10px] font-mono font-bold uppercase block text-emerald-600 dark:text-emerald-400">Standard 1st Line ATT</span>
+          <h4 className="text-sm font-bold text-slate-900 dark:text-white">Drug-Sensitive TB Regimen (2HRZE / 4HRE)</h4>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Daily weight-banded FDCs for 6 months.</p>
         </button>
 
         <button
@@ -71,41 +71,41 @@ export default function EMRTreatmentManager({
             setDoctorNotes(STANDARD_TREATMENT_REGIMENS.dr_tb.doctorNotes);
             soundService.playClick();
           }}
-          className={`p-4 rounded-xl border text-left transition-all space-y-1 ${
+          className={`touch-target tq-lift p-4 rounded-2xl border text-left transition-all space-y-1 min-w-0 ${
             selectedRegimenKey === 'dr_tb'
-              ? 'bg-rose-950/90 border-rose-500 text-rose-200 ring-2 ring-rose-500/40 shadow-lg'
-              : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
+              ? 'bg-rose-50 dark:bg-rose-950/90 border-rose-400 dark:border-rose-500 text-rose-800 dark:text-rose-200 ring-2 ring-rose-500/40 shadow-lg'
+              : 'bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:border-teal-300 dark:hover:border-slate-700'
           }`}
         >
-          <span className="text-[10px] font-mono font-bold uppercase block text-rose-400">PMDT DR-TB Protocol</span>
-          <h4 className="text-sm font-bold text-white">All-Oral Shorter Bedaquiline Regimen</h4>
-          <p className="text-xs text-slate-400">BDQ + Lfx + Cfz + Z + E + Hh + Eto for 9-11 months.</p>
+          <span className="text-[10px] font-mono font-bold uppercase block text-rose-600 dark:text-rose-400">PMDT DR-TB Protocol</span>
+          <h4 className="text-sm font-bold text-slate-900 dark:text-white">All-Oral Shorter Bedaquiline Regimen</h4>
+          <p className="text-xs text-slate-500 dark:text-slate-400">BDQ + Lfx + Cfz + Z + E + Hh + Eto for 9-11 months.</p>
         </button>
       </div>
 
       {/* Regimen Details Table */}
-      <div className="bg-slate-950 border border-slate-800 p-5 rounded-xl space-y-4 text-xs">
-        <div className="flex justify-between items-center border-b border-slate-900 pb-3">
+      <div className="tq-card p-5 space-y-4 text-xs min-w-0">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-200 dark:border-slate-900 pb-3">
           <div>
-            <span className="text-[10px] font-mono text-purple-400 font-bold uppercase">{activeRegimen.category}</span>
-            <h3 className="text-lg font-black text-white">{activeRegimen.name}</h3>
+            <span className="tq-eyebrow">{activeRegimen.category}</span>
+            <h3 className="tq-display text-lg text-slate-900 dark:text-white">{activeRegimen.name}</h3>
           </div>
-          <span className="px-3 py-1 bg-slate-900 border border-slate-800 text-slate-300 font-mono font-bold rounded-lg">
+          <span className="tq-chip tq-chip-slate">
             Duration: {activeRegimen.duration}
           </span>
         </div>
 
         {/* Drug Breakdown Table */}
         <div className="space-y-2">
-          <h5 className="font-bold text-cyan-300 uppercase tracking-wider">Weight-Banded Drug Breakdown</h5>
+          <h5 className="tq-eyebrow">Weight-Banded Drug Breakdown</h5>
           <div className="space-y-1.5 font-mono">
             {activeRegimen.drugs.map((drug, idx) => (
-              <div key={idx} className="p-2.5 bg-slate-900 rounded-lg border border-slate-800/80 flex items-center justify-between">
+              <div key={idx} className="p-2.5 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800/80 flex items-center justify-between gap-2 min-w-0">
                 <div>
-                  <span className="text-white font-bold text-xs">{drug.name}</span>
+                  <span className="text-slate-900 dark:text-white font-bold text-xs">{drug.name}</span>
                   <span className="text-slate-500 text-[10px] block">{drug.frequency}</span>
                 </div>
-                <span className="px-2.5 py-1 bg-cyan-950 border border-cyan-500/30 text-cyan-300 font-bold rounded text-xs">
+                <span className="tq-chip tq-chip-teal">
                   {drug.dosage}
                 </span>
               </div>
@@ -114,19 +114,19 @@ export default function EMRTreatmentManager({
         </div>
 
         {/* Follow-up Schedule */}
-        <div className="p-3 bg-slate-900 border border-slate-800 rounded-lg space-y-1">
-          <h5 className="font-bold text-amber-300 uppercase tracking-wider text-[10px]">Follow-Up & Adherence Monitoring</h5>
-          <p className="text-slate-300 leading-relaxed text-[11px]">{activeRegimen.followUpSchedule}</p>
+        <div className="p-3 bg-amber-50 dark:bg-slate-900 border border-amber-200 dark:border-slate-800 rounded-xl space-y-1">
+          <h5 className="tq-eyebrow">Follow-Up & Adherence Monitoring</h5>
+          <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-[11px]">{activeRegimen.followUpSchedule}</p>
         </div>
 
         {/* Doctor Clinical Notes */}
         <div>
-          <label className="font-bold text-purple-300 uppercase tracking-wider block mb-1">Prescribing Doctor Notes</label>
+          <label className="tq-eyebrow block mb-1">Prescribing Doctor Notes</label>
           <textarea
             rows={3}
             value={doctorNotes}
             onChange={e => setDoctorNotes(e.target.value)}
-            className="w-full p-3 bg-slate-900 border border-slate-800 rounded-xl text-white outline-none focus:border-purple-500 text-xs font-sans resize-none"
+            className="tq-input w-full p-3 min-h-11 text-slate-900 dark:text-white outline-none text-xs font-sans resize-none"
           />
         </div>
       </div>
@@ -134,7 +134,7 @@ export default function EMRTreatmentManager({
       <div className="flex justify-end gap-3 pt-2">
         <button
           onClick={handleConfirmRegimen}
-          className="px-8 py-3.5 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 text-white font-extrabold rounded-xl text-xs shadow-[0_0_25px_rgba(168,85,247,0.4)] transition-all flex items-center gap-2"
+          className="tq-btn-primary touch-target px-8 py-3.5 font-extrabold text-xs flex items-center gap-2 max-w-full"
         >
           <span>Assign Treatment Regimen & Advance Workflow</span>
           <ChevronRight size={18} />

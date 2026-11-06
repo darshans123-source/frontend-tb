@@ -113,33 +113,33 @@ export default function Login({ onLogin }: LoginProps) {
   const isStudent = role === 'student';
 
   return (
-    <div className="min-h-screen bg-[#060913] text-white flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-navy-900 via-ink-950 to-brand-teal-deep dark:bg-ink-950 text-white font-sans flex items-center justify-center p-4 sm:p-6 relative overflow-hidden max-w-full">
       {/* Background glowing lung/circuit effects */}
-      <div className="absolute top-1/4 left-1/4 w-72 sm:w-96 h-72 sm:h-96 bg-cyan-600/10 rounded-full blur-[120px] pointer-events-none"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-72 sm:w-96 h-72 sm:h-96 bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute top-1/4 left-1/4 w-72 sm:w-96 h-72 sm:h-96 bg-brand-teal/20 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-72 sm:w-96 h-72 sm:h-96 bg-brand-royal/20 rounded-full blur-[120px] pointer-events-none"></div>
 
-      <div className="w-full max-w-md bg-slate-900/80 backdrop-blur-xl border border-cyan-500/30 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-[0_0_50px_rgba(6,182,212,0.15)] relative z-10 my-4 max-h-[95vh] overflow-y-auto custom-scrollbar">
+      <div className="tq-fade-up w-full max-w-md bg-[#111c30]/90 dark:bg-[#111c30]/90 backdrop-blur-xl border border-teal-500/30 rounded-[20px] sm:rounded-3xl p-5 sm:p-8 shadow-[0_0_50px_rgba(13,148,136,0.15)] relative z-10 my-4 max-h-[95vh] overflow-y-auto custom-scrollbar min-w-0">
         <div className="text-center mb-4 sm:mb-6">
-          <div className="inline-flex p-2 bg-white/10 backdrop-blur-md border border-cyan-500/30 rounded-xl mb-3 shadow-md shadow-cyan-500/20">
+          <div className="inline-flex p-2.5 bg-white backdrop-blur-md border border-teal-100 rounded-2xl mb-3 shadow-md shadow-teal-500/20">
             <img 
               src="/nit_logo.png" 
               alt="TB Quest Official Logo" 
-              className="w-[40px] h-[40px] sm:w-[44px] sm:h-[44px] md:w-[48px] md:h-[48px] object-contain rounded-[8px]" 
+              className="tq-img w-[40px] h-[40px] sm:w-[44px] sm:h-[44px] md:w-[48px] md:h-[48px] object-contain rounded-xl bg-white p-1 aspect-square" 
             />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 uppercase">
+          <h1 className="tq-display text-2xl sm:text-3xl font-extrabold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-teal-300 via-brand-emerald to-brand-royal uppercase">
             TB QUEST
           </h1>
-          <p className="text-cyan-300/80 text-[10px] font-extrabold uppercase tracking-widest mt-0.5">TB DIAGNOSTIC LEARNING PLATFORM</p>
+          <p className="tq-eyebrow text-[10px] font-extrabold uppercase tracking-widest mt-0.5">TB DIAGNOSTIC LEARNING PLATFORM</p>
 
           {/* Prominent Auth Mode Navigation Tabs */}
-          <div className="flex items-center justify-center gap-1.5 p-1 bg-slate-950/80 border border-slate-800 rounded-xl mt-4">
+          <div className="flex items-center justify-center gap-1.5 p-1 bg-[#0b1220]/80 border border-slate-800 rounded-[14px] mt-4">
             <button
               type="button"
               onClick={() => { setAuthMode('login'); setErrorMsg(null); setSuccessMsg(null); }}
               className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 authMode === 'login'
-                  ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-md'
+                  ? 'tq-btn-primary text-white shadow-md'
                   : 'text-slate-400 hover:text-white hover:bg-slate-900'
               }`}
             >
@@ -150,7 +150,7 @@ export default function Login({ onLogin }: LoginProps) {
               onClick={() => { setAuthMode('register'); setErrorMsg(null); setSuccessMsg(null); }}
               className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 authMode === 'register'
-                  ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-md'
+                  ? 'tq-btn-primary text-white shadow-md'
                   : 'text-slate-400 hover:text-white hover:bg-slate-900'
               }`}
             >
@@ -162,7 +162,7 @@ export default function Login({ onLogin }: LoginProps) {
               onClick={() => { setAuthMode('forgot'); setErrorMsg(null); setSuccessMsg(null); }}
               className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 authMode === 'forgot'
-                  ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-md'
+                  ? 'tq-btn-primary text-white shadow-md'
                   : 'text-slate-400 hover:text-white hover:bg-slate-900'
               }`}
             >
@@ -184,9 +184,9 @@ export default function Login({ onLogin }: LoginProps) {
                   key={r}
                   type="button"
                   onClick={() => handleRoleSelect(r)}
-                  className={`py-2 px-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all border cursor-pointer flex flex-col items-center justify-center gap-0.5 ${
+                  className={`touch-target py-2 px-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all border cursor-pointer flex flex-col items-center justify-center gap-0.5 min-h-11 ${
                     role === r
-                      ? 'bg-cyan-600 border-cyan-400 text-white shadow-[0_0_15px_rgba(6,182,212,0.4)]'
+                      ? 'tq-btn-primary border-teal-400 text-white shadow-[0_0_15px_rgba(13,148,136,0.4)]'
                       : 'bg-slate-800/60 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-800'
                   }`}
                 >
@@ -202,7 +202,7 @@ export default function Login({ onLogin }: LoginProps) {
 
         {/* Error Alert */}
         {errorMsg && (
-          <div className="mb-4 p-3 bg-rose-950/80 border border-rose-500/50 rounded-xl text-rose-200 text-xs flex items-center gap-2 font-mono">
+          <div className="mb-4 p-3 bg-rose-950/80 border border-rose-500/50 border-l-4 border-l-brand-coral rounded-[14px] text-rose-200 text-xs flex items-center gap-2 font-mono">
             <AlertCircle size={16} className="text-rose-400 shrink-0" />
             <span>{errorMsg}</span>
           </div>
@@ -210,7 +210,7 @@ export default function Login({ onLogin }: LoginProps) {
 
         {/* Success Alert */}
         {successMsg && (
-          <div className="mb-4 p-3 bg-emerald-950/80 border border-emerald-500/50 rounded-xl text-emerald-200 text-xs flex items-center gap-2 font-mono">
+          <div className="mb-4 p-3 bg-emerald-950/80 border border-emerald-500/50 border-l-4 border-l-brand-emerald rounded-[14px] text-emerald-200 text-xs flex items-center gap-2 font-mono">
             <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
             <span>{successMsg}</span>
           </div>
@@ -228,7 +228,7 @@ export default function Login({ onLogin }: LoginProps) {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Dr. Full Name"
-                    className="w-full bg-slate-950/60 border border-slate-800 rounded-xl pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition-colors text-xs"
+                    className="tq-input w-full bg-[#0b1220]/80 dark:bg-[#0b1220]/80 border-slate-700/80 pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-500 focus:outline-none focus:border-brand-teal transition-colors text-xs min-h-11"
                     required
                   />
                 </div>
@@ -243,7 +243,7 @@ export default function Login({ onLogin }: LoginProps) {
                     value={mobile}
                     onChange={(e) => setMobile(e.target.value)}
                     placeholder="+91 98765 43210"
-                    className="w-full bg-slate-950/60 border border-slate-800 rounded-xl pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition-colors text-xs"
+                    className="tq-input w-full bg-[#0b1220]/80 dark:bg-[#0b1220]/80 border-slate-700/80 pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-500 focus:outline-none focus:border-brand-teal transition-colors text-xs min-h-11"
                     required
                   />
                 </div>
@@ -258,7 +258,7 @@ export default function Login({ onLogin }: LoginProps) {
                     value={college}
                     onChange={(e) => setCollege(e.target.value)}
                     placeholder="e.g. Navodaya Institute of Technology / RMC"
-                    className="w-full bg-slate-950/60 border border-slate-800 rounded-xl pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition-colors text-xs"
+                    className="tq-input w-full bg-[#0b1220]/80 dark:bg-[#0b1220]/80 border-slate-700/80 pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-500 focus:outline-none focus:border-brand-teal transition-colors text-xs min-h-11"
                     required={!isStudent}
                   />
                 </div>
@@ -277,7 +277,7 @@ export default function Login({ onLogin }: LoginProps) {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Your full name, as registered"
-                    className="w-full bg-slate-950/60 border border-slate-800 rounded-xl pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition-colors text-xs"
+                    className="tq-input w-full bg-[#0b1220]/80 dark:bg-[#0b1220]/80 border-slate-700/80 pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-500 focus:outline-none focus:border-brand-teal transition-colors text-xs min-h-11"
                     required
                   />
                 </div>
@@ -292,7 +292,7 @@ export default function Login({ onLogin }: LoginProps) {
                     value={mobile}
                     onChange={(e) => setMobile(e.target.value)}
                     placeholder="+91 98765 43210"
-                    className="w-full bg-slate-950/60 border border-slate-800 rounded-xl pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition-colors text-xs"
+                    className="tq-input w-full bg-[#0b1220]/80 dark:bg-[#0b1220]/80 border-slate-700/80 pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-500 focus:outline-none focus:border-brand-teal transition-colors text-xs min-h-11"
                     required
                   />
                 </div>
@@ -310,7 +310,7 @@ export default function Login({ onLogin }: LoginProps) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@institution.edu"
-                className="w-full bg-slate-950/60 border border-slate-800 rounded-xl pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition-colors text-xs"
+                className="tq-input w-full bg-[#0b1220]/80 dark:bg-[#0b1220]/80 border-slate-700/80 pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-500 focus:outline-none focus:border-brand-teal transition-colors text-xs min-h-11"
                 required
               />
             </div>
@@ -327,7 +327,7 @@ export default function Login({ onLogin }: LoginProps) {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full bg-slate-950/60 border border-slate-800 rounded-xl pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition-colors text-xs"
+                  className="tq-input w-full bg-[#0b1220]/80 dark:bg-[#0b1220]/80 border-slate-700/80 pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-500 focus:outline-none focus:border-brand-teal transition-colors text-xs min-h-11"
                   required
                 />
               </div>
@@ -344,7 +344,7 @@ export default function Login({ onLogin }: LoginProps) {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full bg-slate-950/60 border border-slate-800 rounded-xl pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition-colors text-xs"
+                  className="tq-input w-full bg-[#0b1220]/80 dark:bg-[#0b1220]/80 border-slate-700/80 pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-500 focus:outline-none focus:border-brand-teal transition-colors text-xs min-h-11"
                   required
                 />
               </div>
@@ -367,7 +367,7 @@ export default function Login({ onLogin }: LoginProps) {
                     value={pin}
                     onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
                     placeholder="••••"
-                    className="w-full bg-slate-950/60 border border-slate-800 rounded-xl pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition-colors text-xs tracking-[0.5em]"
+                    className="tq-input w-full bg-[#0b1220]/80 dark:bg-[#0b1220]/80 border-slate-700/80 pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-500 focus:outline-none focus:border-brand-teal transition-colors text-xs tracking-[0.5em] min-h-11"
                     required
                   />
                 </div>
@@ -387,7 +387,7 @@ export default function Login({ onLogin }: LoginProps) {
                       value={confirmPin}
                       onChange={(e) => setConfirmPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
                       placeholder="••••"
-                      className="w-full bg-slate-950/60 border border-slate-800 rounded-xl pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition-colors text-xs tracking-[0.5em]"
+                      className="tq-input w-full bg-[#0b1220]/80 dark:bg-[#0b1220]/80 border-slate-700/80 pl-11 pr-4 py-2.5 sm:py-3 text-white placeholder-slate-500 focus:outline-none focus:border-brand-teal transition-colors text-xs tracking-[0.5em] min-h-11"
                       required
                     />
                   </div>
@@ -419,7 +419,7 @@ export default function Login({ onLogin }: LoginProps) {
           <button
             type="submit"
             disabled={isLoading || isGoogleLoading}
-            className="w-full py-3.5 sm:py-4 mt-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-xs rounded-xl shadow-[0_0_25px_rgba(6,182,212,0.4)] flex items-center justify-center gap-2 transition-all transform active:scale-[0.99] disabled:opacity-50"
+            className="tq-btn-primary touch-target w-full py-3.5 sm:py-4 mt-2 text-white font-bold text-xs rounded-[14px] shadow-[0_0_25px_rgba(13,148,136,0.4)] flex items-center justify-center gap-2 transition-all transform active:scale-[0.99] disabled:opacity-50 min-h-11"
           >
             <span>
               {isLoading
@@ -449,7 +449,7 @@ export default function Login({ onLogin }: LoginProps) {
             type="button"
             onClick={handleGoogleSignIn}
             disabled={isGoogleLoading || isLoading}
-            className="w-full py-3 sm:py-3.5 bg-slate-950 hover:bg-slate-800/90 border border-slate-700/80 hover:border-cyan-500/50 rounded-xl text-white font-semibold text-xs flex items-center justify-center gap-3 shadow-lg transition-all transform active:scale-[0.99] disabled:opacity-50"
+            className="tq-btn-secondary touch-target tq-lift w-full py-3 sm:py-3.5 rounded-[14px] font-semibold text-xs flex items-center justify-center gap-3 shadow-lg transition-all transform active:scale-[0.99] disabled:opacity-50 min-h-11 dark:bg-white dark:text-ink-900"
           >
             <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
               <path
@@ -485,7 +485,7 @@ export default function Login({ onLogin }: LoginProps) {
               <button
                 type="button"
                 onClick={() => { setAuthMode('register'); setErrorMsg(null); setSuccessMsg(null); }}
-                className="text-cyan-400 hover:underline font-bold"
+                className="text-teal-300 hover:underline font-bold"
               >
                 Register Here
               </button>
@@ -496,7 +496,7 @@ export default function Login({ onLogin }: LoginProps) {
               <button
                 type="button"
                 onClick={() => { setAuthMode('login'); setErrorMsg(null); setSuccessMsg(null); }}
-                className="text-cyan-400 hover:underline font-bold"
+                className="text-teal-300 hover:underline font-bold"
               >
                 Sign In
               </button>

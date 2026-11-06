@@ -604,13 +604,13 @@ export default function App() {
               )}
 
               {currentTab === 'flowcharts' && (
-                <div className="p-4">
+                <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full min-w-0">
                   <AlgorithmFlowchart interactiveMode={true} onFinishCase={handleFinishCase} />
                 </div>
               )}
 
               {currentTab === 'ai-tutor' && (
-                <div className="p-4">
+                <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full min-w-0">
                   <AITutor onClose={() => setCurrentTab('dashboard')} />
                 </div>
               )}
@@ -631,22 +631,22 @@ export default function App() {
               )}
 
               {currentTab === 'leaderboard' && (
-                <div className="p-4">
+                <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full min-w-0">
                   <LeaderboardModal onClose={() => setCurrentTab('dashboard')} entries={leaderboardEntries} badges={badges} onChallenge={(name) => alert(`Challenge sent to ${name}!`)} />
                 </div>
               )}
 
               {currentTab === 'analytics' && (
-                <div className="p-4">
+                <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full min-w-0">
                   <Analytics />
                 </div>
               )}
 
               {currentTab === 'certificate' && (
-                <div className="p-4 text-center space-y-6">
+                <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full min-w-0 text-center space-y-6">
                   <button
                     onClick={() => setShowCertificate(true)}
-                    className="px-8 py-4 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-slate-950 font-extrabold rounded-2xl text-base shadow-[0_0_30px_rgba(245,158,11,0.3)] transition-all"
+                    className="tq-lift touch-target max-w-full whitespace-normal px-8 py-4 bg-gradient-to-r from-brand-amber to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-slate-950 font-extrabold rounded-2xl text-base shadow-[0_0_30px_rgba(245,158,11,0.3)] transition-all focus-visible:ring-2 focus-visible:ring-brand-amber"
                   >
                     Generate & View "TB Diagnostic Expert" Institutional Certificate
                   </button>

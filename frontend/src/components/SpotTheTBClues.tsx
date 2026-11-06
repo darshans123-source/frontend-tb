@@ -204,7 +204,7 @@ export default function SpotTheTBClues({
   const getTimerColor = (sec: number) => {
     if (sec > 15) {
       return {
-        text: 'text-emerald-400',
+        text: 'text-emerald-600 dark:text-emerald-300',
         stroke: '#10B981',
         bg: 'bg-emerald-950/30 border-emerald-500/40'
       };
@@ -226,48 +226,48 @@ export default function SpotTheTBClues({
   // 1. UNLOCK SCREEN
   if (stage === 'unlock') {
     return (
-      <div className="min-h-screen bg-slate-950 text-white p-4 sm:p-6 md:p-8 flex items-center justify-center relative overflow-hidden">
+      <div className="min-h-screen bg-alabaster dark:bg-[#0b1220] text-ink-900 dark:text-slate-100 p-4 sm:p-6 md:p-8 flex items-center justify-center relative overflow-hidden max-w-full">
         {/* Ambient Glow Orbs */}
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="max-w-2xl w-full bg-slate-900/90 border border-cyan-500/40 rounded-3xl p-6 sm:p-10 text-center space-y-6 shadow-[0_0_50px_rgba(6,182,212,0.2)] backdrop-blur-xl relative z-10">
+        <div className="tq-card tq-fade-up max-w-2xl w-full rounded-3xl p-6 sm:p-10 text-center space-y-6 backdrop-blur-xl relative z-10 max-w-full">
           {/* Unlock Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/40 text-amber-300 font-extrabold text-xs tracking-wider uppercase shadow-xs">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/40 text-amber-600 dark:text-amber-300 font-extrabold text-xs tracking-wider uppercase shadow-xs">
             <Sparkles className="w-4 h-4 text-amber-400" />
             <span>🏆 MINI GAME UNLOCKED</span>
           </div>
 
           <div className="space-y-2">
-            <p className="text-cyan-400 font-extrabold text-sm sm:text-base tracking-wide uppercase">
+            <p className="text-brand-teal-deep dark:text-teal-300 font-extrabold text-sm sm:text-base tracking-wide uppercase">
               Congratulations!
             </p>
-            <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white">
+            <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-ink-900 dark:text-slate-100">
               Spot the TB Clues
             </h1>
           </div>
 
           {/* 4 Feature Illustration Badges */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-2">
-            <div className="p-3 bg-slate-950 border border-cyan-500/30 rounded-2xl flex flex-col items-center gap-2 shadow-xs">
-              <HeartPulse className="w-8 h-8 text-cyan-400 animate-pulse" />
-              <span className="text-[11px] font-bold text-slate-300">Healthy Lungs</span>
+            <div className="tq-glass p-3 rounded-2xl flex flex-col items-center gap-2 shadow-xs">
+              <HeartPulse className="w-8 h-8 text-brand-teal-deep dark:text-teal-300 animate-pulse" />
+              <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300">Healthy Lungs</span>
             </div>
-            <div className="p-3 bg-slate-950 border border-amber-500/30 rounded-2xl flex flex-col items-center gap-2 shadow-xs">
+            <div className="tq-glass p-3 rounded-2xl flex flex-col items-center gap-2 shadow-xs">
               <Search className="w-8 h-8 text-amber-400" />
-              <span className="text-[11px] font-bold text-slate-300">Magnifying Glass</span>
+              <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300">Magnifying Glass</span>
             </div>
-            <div className="p-3 bg-slate-950 border border-emerald-500/30 rounded-2xl flex flex-col items-center gap-2 shadow-xs">
-              <ShieldCheck className="w-8 h-8 text-emerald-400" />
-              <span className="text-[11px] font-bold text-slate-300">Medical Shield</span>
+            <div className="tq-glass p-3 rounded-2xl flex flex-col items-center gap-2 shadow-xs">
+              <ShieldCheck className="w-8 h-8 text-emerald-600 dark:text-emerald-300" />
+              <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300">Medical Shield</span>
             </div>
-            <div className="p-3 bg-slate-950 border border-purple-500/30 rounded-2xl flex flex-col items-center gap-2 shadow-xs">
+            <div className="tq-glass p-3 rounded-2xl flex flex-col items-center gap-2 shadow-xs">
               <Sparkles className="w-8 h-8 text-purple-400" />
-              <span className="text-[11px] font-bold text-slate-300">Confetti</span>
+              <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300">Confetti</span>
             </div>
           </div>
 
-          <div className="p-4 bg-slate-950/80 border border-slate-800 rounded-2xl space-y-1">
+          <div className="tq-glass p-4 rounded-2xl space-y-1">
             <p className="text-xs font-bold text-amber-400 uppercase tracking-wide">Final Challenge</p>
             <p className="text-sm text-slate-200 leading-relaxed font-medium">
               Identify the clinical clues that indicate Tuberculosis before time runs out.
@@ -277,7 +277,7 @@ export default function SpotTheTBClues({
           <div className="pt-2 flex justify-center">
             <button
               onClick={startGame}
-              className="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-black text-base rounded-2xl shadow-[0_0_30px_rgba(6,182,212,0.4)] flex items-center justify-center gap-3 transition-all hover:scale-105 cursor-pointer"
+              className="tq-btn-primary touch-target w-full sm:w-auto px-10 py-4 text-white font-black text-base rounded-2xl shadow-[0_0_30px_rgba(6,182,212,0.4)] flex items-center justify-center gap-3 transition-all hover:scale-105 cursor-pointer"
             >
               <span>Start Challenge</span>
               <ArrowRight className="w-5 h-5" />
@@ -294,19 +294,19 @@ export default function SpotTheTBClues({
     const notTBClues = CLUE_DATABASE.filter(c => !c.isCorrect);
 
     return (
-      <div className="min-h-screen bg-slate-950 text-white p-4 sm:p-6 md:p-8 max-w-5xl mx-auto space-y-6">
+      <div className="min-h-screen bg-alabaster dark:bg-[#0b1220] text-ink-900 dark:text-slate-100 p-4 sm:p-6 md:p-8 max-w-5xl mx-auto space-y-6 max-w-full">
         {/* Top Banner Card */}
         <div className="bg-gradient-to-b from-slate-900 via-emerald-950/60 to-slate-900 border border-emerald-500/50 rounded-3xl p-6 sm:p-10 text-center space-y-4 shadow-[0_0_40px_rgba(16,185,129,0.2)] relative overflow-hidden">
-          <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none text-emerald-400">
+          <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none text-emerald-600 dark:text-emerald-300">
             <Sparkles className="w-72 h-72 animate-spin-slow" />
           </div>
 
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-500/40 text-xs font-mono font-bold">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-950 text-emerald-600 dark:text-emerald-300 border border-emerald-500/40 text-xs font-mono font-bold">
             <ShieldCheck className="w-4 h-4" />
             <span>Mission Accomplished</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
+          <h1 className="text-3xl sm:text-5xl font-black text-ink-900 dark:text-slate-100 tracking-tight">
             Spot the TB Clues Completed
           </h1>
 
@@ -316,7 +316,7 @@ export default function SpotTheTBClues({
 
           {/* Large Medical Shield Badge */}
           <div className="pt-2 flex justify-center">
-            <div className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl bg-slate-950 border border-amber-500/50 text-amber-300 font-bold text-sm shadow-lg">
+            <div className="tq-chip tq-chip-amber inline-flex items-center gap-3 px-6 py-3 rounded-2xl font-bold text-sm shadow-lg">
               <ShieldCheck className="w-6 h-6 text-amber-400" />
               <span>Official TB Clues Recognition Passed</span>
             </div>
@@ -326,8 +326,8 @@ export default function SpotTheTBClues({
         {/* Identified Clues Breakdown */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* Correctly Identified */}
-          <div className="bg-slate-900 border border-emerald-500/40 rounded-2xl p-5 space-y-3">
-            <div className="flex items-center gap-2 text-emerald-400 font-bold text-base">
+          <div className="tq-card p-5 space-y-3">
+            <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-300 font-bold text-base">
               <CheckCircle2 className="w-5 h-5" />
               <span>Correctly Identified TB Clues ({correctIdentified.length})</span>
             </div>
@@ -335,27 +335,27 @@ export default function SpotTheTBClues({
               {correctIdentified.map(item => (
                 <li key={item.id} className="p-2.5 bg-emerald-950/40 border border-emerald-500/30 rounded-xl flex items-center justify-between">
                   <span className="flex items-center gap-2">
-                    <span className="text-emerald-400 font-bold">✔</span> {item.title}
+                    <span className="text-emerald-600 dark:text-emerald-300 font-bold">✔</span> {item.title}
                   </span>
-                  <span className="text-[10px] text-emerald-400/80 font-mono">TB Symptom</span>
+                  <span className="text-[10px] text-emerald-600 dark:text-emerald-300/80 font-mono">TB Symptom</span>
                 </li>
               ))}
             </ul>
           </div>
 
           {/* Not TB Clues */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
-            <div className="flex items-center gap-2 text-rose-400 font-bold text-base">
+          <div className="tq-card tq-lift p-5 space-y-3">
+            <div className="flex items-center gap-2 text-rose-600 dark:text-rose-300 font-bold text-base">
               <XCircle className="w-5 h-5" />
               <span>Not TB Clues ({notTBClues.length})</span>
             </div>
-            <ul className="space-y-2 text-xs font-bold text-slate-400">
+            <ul className="space-y-2 text-xs font-bold text-slate-500 dark:text-slate-400">
               {notTBClues.map(item => (
-                <li key={item.id} className="p-2.5 bg-slate-950 border border-slate-800 rounded-xl flex items-center justify-between">
+                <li key={item.id} className="tq-glass p-2.5 rounded-xl flex items-center justify-between">
                   <span className="flex items-center gap-2">
-                    <span className="text-rose-400 font-bold">✖</span> {item.title}
+                    <span className="text-rose-600 dark:text-rose-300 font-bold">✖</span> {item.title}
                   </span>
-                  <span className="text-[10px] text-slate-500 font-mono">Unrelated</span>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Unrelated</span>
                 </li>
               ))}
             </ul>
@@ -365,12 +365,12 @@ export default function SpotTheTBClues({
         {/* Educational Card */}
         <div className="bg-gradient-to-r from-slate-900 via-cyan-950/80 to-slate-900 border border-cyan-500/40 rounded-3xl p-6 space-y-3 shadow-xl">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-cyan-950 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-cyan-950 border border-cyan-500/40 flex items-center justify-center text-brand-teal-deep dark:text-teal-300 shrink-0">
               <HeartPulse className="w-7 h-7 animate-pulse" />
             </div>
             <div>
-              <h3 className="text-lg font-black text-cyan-300">Key Learning</h3>
-              <p className="text-xs text-slate-300 font-medium">Core Clinical Warning Signs of Tuberculosis</p>
+              <h3 className="text-lg font-black text-brand-teal-deep dark:text-teal-300">Key Learning</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-300 font-medium">Core Clinical Warning Signs of Tuberculosis</p>
             </div>
           </div>
           <p className="text-slate-200 text-xs sm:text-sm leading-relaxed font-medium pt-1">
@@ -379,10 +379,10 @@ export default function SpotTheTBClues({
         </div>
 
         {/* Learning Roadmap Stepper */}
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4">
+        <div className="tq-card p-6 space-y-4">
           <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-            <h3 className="font-extrabold text-white text-base">Progress Journey</h3>
-            <span className="text-xs text-emerald-400 font-mono font-bold">Level 2 Unlocked!</span>
+            <h3 className="font-extrabold text-ink-900 dark:text-slate-100 text-base">Progress Journey</h3>
+            <span className="text-xs text-emerald-600 dark:text-emerald-300 font-mono font-bold">Level 2 Unlocked!</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
@@ -399,19 +399,19 @@ export default function SpotTheTBClues({
                 key={idx}
                 className={`p-2.5 rounded-xl border text-center space-y-1 transition-all ${
                   step.status === 'completed'
-                    ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300'
+                    ? 'bg-emerald-100 dark:bg-emerald-900/50 border-emerald-500/60 text-emerald-800 dark:text-emerald-200 ring-2 ring-emerald-500/40'
                     : step.status === 'unlocked'
-                    ? 'bg-cyan-950/40 border-cyan-500/40 text-cyan-300 ring-2 ring-cyan-500/20'
-                    : 'bg-slate-950 border-slate-800 text-slate-500 opacity-60'
+                    ? 'bg-teal-50 dark:bg-teal-900/50 border-teal-400 dark:border-teal-500/60 text-teal-800 dark:text-teal-200 ring-2 ring-brand-teal/40'
+                    : 'bg-white dark:bg-[#111c30] border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 opacity-60'
                 }`}
               >
                 <div className="flex justify-center">
                   {step.status === 'completed' ? (
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-300" />
                   ) : step.status === 'unlocked' ? (
-                    <Sparkles className="w-4 h-4 text-cyan-400" />
+                    <Sparkles className="w-4 h-4 text-brand-teal-deep dark:text-teal-300" />
                   ) : (
-                    <Lock className="w-4 h-4 text-slate-500" />
+                    <Lock className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                   )}
                 </div>
                 <p className="text-[10px] font-extrabold leading-tight">{step.title}</p>
@@ -424,7 +424,7 @@ export default function SpotTheTBClues({
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
           <button
             onClick={startGame}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 bg-slate-900 border border-slate-700 hover:bg-slate-800 text-slate-200 font-bold rounded-2xl text-xs sm:text-sm transition-all cursor-pointer"
+            className="tq-btn-secondary touch-target w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 font-bold rounded-2xl text-xs sm:text-sm transition-all cursor-pointer"
           >
             <RotateCcw className="w-4 h-4" />
             <span>Play Again</span>
@@ -441,7 +441,7 @@ export default function SpotTheTBClues({
           ) : onReturnToDashboard ? (
             <button
               onClick={onReturnToDashboard}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold rounded-2xl text-xs sm:text-sm shadow-[0_0_25px_rgba(6,182,212,0.3)] transition-all cursor-pointer"
+              className="tq-btn-primary touch-target w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 text-white font-bold rounded-2xl text-xs sm:text-sm shadow-[0_0_25px_rgba(6,182,212,0.3)] transition-all cursor-pointer"
             >
               <BookOpen className="w-4 h-4" />
               <span>Return to Dashboard</span>
@@ -457,23 +457,23 @@ export default function SpotTheTBClues({
   const strokeDashoffset = 283 - (283 * timeLeft) / 30;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white p-4 sm:p-6 md:p-8 max-w-7xl mx-auto space-y-6">
+    <div className="min-h-screen bg-alabaster dark:bg-[#0b1220] text-ink-900 dark:text-slate-100 p-4 sm:p-6 md:p-8 max-w-7xl mx-auto space-y-6 max-w-full">
       {/* Top Navbar */}
-      <div className="flex items-center justify-between bg-slate-900 border border-slate-800 rounded-2xl p-4">
+      <div className="tq-card flex items-center justify-between rounded-2xl p-4">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-cyan-950 border border-cyan-500/40 flex items-center justify-center text-cyan-400 font-bold">
+          <div className="w-9 h-9 rounded-xl bg-cyan-950 border border-cyan-500/40 flex items-center justify-center text-brand-teal-deep dark:text-teal-300 font-bold">
             <Search className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="font-black text-white text-lg leading-tight">Spot the TB Clues</h2>
-            <p className="text-xs text-slate-400 font-mono">Clinical Medical Learning Mini Game</p>
+            <h2 className="font-black text-ink-900 dark:text-slate-100 text-lg leading-tight">Spot the TB Clues</h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">Clinical Medical Learning Mini Game</p>
           </div>
         </div>
 
         {onReturnToDashboard && (
           <button
             onClick={onReturnToDashboard}
-            className="flex items-center gap-1.5 px-4 py-2 bg-slate-950 border border-slate-800 hover:bg-slate-800 text-slate-300 font-bold text-xs rounded-xl transition-all cursor-pointer"
+            className="tq-btn-ghost touch-target flex items-center gap-1.5 px-4 py-2 font-bold text-xs rounded-xl transition-all cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Dashboard</span>
@@ -514,71 +514,71 @@ export default function SpotTheTBClues({
                 <span className={`text-3xl font-black font-mono ${timerColor.text}`}>
                   {timeLeft}s
                 </span>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">30 Seconds</span>
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">30 Seconds</span>
               </div>
             </div>
 
             <div className="pt-1">
-              <span className="text-xs font-bold text-slate-300">Time Remaining</span>
+              <span className="text-xs font-bold text-slate-600 dark:text-slate-300">Time Remaining</span>
             </div>
           </div>
 
           {/* Instruction Card */}
-          <div className="p-5 bg-slate-900 border border-slate-800 rounded-3xl space-y-3">
-            <div className="flex items-center gap-2 text-cyan-400 font-extrabold text-sm">
+          <div className="tq-card tq-lift p-5 rounded-3xl space-y-3">
+            <div className="flex items-center gap-2 text-brand-teal-deep dark:text-teal-300 font-extrabold text-sm">
               <BookOpen className="w-4 h-4" />
               <span>How to Play</span>
             </div>
-            <ul className="space-y-2 text-xs text-slate-300 leading-relaxed font-medium">
+            <ul className="space-y-2 text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
               <li className="flex items-start gap-2">
-                <span className="text-emerald-400 font-bold mt-0.5">✓</span>
+                <span className="text-emerald-600 dark:text-emerald-300 font-bold mt-0.5">✓</span>
                 <span>Click <strong>ONLY</strong> the clues that indicate Tuberculosis.</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-rose-400 font-bold mt-0.5">✕</span>
+                <span className="text-rose-600 dark:text-rose-300 font-bold mt-0.5">✕</span>
                 <span>Avoid selecting unrelated clues.</span>
               </li>
             </ul>
-            <div className="pt-2 text-[11px] text-slate-400 border-t border-slate-800 font-mono">
+            <div className="pt-2 text-[11px] text-slate-500 dark:text-slate-400 border-t border-slate-800 font-mono">
               Educational Only — No scoring or penalty.
             </div>
           </div>
         </div>
 
         {/* Center Panel: Patient Profile & Details */}
-        <div className="lg:col-span-4 bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 space-y-4 shadow-xl">
+        <div className="lg:col-span-4 tq-card p-5 sm:p-6 space-y-4 shadow-xl">
           <div className="flex items-center justify-between border-b border-slate-800 pb-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-cyan-950 border border-cyan-500/40 flex items-center justify-center text-cyan-400 font-bold">
+              <div className="w-10 h-10 rounded-2xl bg-cyan-950 border border-cyan-500/40 flex items-center justify-center text-brand-teal-deep dark:text-teal-300 font-bold">
                 <User className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-extrabold text-white text-base">Patient Profile</h3>
-                <p className="text-xs text-slate-400">Clinical Case Study</p>
+                <h3 className="font-extrabold text-ink-900 dark:text-slate-100 text-base">Patient Profile</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Clinical Case Study</p>
               </div>
             </div>
-            <span className="px-3 py-1 bg-cyan-950 text-cyan-300 border border-cyan-500/30 rounded-full text-xs font-mono font-bold">
+            <span className="px-3 py-1 bg-cyan-950 text-brand-teal-deep dark:text-teal-300 border border-cyan-500/30 rounded-full text-xs font-mono font-bold">
               Case #TB-2026
             </span>
           </div>
 
           {/* Demographic Details Grid */}
           <div className="grid grid-cols-2 gap-2 text-xs">
-            <div className="p-2.5 bg-slate-950 rounded-xl border border-slate-800">
-              <span className="text-slate-400 block text-[10px] uppercase font-bold">Age</span>
-              <span className="text-white font-extrabold">28 Years</span>
+            <div className="tq-glass p-2.5 rounded-xl">
+              <span className="text-slate-500 dark:text-slate-400 block text-[10px] uppercase font-bold">Age</span>
+              <span className="text-ink-900 dark:text-slate-100 font-extrabold">28 Years</span>
             </div>
-            <div className="p-2.5 bg-slate-950 rounded-xl border border-slate-800">
-              <span className="text-slate-400 block text-[10px] uppercase font-bold">Gender</span>
-              <span className="text-white font-extrabold">Male</span>
+            <div className="tq-glass p-2.5 rounded-xl">
+              <span className="text-slate-500 dark:text-slate-400 block text-[10px] uppercase font-bold">Gender</span>
+              <span className="text-ink-900 dark:text-slate-100 font-extrabold">Male</span>
             </div>
-            <div className="p-2.5 bg-slate-950 rounded-xl border border-slate-800">
-              <span className="text-slate-400 block text-[10px] uppercase font-bold">Occupation</span>
-              <span className="text-white font-extrabold">Factory Worker</span>
+            <div className="tq-glass p-2.5 rounded-xl">
+              <span className="text-slate-500 dark:text-slate-400 block text-[10px] uppercase font-bold">Occupation</span>
+              <span className="text-ink-900 dark:text-slate-100 font-extrabold">Factory Worker</span>
             </div>
-            <div className="p-2.5 bg-slate-950 rounded-xl border border-slate-800">
-              <span className="text-slate-400 block text-[10px] uppercase font-bold">Residence</span>
-              <span className="text-white font-extrabold">Urban</span>
+            <div className="tq-glass p-2.5 rounded-xl">
+              <span className="text-slate-500 dark:text-slate-400 block text-[10px] uppercase font-bold">Residence</span>
+              <span className="text-ink-900 dark:text-slate-100 font-extrabold">Urban</span>
             </div>
           </div>
 
@@ -592,31 +592,31 @@ export default function SpotTheTBClues({
 
           {/* History */}
           <div className="space-y-2">
-            <span className="text-[11px] font-extrabold text-slate-300 uppercase tracking-wide">History</span>
-            <ul className="grid grid-cols-2 gap-1.5 text-xs font-medium text-slate-300">
-              <li className="p-2 bg-slate-950 rounded-lg border border-slate-800 flex items-center gap-1.5">
-                <span className="text-cyan-400 font-bold">•</span> Weight loss
+            <span className="text-[11px] font-extrabold text-slate-600 dark:text-slate-300 uppercase tracking-wide">History</span>
+            <ul className="grid grid-cols-2 gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-300">
+              <li className="tq-glass p-2 rounded-lg flex items-center gap-1.5">
+                <span className="text-brand-teal-deep dark:text-teal-300 font-bold">•</span> Weight loss
               </li>
-              <li className="p-2 bg-slate-950 rounded-lg border border-slate-800 flex items-center gap-1.5">
-                <span className="text-cyan-400 font-bold">•</span> Night sweats
+              <li className="tq-glass p-2 rounded-lg flex items-center gap-1.5">
+                <span className="text-brand-teal-deep dark:text-teal-300 font-bold">•</span> Night sweats
               </li>
-              <li className="p-2 bg-slate-950 rounded-lg border border-slate-800 flex items-center gap-1.5">
-                <span className="text-cyan-400 font-bold">•</span> Fever
+              <li className="tq-glass p-2 rounded-lg flex items-center gap-1.5">
+                <span className="text-brand-teal-deep dark:text-teal-300 font-bold">•</span> Fever
               </li>
-              <li className="p-2 bg-slate-950 rounded-lg border border-slate-800 flex items-center gap-1.5">
-                <span className="text-cyan-400 font-bold">•</span> Loss of appetite
+              <li className="tq-glass p-2 rounded-lg flex items-center gap-1.5">
+                <span className="text-brand-teal-deep dark:text-teal-300 font-bold">•</span> Loss of appetite
               </li>
-              <li className="p-2 bg-slate-950 rounded-lg border border-slate-800 flex items-center gap-1.5">
-                <span className="text-cyan-400 font-bold">•</span> Fatigue
+              <li className="tq-glass p-2 rounded-lg flex items-center gap-1.5">
+                <span className="text-brand-teal-deep dark:text-teal-300 font-bold">•</span> Fatigue
               </li>
-              <li className="p-2 bg-slate-950 rounded-lg border border-slate-800 flex items-center gap-1.5">
-                <span className="text-cyan-400 font-bold">•</span> Contact with TB patient
+              <li className="tq-glass p-2 rounded-lg flex items-center gap-1.5">
+                <span className="text-brand-teal-deep dark:text-teal-300 font-bold">•</span> Contact with TB patient
               </li>
             </ul>
           </div>
 
           {/* Bottom Prompt */}
-          <div className="pt-2 text-center text-xs font-bold text-slate-300 bg-slate-950 p-3 rounded-xl border border-slate-800">
+          <div className="pt-2 text-center text-xs font-bold text-slate-600 dark:text-slate-300 tq-glass p-3 rounded-xl">
             Identify all TB-related clues before the timer ends.
           </div>
         </div>
@@ -624,8 +624,8 @@ export default function SpotTheTBClues({
         {/* Right Panel: 3x3 Grid of Clickable Clue Cards */}
         <div className="lg:col-span-5 space-y-3">
           <div className="flex items-center justify-between px-1">
-            <span className="text-xs font-bold text-slate-300 uppercase tracking-wide">3×3 Clue Cards Grid</span>
-            <span className="text-xs text-cyan-400 font-mono font-bold">
+            <span className="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wide">3×3 Clue Cards Grid</span>
+            <span className="text-xs text-brand-teal-deep dark:text-teal-300 font-mono font-bold">
               Found: {cards.filter(c => c.isCorrect && selectedClues.has(c.id)).length} / 6
             </span>
           </div>
@@ -635,13 +635,13 @@ export default function SpotTheTBClues({
               const isSelected = selectedClues.has(card.id);
               const IconComp = card.icon;
 
-              let cardStyle = "bg-slate-900 border-slate-800 text-white hover:border-cyan-500/50 hover:scale-105 hover:shadow-[0_0_15px_rgba(6,182,212,0.2)]";
+              let cardStyle = "tq-card tq-lift text-ink-900 dark:text-slate-100 hover:border-teal-400 hover:scale-105 hover:shadow-[0_0_15px_rgba(6,182,212,0.2)]";
 
               if (isSelected) {
                 if (card.isCorrect) {
-                  cardStyle = "bg-emerald-950/70 border-emerald-500 text-emerald-200 shadow-[0_0_20px_rgba(16,185,129,0.4)] scale-100";
+                  cardStyle = "bg-emerald-100 dark:bg-emerald-950/70 border-emerald-500 text-emerald-800 dark:text-emerald-200 shadow-[0_0_20px_rgba(16,185,129,0.4)] scale-100";
                 } else {
-                  cardStyle = "bg-rose-950/70 border-rose-500 text-rose-200 shadow-[0_0_20px_rgba(244,63,94,0.4)] scale-100";
+                  cardStyle = "bg-rose-100 dark:bg-rose-950/70 border-rose-500 text-rose-800 dark:text-rose-200 shadow-[0_0_20px_rgba(244,63,94,0.4)] scale-100";
                 }
               }
 
@@ -656,15 +656,15 @@ export default function SpotTheTBClues({
                   {isSelected && (
                     <div className="absolute top-2 right-2">
                       {card.isCorrect ? (
-                        <CheckCircle2 className="w-5 h-5 text-emerald-400 animate-bounce" />
+                        <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-300 animate-bounce" />
                       ) : (
-                        <XCircle className="w-5 h-5 text-rose-400 animate-pulse" />
+                        <XCircle className="w-5 h-5 text-rose-600 dark:text-rose-300 animate-pulse" />
                       )}
                     </div>
                   )}
 
                   <div className="pt-2 flex justify-center">
-                    <div className={`p-2.5 rounded-xl ${isSelected ? (card.isCorrect ? 'bg-emerald-900/50 text-emerald-300' : 'bg-rose-900/50 text-rose-300') : 'bg-slate-950 text-cyan-400 group-hover:text-cyan-300'}`}>
+                    <div className={`p-2.5 rounded-xl ${isSelected ? (card.isCorrect ? 'bg-emerald-900/50 text-emerald-600 dark:text-emerald-300' : 'bg-rose-900/50 text-rose-300') : 'bg-white dark:bg-slate-950 text-brand-teal-deep dark:text-teal-300 group-hover:text-brand-teal-deep dark:text-teal-300'}`}>
                       <IconComp className="w-6 h-6" />
                     </div>
                   </div>

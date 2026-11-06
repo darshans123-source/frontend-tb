@@ -1091,7 +1091,7 @@ export default function SnakeLadderGame({
   const stageStyle = getStageHeaderStyles(stageDetails.stage);
 
   return (
-    <div className="min-h-screen bg-[#F4F8FC] text-[#102A43] font-sans selection:bg-blue-500/20 selection:text-blue-900 relative overflow-hidden flex flex-col">
+    <div className="min-h-screen bg-alabaster dark:bg-[#0b1220] text-ink-900 dark:text-slate-100 font-sans selection:bg-blue-500/20 selection:text-blue-900 relative overflow-hidden flex flex-col">
       {/* ========================================================================= */}
       {/* 13. BEAUTIFUL LIGHT MEDICAL BACKGROUND (Subtle & High-End) */}
       {/* ========================================================================= */}
@@ -1130,31 +1130,31 @@ export default function SnakeLadderGame({
       {/* ========================================================================= */}
       {/* 7. TOP HUD: BRIGHT, COLORFUL STAT CARDS */}
       {/* ========================================================================= */}
-      <header className="relative z-20 border-b border-slate-200/90 bg-white/95 backdrop-blur-md px-4 sm:px-6 py-3 shadow-[0_4px_20px_rgba(16,42,67,0.04)]">
+      <header className="relative z-20 border-b border-slate-200 dark:border-slate-700/90 bg-white/95 backdrop-blur-md px-4 sm:px-6 py-3 shadow-[0_4px_20px_rgba(16,42,67,0.04)]">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
           {/* Logo & Level Banner */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1677FF] via-[#00B8A9] to-teal-500 flex items-center justify-center shadow-md shadow-blue-500/25 border border-white">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-royal via-brand-teal to-brand-emerald flex items-center justify-center shadow-md shadow-blue-500/25 border border-white">
               <SnakeGlyph className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-sm font-black tracking-tight text-[#102A43] uppercase">TB QUEST</span>
-                <span className="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-blue-100 border border-blue-200 text-blue-700">
+                <span className="text-sm font-black tracking-tight text-ink-900 dark:text-slate-100 uppercase">TB QUEST</span>
+                <span className="tq-chip tq-chip-royal px-2.5 py-0.5">
                   LEVEL 1
                 </span>
               </div>
-              <div className="text-xs text-[#64748B] font-medium">Path to TB Awareness</div>
+              <div className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-400 font-medium">Path to TB Awareness</div>
             </div>
           </div>
 
           {/* Core HUD Metrics: Colorful Pill Cards */}
           <div className="flex items-center flex-wrap gap-2.5 sm:gap-3 text-xs font-mono">
             {/* 🟡 SCORE: Gold / Yellow */}
-            <div className="flex items-center gap-2 bg-gradient-to-br from-amber-50 to-yellow-50/80 px-3.5 py-1.5 rounded-xl border border-amber-200 shadow-sm">
+            <div className="tq-chip tq-chip-amber px-3.5 py-1.5 rounded-xl">
               <span className="text-base leading-none">🟡</span>
               <div>
-                <span className="text-[#64748B] text-[10px] uppercase block leading-none font-bold">SCORE</span>
+                <span className="text-slate-500 dark:text-slate-400 dark:text-slate-400 text-[10px] uppercase block leading-none font-bold">SCORE</span>
                 <span className="text-sm font-black text-amber-900">
                   {gameState.score} <span className="text-[11px] text-amber-600/80 font-normal">/ 250</span>
                 </span>
@@ -1162,30 +1162,30 @@ export default function SnakeLadderGame({
             </div>
 
             {/* 🟣 XP: Purple / Cyan — pops a little every time XP is earned */}
-            <div className="flex items-center gap-2 bg-gradient-to-br from-purple-50 to-indigo-50/80 px-3.5 py-1.5 rounded-xl border border-purple-200 shadow-sm">
+            <div className="tq-chip tq-chip-royal px-3.5 py-1.5 rounded-xl">
               <span className="text-base leading-none">🟣</span>
               <div>
-                <span className="text-[#64748B] text-[10px] uppercase block leading-none font-bold">XP</span>
+                <span className="text-slate-500 dark:text-slate-400 dark:text-slate-400 text-[10px] uppercase block leading-none font-bold">XP</span>
                 <span key={gameState.xp} className="xp-pop text-sm font-black text-purple-900">{gameState.xp}</span>
               </div>
             </div>
 
             {/* 🔥 STREAK: shows once the student gets 2+ correct in a row */}
             {streak >= 2 && (
-              <div className="flex items-center gap-2 bg-gradient-to-br from-orange-50 to-amber-50/80 px-3.5 py-1.5 rounded-xl border border-orange-200 shadow-sm">
+              <div className="tq-chip tq-chip-coral px-3.5 py-1.5 rounded-xl">
                 <span className="text-base leading-none">🔥</span>
                 <div>
-                  <span className="text-[#64748B] text-[10px] uppercase block leading-none font-bold">STREAK</span>
+                  <span className="text-slate-500 dark:text-slate-400 dark:text-slate-400 text-[10px] uppercase block leading-none font-bold">STREAK</span>
                   <span className="text-sm font-black text-orange-800">{streak} in a row</span>
                 </div>
               </div>
             )}
 
             {/* 🟢 ACCURACY: Green */}
-            <div className="flex items-center gap-2 bg-gradient-to-br from-emerald-50 to-teal-50/80 px-3.5 py-1.5 rounded-xl border border-emerald-200 shadow-sm">
+            <div className="tq-chip tq-chip-teal px-3.5 py-1.5 rounded-xl">
               <span className="text-base leading-none">🟢</span>
               <div>
-                <span className="text-[#64748B] text-[10px] uppercase block leading-none font-bold">ACCURACY</span>
+                <span className="text-slate-500 dark:text-slate-400 dark:text-slate-400 text-[10px] uppercase block leading-none font-bold">ACCURACY</span>
                 <span className={`text-sm font-black ${gameState.accuracy >= 80 ? 'text-emerald-700' : 'text-amber-700'}`}>
                   {gameState.accuracy}%
                 </span>
@@ -1193,10 +1193,10 @@ export default function SnakeLadderGame({
             </div>
 
             {/* 🔵 SQUARE: Blue */}
-            <div className="flex items-center gap-2 bg-gradient-to-br from-blue-50 to-sky-50/80 px-3.5 py-1.5 rounded-xl border border-blue-200 shadow-sm">
+            <div className="tq-chip tq-chip-royal px-3.5 py-1.5 rounded-xl">
               <span className="text-base leading-none">🔵</span>
               <div>
-                <span className="text-[#64748B] text-[10px] uppercase block leading-none font-bold">SQUARE</span>
+                <span className="text-slate-500 dark:text-slate-400 dark:text-slate-400 text-[10px] uppercase block leading-none font-bold">SQUARE</span>
                 <span className="text-sm font-black text-blue-900">
                   {gameState.currentSquare} <span className="text-[11px] text-blue-600/80 font-normal">/ 100</span>
                 </span>
@@ -1204,10 +1204,10 @@ export default function SnakeLadderGame({
             </div>
 
             {/* 🟣 QUESTIONS: Purple */}
-            <div className="flex items-center gap-2 bg-gradient-to-br from-indigo-50 to-purple-50/80 px-3.5 py-1.5 rounded-xl border border-indigo-200 shadow-sm">
+            <div className="tq-chip tq-chip-royal px-3.5 py-1.5 rounded-xl">
               <span className="text-base leading-none">🟣</span>
               <div>
-                <span className="text-[#64748B] text-[10px] uppercase block leading-none font-bold">QUESTIONS</span>
+                <span className="text-slate-500 dark:text-slate-400 dark:text-slate-400 text-[10px] uppercase block leading-none font-bold">QUESTIONS</span>
                 <span className="text-sm font-black text-indigo-900">
                   {(gameState.completedQuestionIds || []).length} <span className="text-[11px] text-indigo-600/80 font-normal">/ 25</span>
                 </span>
@@ -1221,9 +1221,9 @@ export default function SnakeLadderGame({
             <button
               onClick={() => setShowHowToPlay(true)}
               title="How to Play / Tutorial"
-              className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-mono font-bold text-[#102A43] hover:text-[#1677FF] hover:border-blue-300 shadow-sm transition-all flex items-center gap-1.5 active:scale-95"
+              className="px-3 py-1.5 rounded-xl tq-card text-xs font-mono font-bold text-ink-900 dark:text-slate-100 hover:text-brand-royal dark:text-blue-400 hover:border-blue-300 shadow-sm transition-all flex items-center gap-1.5 active:scale-95"
             >
-              <BookOpen className="w-3.5 h-3.5 text-[#1677FF]" />
+              <BookOpen className="w-3.5 h-3.5 text-brand-royal dark:text-blue-400" />
               <span className="hidden sm:inline">How to Play</span>
             </button>
 
@@ -1233,8 +1233,8 @@ export default function SnakeLadderGame({
               title={musicEnabled ? 'Atmospheric Music: ON' : 'Atmospheric Music: OFF'}
               className={`p-2 rounded-xl border text-xs transition-all ${
                 musicEnabled 
-                  ? 'bg-blue-50 border-blue-300 text-blue-700 shadow-sm' 
-                  : 'bg-white border-slate-200 text-slate-400 hover:text-slate-700'
+                  ? 'bg-blue-50 dark:bg-blue-950/50 border-blue-300 dark:border-blue-500/50 text-blue-700 dark:text-blue-300 shadow-sm'
+                  : 'bg-white border-slate-200 dark:border-slate-700 text-slate-400 hover:text-slate-700 dark:text-slate-200'
               }`}
             >
               <Music className="w-3.5 h-3.5" />
@@ -1246,8 +1246,8 @@ export default function SnakeLadderGame({
               title={sfxEnabled ? 'Sound FX: ON' : 'Sound FX: OFF'}
               className={`p-2 rounded-xl border text-xs transition-all ${
                 sfxEnabled 
-                  ? 'bg-teal-50 border-teal-300 text-teal-700 shadow-sm' 
-                  : 'bg-white border-slate-200 text-slate-400 hover:text-slate-700'
+                  ? 'bg-teal-50 dark:bg-teal-950/50 border-teal-300 dark:border-teal-500/50 text-teal-700 dark:text-teal-300 shadow-sm'
+                  : 'bg-white border-slate-200 dark:border-slate-700 text-slate-400 hover:text-slate-700 dark:text-slate-200'
               }`}
             >
               {sfxEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
@@ -1257,7 +1257,7 @@ export default function SnakeLadderGame({
             <button
               onClick={() => setShowRestartConfirm(true)}
               title="Reset Board Progress"
-              className="p-2 rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-rose-500 hover:border-rose-200 transition-colors shadow-sm"
+              className="p-2 rounded-xl tq-card text-slate-400 hover:text-rose-500 hover:border-rose-200 transition-colors shadow-sm"
             >
               <RotateCcw className="w-3.5 h-3.5" />
             </button>
@@ -1266,7 +1266,7 @@ export default function SnakeLadderGame({
             {onBackToDashboard && (
               <button
                 onClick={onBackToDashboard}
-                className="px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-all shadow-sm"
+                className="px-3.5 py-1.5 rounded-xl tq-card text-xs font-semibold text-slate-700 dark:text-slate-200 hover:text-slate-900 hover:bg-slate-50 transition-all shadow-sm"
               >
                 Exit
               </button>
@@ -1277,7 +1277,7 @@ export default function SnakeLadderGame({
             <span
               title={syncStatus === 'saved' ? 'Progress saved to Supabase' : syncStatus === 'saving' ? 'Saving progress to Supabase…' : 'Progress saved on this device only — run supabase_level1_snake_progress.sql in Supabase to enable cloud save'}
               className={`px-2.5 py-1.5 rounded-xl border text-[11px] font-mono font-bold flex items-center gap-1.5 shadow-sm ${
-                syncStatus === 'saved' ? 'bg-emerald-50 border-emerald-300 text-emerald-700' : syncStatus === 'saving' ? 'bg-blue-50 border-blue-300 text-blue-700' : 'bg-white border-slate-200 text-slate-500'
+                syncStatus === 'saved' ? 'bg-emerald-50 border-emerald-300 text-emerald-700' : syncStatus === 'saving' ? 'bg-blue-50 border-blue-300 text-blue-700' : 'bg-white border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400'
               }`}
             >
               {syncStatus === 'saved' ? <Cloud className="w-3.5 h-3.5" /> : syncStatus === 'saving' ? <Cloud className="w-3.5 h-3.5 animate-pulse" /> : <CloudOff className="w-3.5 h-3.5" />}
@@ -1290,7 +1290,7 @@ export default function SnakeLadderGame({
         {/* 8. PROGRESS BAR: VIBRANT GRADIENT WITH MOVING SHINE */}
         {/* ========================================================================= */}
         <div className="max-w-7xl mx-auto mt-2.5">
-          <div className="flex items-center justify-between text-[11px] font-mono font-bold text-[#64748B] mb-1">
+          <div className="flex items-center justify-between text-[11px] font-mono font-bold text-slate-500 dark:text-slate-400 dark:text-slate-400 mb-1">
             <span className="flex items-center gap-1.5 text-blue-700">
               <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
               LEVEL 1 PROGRESS
@@ -1298,9 +1298,9 @@ export default function SnakeLadderGame({
             <span>{gameState.currentSquare} / 100 SQUARES ({Math.min(100, gameState.currentSquare)}%)</span>
           </div>
 
-          <div className="h-2.5 w-full bg-slate-200/90 rounded-full overflow-hidden p-0.5 shadow-inner relative">
+          <div className="tq-progress w-full p-0.5 shadow-inner relative">
             <div 
-              className="h-full bg-gradient-to-r from-[#1677FF] via-[#00B8A9] to-[#22C55E] rounded-full transition-all duration-500 shadow-sm relative overflow-hidden"
+              className="tq-progress-bar relative overflow-hidden"
               style={{ width: `${Math.min(100, gameState.currentSquare)}%` }}
             >
               {/* Moving shine reflection animation */}
@@ -1316,11 +1316,11 @@ export default function SnakeLadderGame({
           key={celebration.id}
           className="toast-pop fixed left-1/2 top-20 z-[100] -translate-x-1/2 pointer-events-none px-1 w-[calc(100%-2rem)] max-w-md"
         >
-          <div className="flex items-start gap-3 rounded-2xl bg-white/95 backdrop-blur border-2 border-amber-300 shadow-xl shadow-amber-500/20 px-4 py-3">
+          <div className="tq-glass flex items-start gap-3 rounded-2xl border-2 border-amber-300 shadow-xl shadow-amber-500/20 px-4 py-3">
             <span className="text-2xl leading-none mt-0.5">{celebration.emoji}</span>
             <div className="min-w-0">
-              <div className="text-sm font-black text-[#102A43] leading-snug">{celebration.title}</div>
-              {celebration.sub && <div className="text-xs font-medium text-slate-600 leading-snug mt-0.5">{celebration.sub}</div>}
+              <div className="text-sm font-black text-ink-900 dark:text-slate-100 leading-snug">{celebration.title}</div>
+              {celebration.sub && <div className="text-xs font-medium text-slate-600 dark:text-slate-400 leading-snug mt-0.5">{celebration.sub}</div>}
             </div>
           </div>
         </div>
@@ -1334,7 +1334,7 @@ export default function SnakeLadderGame({
         {/* 2. GAME BOARD: THE VISUAL HERO OF THE PAGE */}
         {/* ========================================================================= */}
         <div className="lg:col-span-8 flex flex-col items-center">
-          <div className="w-full max-w-[680px] aspect-square relative rounded-3xl bg-white border-2 border-slate-200/90 p-2.5 sm:p-3.5 shadow-[0_20px_50px_-10px_rgba(22,119,255,0.12),0_10px_20px_-5px_rgba(0,0,0,0.05)] backdrop-blur-xl">
+          <div className="w-full max-w-[680px] aspect-square relative rounded-3xl tq-card border-2 p-2.5 sm:p-3.5 shadow-[0_20px_50px_-10px_rgba(22,119,255,0.12),0_10px_20px_-5px_rgba(0,0,0,0.05)] backdrop-blur-xl">
             {/* Subtle Metallic Corner Guides */}
             <div className="absolute top-1.5 left-1.5 w-3 h-3 border-t-2 border-l-2 border-blue-400 rounded-tl-sm pointer-events-none" />
             <div className="absolute top-1.5 right-1.5 w-3 h-3 border-t-2 border-r-2 border-blue-400 rounded-tr-sm pointer-events-none" />
@@ -1342,7 +1342,7 @@ export default function SnakeLadderGame({
             <div className="absolute bottom-1.5 right-1.5 w-3 h-3 border-b-2 border-r-2 border-blue-400 rounded-br-sm pointer-events-none" />
 
             {/* 10 x 10 Grid */}
-            <div className="w-full h-full grid grid-cols-10 grid-rows-10 gap-1 sm:gap-1.5 relative">
+            <div className="w-full h-full grid grid-cols-10 grid-rows-10 gap-1 sm:gap-1.5 relative min-w-0">
               {Array.from({ length: 100 }, (_, idx) => {
                 const squareNum = idx + 1;
                 const coords = getSquareCoordinates(squareNum);
@@ -1358,43 +1358,43 @@ export default function SnakeLadderGame({
                 const isMissedQuestion = challenge && gameState.missedQuestionIds.includes(challenge.id);
 
                 // Alternating Soft Educational Colors
-                let squareStyle = 'bg-white border-slate-200/90 text-slate-800 shadow-[0_1px_3px_rgba(0,0,0,0.03)]';
+                let squareStyle = 'bg-white border-slate-200 dark:border-slate-700/90 text-slate-800 dark:text-slate-200 shadow-[0_1px_3px_rgba(0,0,0,0.03)]';
 
                 if (squareNum === 1) {
                   // Start: Green accent
-                  squareStyle = 'bg-gradient-to-br from-emerald-100 to-teal-100 border-2 border-emerald-500 text-emerald-950 font-black shadow-sm';
+                  squareStyle = 'bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/60 dark:to-teal-900/60 border-2 border-emerald-500 text-emerald-950 dark:text-emerald-100 font-black shadow-sm';
                 } else if (squareNum === 100) {
                   // Finish: Gold / Purple accent
-                  squareStyle = 'bg-gradient-to-br from-amber-100 via-yellow-100 to-purple-100 border-2 border-amber-400 text-amber-950 font-black shadow-md';
+                  squareStyle = 'bg-gradient-to-br from-amber-100 via-yellow-100 to-purple-100 dark:from-amber-900/60 dark:via-yellow-900/50 dark:to-purple-900/60 border-2 border-amber-400 text-amber-950 dark:text-amber-100 font-black shadow-md';
                 } else if (hasLadder || isAutoBonus) {
                   // Ladder: Very light green / teal
-                  squareStyle = 'bg-gradient-to-br from-emerald-50/90 to-teal-50/90 border border-emerald-300 text-emerald-900 shadow-sm';
+                  squareStyle = 'bg-gradient-to-br from-teal-100 to-emerald-100 dark:from-teal-900/60 dark:to-emerald-900/60 border border-teal-400 dark:border-teal-500 text-teal-900 dark:text-teal-100 shadow-sm ring-1 ring-teal-300/60';
                 } else if (hasSnake || isAutoSnake) {
                   // Snake: Very light coral / red
-                  squareStyle = 'bg-gradient-to-br from-rose-50/90 to-red-50/90 border border-rose-300 text-rose-900 shadow-sm';
+                  squareStyle = 'bg-gradient-to-br from-rose-100 to-red-100 dark:from-rose-900/60 dark:to-red-900/60 border border-brand-coral dark:border-rose-500 text-rose-900 dark:text-rose-100 shadow-sm ring-1 ring-brand-coral/50';
                 } else if (challenge) {
                   // Question: Light purple / blue
                   squareStyle = isCompletedQuestion
-                    ? 'bg-emerald-50/90 border border-emerald-300 text-emerald-900'
+                    ? 'bg-emerald-50/90 dark:bg-emerald-900/50 border border-emerald-300 text-emerald-900 dark:text-emerald-100'
                     : isMissedQuestion
-                    ? 'bg-rose-50/90 border border-rose-300 text-rose-900'
-                    : 'bg-indigo-50/80 border border-indigo-200 text-indigo-900';
+                    ? 'bg-rose-50/90 dark:bg-rose-900/50 border border-rose-300 text-rose-900 dark:text-rose-100'
+                    : 'bg-indigo-50/80 dark:bg-indigo-900/50 border border-indigo-200 dark:border-indigo-500 text-indigo-900 dark:text-indigo-100';
                 } else if ([3, 7, 14, 22, 30, 38, 48, 59, 68, 79, 86, 97].includes(squareNum)) {
                   // Learning / Pearl: Light cyan
-                  squareStyle = 'bg-cyan-50/80 border border-cyan-200 text-cyan-900';
+                  squareStyle = 'bg-cyan-50/80 dark:bg-cyan-900/50 border border-cyan-200 dark:border-cyan-500 text-cyan-900 dark:text-cyan-100';
                 } else if (isVisited) {
                   // Visited
-                  squareStyle = 'bg-slate-50/90 border-slate-200 text-slate-700';
+                  squareStyle = 'bg-slate-50/90 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200';
                 } else {
                   // Normal: Alternating white and soft blue tint
                   squareStyle = (coords.row + coords.col) % 2 === 0
-                    ? 'bg-white border-slate-200/80 text-slate-800'
-                    : 'bg-blue-50/40 border-slate-200/80 text-slate-800';
+                    ? 'bg-white border-slate-200 dark:border-slate-700/80 text-slate-800 dark:text-slate-200'
+                    : 'bg-blue-50/40 border-slate-200 dark:border-slate-700/80 text-slate-800 dark:text-slate-200';
                 }
 
                 // Current player highlight
                 if (isCurrent) {
-                  squareStyle += ' ring-4 ring-blue-500/40 border-2 border-blue-600 shadow-[0_0_20px_rgba(22,119,255,0.45)] z-20';
+                  squareStyle += ' ring-4 ring-brand-teal/40 border-2 border-brand-teal shadow-[0_0_20px_rgba(13,148,136,0.45)] z-20';
                 }
 
                 // Destination highlight (the square the dice is taking you to)
@@ -1409,7 +1409,7 @@ export default function SnakeLadderGame({
                       gridColumnStart: coords.col + 1,
                       gridRowStart: coords.row + 1
                     }}
-                    className={`relative rounded-lg flex flex-col justify-between p-1 select-none transition-all duration-300 border ${squareStyle}`}
+                    className={`relative rounded-lg flex flex-col justify-between p-1 select-none transition-all duration-300 border min-w-0 min-h-0 ${squareStyle}`}
                   >
                     {/* Top Row: Square Number & Icon */}
                     <div className="flex items-center justify-between leading-none">
@@ -1420,7 +1420,7 @@ export default function SnakeLadderGame({
                           ? 'text-amber-800 font-black' 
                           : squareNum === 1
                           ? 'text-emerald-800 font-black'
-                          : 'text-[#102A43]'
+                          : 'text-ink-900 dark:text-slate-100'
                       }`}>
                         {squareNum}
                       </span>
@@ -1659,7 +1659,7 @@ export default function SnakeLadderGame({
                   <div className="absolute top-7 w-8 h-2.5 bg-slate-900/35 rounded-full blur-[2px]" />
 
                   {/* 3D Glossy Game Piece */}
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-[#38BDF8] via-[#1677FF] to-[#0d9488] border-2 border-white shadow-[0_8px_18px_rgba(22,119,255,0.45)] flex items-center justify-center">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-sky-400 via-brand-royal to-brand-teal border-2 border-white shadow-[0_8px_18px_rgba(22,119,255,0.45)] flex items-center justify-center">
                     {/* Glossy Top Specular Highlight */}
                     <div className="w-6 h-6 rounded-full bg-gradient-to-b from-white/70 to-transparent flex items-center justify-center">
                       <Activity className="w-3.5 h-3.5 text-white stroke-[2.5]" />
@@ -1679,9 +1679,9 @@ export default function SnakeLadderGame({
         {/* ========================================================================= */}
         <div className="lg:col-span-4 flex flex-col gap-5">
           {/* 9. CLINICAL STAGE CARD (Bright Medical Theme) */}
-          <div className={`rounded-2xl p-4.5 border shadow-sm bg-gradient-to-r ${stageStyle.bg}`}>
+          <div className={`tq-card rounded-2xl p-4 sm:p-5 border shadow-sm bg-gradient-to-r ${stageStyle.bg}`}>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-mono uppercase tracking-wider font-extrabold text-[#64748B]">
+              <span className="text-[11px] font-mono uppercase tracking-wider font-extrabold text-slate-500 dark:text-slate-400 dark:text-slate-400">
                 CLINICAL STAGE
               </span>
               <span className={`text-[11px] font-mono font-bold px-2 py-0.5 rounded-full border ${stageStyle.badge}`}>
@@ -1689,12 +1689,12 @@ export default function SnakeLadderGame({
               </span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-center text-2xl">
+              <div className="w-11 h-11 rounded-2xl tq-card shadow-sm flex items-center justify-center text-2xl">
                 {stageDetails.badge}
               </div>
               <div>
-                <h4 className="text-base font-black text-[#102A43] tracking-tight">{stageDetails.stage}</h4>
-                <p className="text-xs text-[#64748B] leading-snug font-medium">{stageDetails.focus}</p>
+                <h4 className="text-base font-black text-ink-900 dark:text-slate-100 tracking-tight">{stageDetails.stage}</h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-400 leading-snug font-medium">{stageDetails.focus}</p>
               </div>
             </div>
           </div>
@@ -1702,8 +1702,8 @@ export default function SnakeLadderGame({
           {/* ========================================================================= */}
           {/* 6. REALISTIC 3D-STYLE DICE AREA (Clean White Card) */}
           {/* ========================================================================= */}
-          <div className="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-md flex flex-col items-center justify-center relative overflow-hidden">
-            <div className="text-[11px] font-mono uppercase tracking-widest text-[#64748B] mb-3 flex items-center gap-2 font-bold">
+          <div className="tq-card rounded-2xl p-6 shadow-md flex flex-col items-center justify-center relative overflow-hidden">
+            <div className="text-[11px] font-mono uppercase tracking-widest text-slate-500 dark:text-slate-400 dark:text-slate-400 mb-3 flex items-center gap-2 font-bold">
               <Zap className="w-3.5 h-3.5 text-amber-500" />
               ROLL THE DICE
             </div>
@@ -1773,15 +1773,15 @@ export default function SnakeLadderGame({
             <div className="min-h-[44px] flex flex-col items-center justify-center my-1 font-mono">
               {rollAnnouncement ? (
                 <div className="text-center animate-bounce">
-                  <span className="text-2xl font-black text-[#102A43] block leading-none">{rollAnnouncement.number}</span>
-                  <span className="text-[11px] font-bold tracking-widest text-[#1677FF] uppercase">{rollAnnouncement.text}</span>
+                  <span className="text-2xl font-black text-ink-900 dark:text-slate-100 block leading-none">{rollAnnouncement.number}</span>
+                  <span className="text-[11px] font-bold tracking-widest text-brand-royal dark:text-blue-400 uppercase">{rollAnnouncement.text}</span>
                 </div>
               ) : isRolling ? (
                 <span className="text-xs font-bold text-blue-600 animate-pulse tracking-wide">ROLLING DICE...</span>
               ) : isMoving ? (
                 <span className="text-xs font-bold text-teal-600 tracking-wide">ADVANCING CLINICAL TOKEN...</span>
               ) : (
-                <span className="text-xs text-slate-500 font-medium">READY TO ADVANCE</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">READY TO ADVANCE</span>
               )}
             </div>
 
@@ -1791,8 +1791,8 @@ export default function SnakeLadderGame({
               disabled={isRolling || isMoving || !!activeChallenge || showGrandMastery}
               className={`w-full mt-3 py-3.5 px-6 rounded-xl font-black tracking-wider uppercase text-sm flex items-center justify-center gap-2.5 transition-all shadow-md touch-manipulation min-h-[52px] ${
                 isRolling || isMoving || activeChallenge || showGrandMastery
-                  ? 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed shadow-none'
-                  : 'bg-gradient-to-r from-[#1677FF] via-[#00B8A9] to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white shadow-blue-500/25 active:scale-[0.98]'
+                  ? 'bg-slate-100 text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed shadow-none'
+                  : 'tq-btn-primary text-white shadow-blue-500/25 active:scale-[0.98]'
               }`}
             >
               <RotateCw className={`w-4 h-4 ${isRolling ? 'animate-spin' : ''}`} />
@@ -1801,9 +1801,9 @@ export default function SnakeLadderGame({
           </div>
 
           {/* 25 QUESTIONS CURRICULUM SYLLABUS TRACKER */}
-          <div className="bg-white border border-slate-200/90 rounded-2xl p-4.5 shadow-sm">
+          <div className="tq-card rounded-2xl p-4.5 shadow-sm">
             <div className="flex items-center justify-between mb-3 font-mono">
-              <span className="text-[11px] uppercase tracking-wider text-[#64748B] font-extrabold">25 TB CLINICAL QUESTIONS</span>
+              <span className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 dark:text-slate-400 font-extrabold">25 TB CLINICAL QUESTIONS</span>
               <span className="text-xs font-black text-blue-600">
                 {(gameState.completedQuestionIds || []).length} / 25 DONE
               </span>
@@ -1818,12 +1818,12 @@ export default function SnakeLadderGame({
                   <div
                     key={q.id}
                     title={`Q${q.questionNumber}: ${q.categoryLabel}`}
-                    className={`h-7 rounded-lg flex items-center justify-center border transition-colors ${
+                    className={`h-7 min-w-7 rounded-lg flex items-center justify-center border transition-colors ${
                       isDone && !isMissed
-                        ? 'bg-emerald-100 border-emerald-300 text-emerald-800'
+                        ? 'bg-emerald-100 dark:bg-emerald-900/50 border-emerald-300 text-emerald-800 dark:text-emerald-200'
                         : isMissed
-                        ? 'bg-rose-100 border-rose-300 text-rose-800'
-                        : 'bg-slate-50 border-slate-200 text-slate-400'
+                        ? 'bg-rose-100 dark:bg-rose-900/50 border-rose-300 text-rose-800 dark:text-rose-200'
+                        : 'bg-slate-50 border-slate-200 dark:border-slate-700 text-slate-400'
                     }`}
                   >
                     {q.questionNumber}
@@ -1831,7 +1831,7 @@ export default function SnakeLadderGame({
                 );
               })}
             </div>
-            <div className="mt-3 flex items-center justify-between text-[10px] font-mono text-[#64748B] font-semibold">
+            <div className="mt-3 flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400 dark:text-slate-400 font-semibold">
               <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500" /> Correct (+10)</span>
               <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-rose-500" /> Review</span>
               <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-slate-300" /> Pending</span>
@@ -1844,8 +1844,8 @@ export default function SnakeLadderGame({
       {/* 10. BRIGHT & ENGAGING QUESTION MODAL (Clean Medical White Theme) */}
       {/* ========================================================================= */}
       {activeChallenge && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="w-full max-w-2xl bg-white border border-slate-200/90 rounded-3xl shadow-[0_25px_70px_rgba(16,42,67,0.18)] p-6 sm:p-8 text-[#102A43] relative overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md animate-in fade-in duration-200 tq-fade-in">
+          <div className="w-full max-w-2xl tq-card rounded-3xl shadow-[0_25px_70px_rgba(16,42,67,0.18)] p-6 sm:p-8 text-ink-900 dark:text-slate-100 relative overflow-hidden">
             {/* 11. Floating Score / XP Particle Feedback Animation */}
             {showFloatingScore && (
               <div className="absolute top-8 right-8 pointer-events-none animate-bounce flex items-center gap-2 font-mono text-sm font-black px-3 py-1 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-800 shadow-lg">
@@ -1859,20 +1859,20 @@ export default function SnakeLadderGame({
             )}
 
             {/* Top Clinical Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-slate-200">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-700">
               <div className="flex items-center gap-2.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#1677FF] animate-pulse" />
-                <span className="text-xs font-mono font-black tracking-wider text-[#1677FF] uppercase">
+                <span className="w-2.5 h-2.5 rounded-full bg-brand-royal animate-pulse" />
+                <span className="text-xs font-mono font-black tracking-wider text-brand-royal dark:text-blue-400 uppercase">
                   TB CLINICAL QUESTION #{activeChallenge.questionNumber} / 25
                 </span>
-                <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-bold">
+                <span className="tq-chip tq-chip-royal px-2.5 py-0.5 font-mono">
                   {CATEGORY_LABELS[activeChallenge.category] || activeChallenge.categoryLabel}
                 </span>
               </div>
 
               {/* Rapid Countdown Timer */}
               {activeChallenge.isRapid && !challengeResult && (
-                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-300 text-amber-800 font-mono text-xs font-bold shadow-sm">
+                <div className="tq-chip tq-chip-amber px-3 py-1 font-mono shadow-sm">
                   <Clock className="w-3.5 h-3.5 text-amber-600 animate-spin" style={{ animationDuration: '3s' }} />
                   <span>00:{rapidSecondsRemaining < 10 ? `0${rapidSecondsRemaining}` : rapidSecondsRemaining}</span>
                 </div>
@@ -1885,14 +1885,14 @@ export default function SnakeLadderGame({
                 <Activity className="w-3.5 h-3.5 text-blue-600" />
                 PATIENT CLUE
               </div>
-              <p className="text-sm font-semibold text-slate-800 leading-relaxed">
+              <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 leading-relaxed">
                 {activeChallenge.patientClue}
               </p>
             </div>
 
             {/* Question Heading */}
             <div className="mt-4">
-              <h3 className="text-base sm:text-lg font-black text-[#102A43] leading-snug">
+              <h3 className="text-base sm:text-lg font-black text-ink-900 dark:text-slate-100 leading-snug">
                 {activeChallenge.question}
               </h3>
             </div>
@@ -1904,20 +1904,20 @@ export default function SnakeLadderGame({
                 const isCorrectChoice = idx === activeChallenge.correctIndex;
                 const showFeedback = !!challengeResult;
 
-                let btnStyles = 'bg-[#F8FAFC] border-slate-200 text-[#102A43] hover:border-blue-300 hover:bg-blue-50/60 cursor-pointer shadow-sm';
+                let btnStyles = 'bg-alabaster dark:bg-[#0b1220] border-slate-200 dark:border-slate-700 text-ink-900 dark:text-slate-100 hover:border-blue-300 hover:bg-blue-50/60 cursor-pointer shadow-sm';
 
                 if (showFeedback) {
                   if (isCorrectChoice) {
                     // Always show correct answer in GREEN
-                    btnStyles = 'bg-emerald-50 border-2 border-emerald-500 text-emerald-950 font-bold shadow-[0_0_15px_rgba(34,197,94,0.25)]';
+                    btnStyles = 'bg-emerald-50 dark:bg-emerald-900/50 border-2 border-emerald-500 text-emerald-950 dark:text-emerald-100 font-bold shadow-[0_0_15px_rgba(34,197,94,0.25)] ring-2 ring-emerald-500';
                   } else if (isSelected && !isCorrectChoice) {
                     // Show selected incorrect answer in RED with shake
-                    btnStyles = 'bg-rose-50 border-2 border-rose-500 text-rose-950 font-medium animate-shake';
+                    btnStyles = 'bg-rose-50 dark:bg-rose-900/50 border-2 border-rose-500 text-rose-950 dark:text-rose-100 font-medium animate-shake ring-2 ring-rose-500';
                   } else {
-                    btnStyles = 'bg-slate-50 border-slate-200 text-slate-400 opacity-60 cursor-not-allowed';
+                    btnStyles = 'bg-slate-50 border-slate-200 dark:border-slate-700 text-slate-400 opacity-60 cursor-not-allowed';
                   }
                 } else if (isSelected) {
-                  btnStyles = 'bg-blue-50 border-2 border-blue-500 text-blue-900 shadow-sm font-semibold';
+                  btnStyles = 'bg-teal-50 dark:bg-teal-900/50 border-2 border-brand-teal text-teal-900 dark:text-teal-100 shadow-sm font-semibold ring-2 ring-brand-teal';
                 }
 
                 return (
@@ -1925,7 +1925,7 @@ export default function SnakeLadderGame({
                     key={idx}
                     disabled={showFeedback}
                     onClick={() => handleSelectOption(idx)}
-                    className={`w-full text-left p-3.5 rounded-xl border transition-all flex items-start gap-3.5 select-none ${btnStyles}`}
+                    className={`w-full text-left p-3.5 rounded-xl border transition-all flex items-start gap-3.5 select-none touch-target min-h-11 ${btnStyles}`}
                   >
                     <span className={`w-5 h-5 rounded-full border flex items-center justify-center font-mono text-xs font-bold mt-0.5 shrink-0 ${
                       showFeedback && isCorrectChoice
@@ -1933,8 +1933,8 @@ export default function SnakeLadderGame({
                         : showFeedback && isSelected && !isCorrectChoice
                         ? 'border-rose-500 bg-rose-500 text-white'
                         : isSelected
-                        ? 'border-blue-600 bg-blue-600 text-white'
-                        : 'border-slate-300 bg-white text-slate-600'
+                        ? 'border-brand-teal bg-brand-teal text-white'
+                        : 'border-slate-300 bg-white text-slate-600 dark:text-slate-400'
                     }`}>
                       {showFeedback && isCorrectChoice ? (
                         <Check className="w-3 h-3 stroke-[3]" />
@@ -1957,8 +1957,8 @@ export default function SnakeLadderGame({
                 disabled={selectedOptionIndex === null}
                 className={`w-full mt-4 py-3.5 rounded-xl font-black uppercase tracking-wider text-sm flex items-center justify-center gap-2 transition-all min-h-[52px] touch-manipulation ${
                   selectedOptionIndex === null
-                    ? 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-[#1677FF] via-[#00B8A9] to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white shadow-lg shadow-blue-500/25 active:scale-[0.98]'
+                    ? 'bg-slate-100 text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed'
+                    : 'tq-btn-primary text-white shadow-lg shadow-blue-500/25 active:scale-[0.98]'
                 }`}
               >
                 <Check className="w-4 h-4 stroke-[3]" />
@@ -1971,7 +1971,7 @@ export default function SnakeLadderGame({
               <div className="mt-5 animate-in fade-in duration-300">
                 {challengeResult.isCorrect ? (
                   /* 🟢 CORRECT ANSWER CARD */
-                  <div className="p-4 sm:p-5 rounded-2xl bg-emerald-50 border-2 border-emerald-400 shadow-sm">
+                  <div className="tq-card p-4 sm:p-5 rounded-2xl border-2 border-emerald-400 shadow-sm dark:bg-emerald-950/40">
                     <div className="flex items-center justify-between pb-2.5 border-b border-emerald-200 mb-3">
                       <div className="flex items-center gap-2">
                         <div className="w-7 h-7 rounded-full bg-emerald-500 flex items-center justify-center text-white font-bold">
@@ -2002,11 +2002,11 @@ export default function SnakeLadderGame({
                     </div>
 
                     {/* 💡 WHAT YOU LEARNED */}
-                    <div className="mt-2.5 p-3.5 rounded-xl bg-white/90 border border-emerald-200">
+                    <div className="tq-glass mt-2.5 p-3.5 rounded-xl border border-emerald-200 dark:border-emerald-500/40">
                       <div className="text-[11px] font-mono font-black text-amber-700 uppercase tracking-widest flex items-center gap-1.5 mb-1">
                         <span>💡</span> WHAT YOU LEARNED
                       </div>
-                      <p className="text-sm text-slate-800 leading-relaxed font-semibold">
+                      <p className="text-sm text-slate-800 dark:text-slate-200 leading-relaxed font-semibold">
                         "{activeChallenge.clinicalInsight}"
                       </p>
                     </div>
@@ -2014,7 +2014,7 @@ export default function SnakeLadderGame({
                     <div className="mt-4 flex justify-end">
                       <button
                         onClick={handleChallengeDismiss}
-                        className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-mono text-xs font-black uppercase tracking-wider shadow-md shadow-emerald-600/25 flex items-center gap-2 transition-all active:scale-95 min-h-[44px]"
+                        className="tq-btn-primary touch-target px-6 py-2.5 rounded-xl text-white font-mono text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all active:scale-95 min-h-[44px]"
                       >
                         <span>{activeChallenge?.questionNumber === 25 ? 'See Results' : 'Next Question'}</span>
                         <ArrowRight className="w-4 h-4" />
@@ -2023,7 +2023,7 @@ export default function SnakeLadderGame({
                   </div>
                 ) : (
                   /* 🔴 WRONG ANSWER CARD */
-                  <div className="p-4 sm:p-5 rounded-2xl bg-rose-50 border-2 border-rose-300 shadow-sm">
+                  <div className="tq-card p-4 sm:p-5 rounded-2xl border-2 border-rose-300 shadow-sm dark:bg-rose-950/40">
                     <div className="flex items-center justify-between pb-2.5 border-b border-rose-200 mb-3">
                       <div className="flex items-center gap-2">
                         <div className="w-7 h-7 rounded-full bg-rose-500 flex items-center justify-center text-white font-bold">
@@ -2037,7 +2037,7 @@ export default function SnakeLadderGame({
                         <span className="px-2.5 py-1 rounded-lg bg-rose-100 text-rose-800 border border-rose-300">
                           +0 MARKS
                         </span>
-                        <span className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-500 border border-slate-200">
+                        <span className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
                           0 XP
                         </span>
                       </div>
@@ -2050,7 +2050,7 @@ export default function SnakeLadderGame({
 
                     {/* Comparison: Selected vs Correct */}
                     <div className="space-y-2 my-3 text-xs sm:text-sm">
-                      <div className="p-2.5 rounded-xl bg-white border border-rose-200 flex items-start gap-2">
+                      <div className="tq-glass p-2.5 rounded-xl border border-rose-200 dark:border-rose-500/40 flex items-start gap-2">
                         <span className="text-rose-600 font-mono font-bold text-xs uppercase shrink-0 mt-0.5">🔴 Your answer:</span>
                         <span className="text-rose-900 font-medium">
                           {selectedOptionIndex !== null && selectedOptionIndex >= 0
@@ -2059,7 +2059,7 @@ export default function SnakeLadderGame({
                         </span>
                       </div>
 
-                      <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-300 flex items-start gap-2">
+                      <div className="tq-glass p-2.5 rounded-xl border border-emerald-300 dark:border-emerald-500/40 flex items-start gap-2">
                         <span className="text-emerald-700 font-mono font-bold text-xs uppercase shrink-0 mt-0.5">🟢 Correct answer:</span>
                         <span className="text-emerald-950 font-black">
                           {activeChallenge.options[activeChallenge.correctIndex]}
@@ -2068,11 +2068,11 @@ export default function SnakeLadderGame({
                     </div>
 
                     {/* 💡 LEARNING MOMENT */}
-                    <div className="mt-2.5 p-3.5 rounded-xl bg-white/90 border border-slate-200">
+                    <div className="mt-2.5 p-3.5 rounded-xl bg-white/90 border border-slate-200 dark:border-slate-700">
                       <div className="text-[11px] font-mono font-black text-amber-700 uppercase tracking-widest flex items-center gap-1.5 mb-1">
                         <span>💡</span> LEARNING MOMENT
                       </div>
-                      <p className="text-xs text-slate-700 leading-relaxed font-semibold">
+                      <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed font-semibold">
                         {activeChallenge.whyRationale}
                       </p>
                     </div>
@@ -2080,7 +2080,7 @@ export default function SnakeLadderGame({
                     <div className="mt-4 flex justify-end">
                       <button
                         onClick={handleChallengeDismiss}
-                        className="px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-mono text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all active:scale-95 shadow-sm min-h-[44px]"
+                        className="tq-btn-secondary touch-target px-6 py-2.5 rounded-xl font-mono text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all active:scale-95 shadow-sm min-h-[44px]"
                       >
                         <span>{activeChallenge?.questionNumber === 25 ? 'See Results' : 'Next Question'}</span>
                         <ArrowRight className="w-4 h-4" />
@@ -2099,14 +2099,14 @@ export default function SnakeLadderGame({
       {/* ========================================================================= */}
       {eventNotification && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className={`w-full max-w-md rounded-3xl border-2 p-6 text-center shadow-2xl backdrop-blur-xl bg-white text-[#102A43] ${
+          <div className={`w-full max-w-md rounded-3xl border-2 p-6 text-center shadow-2xl backdrop-blur-xl bg-white text-ink-900 dark:text-slate-100 ${
             eventNotification.type === 'ladder'
               ? 'border-emerald-400 shadow-emerald-500/20'
               : eventNotification.type === 'avoided'
               ? 'border-blue-400 shadow-blue-500/20'
               : 'border-rose-400 shadow-rose-500/20'
           }`}>
-            <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-3 text-3xl bg-slate-50 border border-slate-200 shadow-sm">
+            <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-3 text-3xl bg-slate-50 border border-slate-200 dark:border-slate-700 shadow-sm">
               {eventNotification.type === 'ladder' ? <LadderGlyph className="w-9 h-9" /> : eventNotification.type === 'avoided' ? <ShieldCheck className="w-9 h-9 text-blue-600" /> : <SnakeGlyph className="w-9 h-9" />}
             </div>
             <h3 className={`text-xl font-black tracking-tight ${
@@ -2132,11 +2132,11 @@ export default function SnakeLadderGame({
               )}
             </div>
 
-            <p className="text-xs text-slate-700 mt-2 leading-relaxed font-semibold">
+            <p className="text-xs text-slate-700 dark:text-slate-200 mt-2 leading-relaxed font-semibold">
               {eventNotification.description}
             </p>
 
-            <div className="mt-4 text-[11px] font-mono text-slate-500 font-bold">
+            <div className="mt-4 text-[11px] font-mono text-slate-500 dark:text-slate-400 font-bold">
               {eventNotification.type === 'ladder' 
                 ? `Climbing upward: Square ${eventNotification.from} ➔ ${eventNotification.to}`
                 : eventNotification.type === 'snake'
@@ -2172,7 +2172,7 @@ export default function SnakeLadderGame({
               ))}
             </div>
           )}
-          <div className="w-full max-w-xl bg-white border border-slate-200 rounded-3xl shadow-2xl p-6 sm:p-8 text-center relative my-6 text-[#102A43]">
+          <div className="w-full max-w-xl tq-card rounded-3xl shadow-2xl p-6 sm:p-8 text-center relative my-6 text-ink-900 dark:text-slate-100">
             {/* 5-Step Diagnostic Cascade Display */}
             <div className="flex items-center justify-center gap-1 sm:gap-2 mb-5 flex-wrap">
               {['RECOGNIZE', 'ASSESS', 'TEST', 'INTERPRET', 'DIAGNOSE'].map((step, idx) => (
@@ -2180,7 +2180,7 @@ export default function SnakeLadderGame({
                   <span className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold ${
                     cascadeStep >= idx + 1
                       ? 'bg-blue-600 text-white shadow-sm'
-                      : 'bg-slate-100 border border-slate-200 text-slate-500'
+                      : 'bg-slate-100 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400'
                   }`}>
                     {step}
                   </span>
@@ -2195,42 +2195,42 @@ export default function SnakeLadderGame({
                 <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/30 mb-3 text-3xl">
                   🏆
                 </div>
-                <h2 className="text-2xl font-black text-[#102A43] tracking-tight uppercase">
+                <h2 className="text-2xl font-black text-ink-900 dark:text-slate-100 tracking-tight uppercase">
                   🎉 LEVEL 1 MASTERED!
                 </h2>
                 <div className="text-sm font-bold text-amber-700 font-mono mt-0.5">
                   🏆 TB AWARENESS CHAMPION
                 </div>
-                <p className="text-sm text-slate-600 max-w-md mx-auto mt-2 leading-relaxed font-medium">
+                <p className="text-sm text-slate-600 dark:text-slate-400 max-w-md mx-auto mt-2 leading-relaxed font-medium">
                   You played all the way to Square 100 — that is real TB awareness, and you earned every bit of it. Well done!
                 </p>
-                <div className="my-2.5 inline-block px-3.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300 font-mono text-xs font-bold shadow-sm">
+                <div className="tq-chip tq-chip-amber my-2.5 inline-block px-3.5 py-1 font-mono shadow-sm">
                   +500 XP REWARD
                 </div>
 
                 {/* Score & Accuracy Breakdown Cards */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 my-4 text-left font-mono">
-                  <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200">
-                    <span className="text-[10px] text-[#64748B] uppercase block font-bold">SCORE</span>
+                  <div className="tq-glass p-3 rounded-2xl border border-amber-200 dark:border-amber-500/40">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 dark:text-slate-400 uppercase block font-bold">SCORE</span>
                     <span className="text-base font-black text-amber-900">{gameState.score} / 250</span>
                   </div>
-                  <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200">
-                    <span className="text-[10px] text-[#64748B] uppercase block font-bold">ACCURACY</span>
+                  <div className="tq-glass p-3 rounded-2xl border border-emerald-200 dark:border-emerald-500/40">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 dark:text-slate-400 uppercase block font-bold">ACCURACY</span>
                     <span className="text-base font-black text-emerald-800">{gameState.accuracy}%</span>
                   </div>
-                  <div className="p-3 rounded-2xl bg-blue-50 border border-blue-200">
-                    <span className="text-[10px] text-[#64748B] uppercase block font-bold">CORRECT</span>
+                  <div className="tq-glass p-3 rounded-2xl border border-blue-200 dark:border-blue-500/40">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 dark:text-slate-400 uppercase block font-bold">CORRECT</span>
                     <span className="text-base font-black text-blue-900">{gameState.correctAnswers} / 25</span>
                   </div>
                   <div className="p-3 rounded-2xl bg-purple-50 border border-purple-200">
-                    <span className="text-[10px] text-[#64748B] uppercase block font-bold">TOTAL XP</span>
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 dark:text-slate-400 uppercase block font-bold">TOTAL XP</span>
                     <span className="text-base font-black text-purple-900">{gameState.xp}</span>
                   </div>
                 </div>
 
                 {/* Category Performance Table */}
-                <div className="my-4 text-left p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-mono">
-                  <div className="text-[11px] uppercase tracking-wider text-[#64748B] font-bold mb-2 pb-1 border-b border-slate-200 flex justify-between">
+                <div className="my-4 text-left p-4 rounded-2xl bg-slate-50 border border-slate-200 dark:border-slate-700 text-xs font-mono">
+                  <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 dark:text-slate-400 font-bold mb-2 pb-1 border-b border-slate-200 dark:border-slate-700 flex justify-between">
                     <span>CATEGORY</span>
                     <span>PERFORMANCE</span>
                   </div>
@@ -2239,7 +2239,7 @@ export default function SnakeLadderGame({
                       const stat = categoryStats[catKey as ChallengeCategory];
                       const isGood = stat.correct >= Math.ceil(stat.total * 0.7);
                       return (
-                        <div key={catKey} className="flex items-center justify-between text-slate-700">
+                        <div key={catKey} className="flex items-center justify-between text-slate-700 dark:text-slate-200">
                           <span>{label}</span>
                           <span className="flex items-center gap-2 font-bold">
                             <span>{stat.correct} / {stat.total}</span>
@@ -2261,7 +2261,7 @@ export default function SnakeLadderGame({
                   {onProceedToLevel2 && (
                     <button
                       onClick={onProceedToLevel2}
-                      className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-[#1677FF] via-[#00B8A9] to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white font-mono text-xs font-bold uppercase tracking-wider shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 transition-all active:scale-95"
+                      className="w-full sm:w-auto px-6 py-3 rounded-xl tq-btn-primary text-white font-mono text-xs font-bold uppercase tracking-wider shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 transition-all active:scale-95"
                     >
                       <span>LAUNCH LEVEL 2 CASES</span>
                       <ArrowRight className="w-4 h-4" />
@@ -2270,7 +2270,7 @@ export default function SnakeLadderGame({
                   {onBackToDashboard && (
                     <button
                       onClick={onBackToDashboard}
-                      className="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-mono text-xs font-bold uppercase tracking-wider transition-all"
+                      className="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 dark:text-slate-200 font-mono text-xs font-bold uppercase tracking-wider transition-all"
                     >
                       RETURN TO DASHBOARD
                     </button>
@@ -2280,43 +2280,43 @@ export default function SnakeLadderGame({
             ) : (
               /* 🔒 BELOW 80% — LEVEL 2 LOCKED & REPLAY WEAK AREAS */
               <div>
-                <div className="w-16 h-16 mx-auto rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center mb-3">
+                <div className="w-16 h-16 mx-auto rounded-2xl bg-slate-100 border border-slate-200 dark:border-slate-700 flex items-center justify-center mb-3">
                   <Lock className="w-8 h-8 text-amber-600" />
                 </div>
-                <h2 className="text-xl font-black text-[#102A43] tracking-tight uppercase">
+                <h2 className="text-xl font-black text-ink-900 dark:text-slate-100 tracking-tight uppercase">
                   🔒 LEVEL 2 LOCKED
                 </h2>
-                <div className="my-2 inline-block px-3.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-300 font-mono text-xs font-bold">
+                <div className="tq-chip tq-chip-amber my-2 inline-block px-3.5 py-1 font-mono">
                   {gameState.correctAnswers} / 25 • {gameState.accuracy}% (80% REQUIRED)
                 </div>
 
-                <p className="text-sm text-slate-600 max-w-md mx-auto mt-2 leading-relaxed font-medium">
+                <p className="text-sm text-slate-600 dark:text-slate-400 max-w-md mx-auto mt-2 leading-relaxed font-medium">
                   "So close — and every question you got right still counts. Have another look at the ones you missed, then go again. You've got this!"
                 </p>
 
                 {/* Score & Accuracy Breakdown */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 my-4 text-left font-mono">
-                  <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200">
-                    <span className="text-[10px] text-[#64748B] uppercase block font-bold">SCORE</span>
+                  <div className="tq-glass p-3 rounded-2xl border border-amber-200 dark:border-amber-500/40">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 dark:text-slate-400 uppercase block font-bold">SCORE</span>
                     <span className="text-base font-black text-amber-900">{gameState.score} / 250</span>
                   </div>
-                  <div className="p-3 rounded-2xl bg-rose-50 border border-rose-200">
-                    <span className="text-[10px] text-[#64748B] uppercase block font-bold">ACCURACY</span>
+                  <div className="tq-glass p-3 rounded-2xl border border-rose-200 dark:border-rose-500/40">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 dark:text-slate-400 uppercase block font-bold">ACCURACY</span>
                     <span className="text-base font-black text-rose-700">{gameState.accuracy}%</span>
                   </div>
-                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200">
-                    <span className="text-[10px] text-[#64748B] uppercase block font-bold">CORRECT</span>
-                    <span className="text-base font-black text-slate-800">{gameState.correctAnswers} / 25</span>
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 dark:border-slate-700">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 dark:text-slate-400 uppercase block font-bold">CORRECT</span>
+                    <span className="text-base font-black text-slate-800 dark:text-slate-200">{gameState.correctAnswers} / 25</span>
                   </div>
-                  <div className="p-3 rounded-2xl bg-blue-50 border border-blue-200">
-                    <span className="text-[10px] text-[#64748B] uppercase block font-bold">ACHIEVEMENT</span>
+                  <div className="tq-glass p-3 rounded-2xl border border-blue-200 dark:border-blue-500/40">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 dark:text-slate-400 uppercase block font-bold">ACHIEVEMENT</span>
                     <span className="text-xs font-black text-blue-900 block truncate">{getScoreRanking(gameState.accuracy)}</span>
                   </div>
                 </div>
 
                 {/* Category Performance Table */}
-                <div className="my-4 text-left p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-mono">
-                  <div className="text-[11px] uppercase tracking-wider text-[#64748B] font-bold mb-2 pb-1 border-b border-slate-200 flex justify-between">
+                <div className="my-4 text-left p-4 rounded-2xl bg-slate-50 border border-slate-200 dark:border-slate-700 text-xs font-mono">
+                  <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 dark:text-slate-400 font-bold mb-2 pb-1 border-b border-slate-200 dark:border-slate-700 flex justify-between">
                     <span>CATEGORY</span>
                     <span>PERFORMANCE</span>
                   </div>
@@ -2325,7 +2325,7 @@ export default function SnakeLadderGame({
                       const stat = categoryStats[catKey as ChallengeCategory];
                       const isGood = stat.correct >= Math.ceil(stat.total * 0.7);
                       return (
-                        <div key={catKey} className="flex items-center justify-between text-slate-700">
+                        <div key={catKey} className="flex items-center justify-between text-slate-700 dark:text-slate-200">
                           <span>{label}</span>
                           <span className="flex items-center gap-2 font-bold">
                             <span>{stat.correct} / {stat.total}</span>
@@ -2341,7 +2341,7 @@ export default function SnakeLadderGame({
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6">
                   <button
                     onClick={handleStartReplayWeakAreas}
-                    className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white font-mono text-xs font-bold uppercase tracking-wider shadow-lg shadow-amber-500/25 flex items-center justify-center gap-2 transition-all active:scale-95"
+                    className="tq-btn-coral touch-target w-full sm:w-auto px-6 py-3 rounded-xl text-white font-mono text-xs font-bold uppercase tracking-wider shadow-lg shadow-amber-500/25 flex items-center justify-center gap-2 transition-all active:scale-95"
                   >
                     <RotateCw className="w-4 h-4" />
                     <span>🔄 REPLAY WEAK AREAS</span>
@@ -2349,7 +2349,7 @@ export default function SnakeLadderGame({
                   {onBackToDashboard && (
                     <button
                       onClick={onBackToDashboard}
-                      className="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-mono text-xs font-bold uppercase tracking-wider"
+                      className="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 dark:text-slate-200 font-mono text-xs font-bold uppercase tracking-wider"
                     >
                       DASHBOARD
                     </button>
@@ -2364,22 +2364,22 @@ export default function SnakeLadderGame({
       {/* CONFIRMATION MODAL: RESTART JOURNEY */}
       {showRestartConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="w-full max-w-sm bg-white border border-slate-200 rounded-3xl p-6 text-center shadow-2xl text-[#102A43]">
+          <div className="w-full max-w-sm tq-card rounded-3xl p-6 text-center shadow-2xl text-ink-900 dark:text-slate-100">
             <AlertTriangle className="w-11 h-11 text-amber-500 mx-auto mb-2" />
-            <h4 className="text-base font-black text-[#102A43]">Restart Level 1 Journey?</h4>
-            <p className="text-xs text-slate-600 mt-1 mb-5 leading-relaxed font-medium">
+            <h4 className="text-base font-black text-ink-900 dark:text-slate-100">Restart Level 1 Journey?</h4>
+            <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 mb-5 leading-relaxed font-medium">
               This will reset your board position back to Square 1 while preserving your learning achievements.
             </p>
             <div className="flex items-center justify-center gap-2.5">
               <button
                 onClick={() => setShowRestartConfirm(false)}
-                className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-mono font-bold"
+                className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:text-slate-200 text-xs font-mono font-bold"
               >
                 CANCEL
               </button>
               <button
                 onClick={handleRestartJourney}
-                className="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-mono font-bold shadow-md shadow-rose-500/25"
+                className="tq-btn-coral touch-target px-4 py-2.5 rounded-xl text-xs font-mono font-bold shadow-md"
               >
                 CONFIRM RESTART
               </button>

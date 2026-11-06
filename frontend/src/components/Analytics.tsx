@@ -61,9 +61,9 @@ export default function Analytics() {
   }, []);
 
   return (
-    <div className="p-4 sm:p-6 bg-slate-900/50 border border-slate-800 rounded-2xl w-full max-w-full overflow-hidden">
-      <h2 className="text-lg sm:text-xl font-bold text-white mb-4 sm:mb-6">Diagnostic Success Heatmap</h2>
-      <div className="w-full overflow-x-auto custom-scrollbar">
+    <div className="tq-card tq-lift p-4 sm:p-6 w-full max-w-full overflow-hidden tq-fade-up">
+      <h2 className="tq-display text-lg sm:text-xl font-bold text-ink-900 dark:text-white mb-1 sm:mb-2">Diagnostic Success Heatmap</h2>
+      <div className="w-full overflow-x-auto overflow-auto custom-scrollbar">
         <div className="min-w-[480px]">
           <svg ref={svgRef}></svg>
         </div>

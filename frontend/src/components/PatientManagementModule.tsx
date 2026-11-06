@@ -111,28 +111,28 @@ export default function PatientManagementModule({
   const getStatusBadge = (status: EMRPatientStatus) => {
     switch (status) {
       case 'Waiting':
-        return 'bg-amber-950 border-amber-500/40 text-amber-300';
+        return 'bg-amber-100 dark:bg-amber-950 border-amber-300 dark:border-amber-500/40 text-amber-700 dark:text-amber-300';
       case 'In Progress':
-        return 'bg-cyan-950 border-cyan-500/40 text-cyan-300 animate-pulse';
+        return 'bg-teal-100 dark:bg-teal-950 border-teal-300 dark:border-teal-500/40 text-teal-700 dark:text-teal-300 animate-pulse';
       case 'Under Investigation':
-        return 'bg-purple-950 border-purple-500/40 text-purple-300';
+        return 'bg-purple-100 dark:bg-purple-950 border-purple-300 dark:border-purple-500/40 text-purple-700 dark:text-purple-300';
       case 'Diagnosis Confirmed':
-        return 'bg-emerald-950 border-emerald-500/40 text-emerald-300';
+        return 'bg-emerald-100 dark:bg-emerald-950 border-emerald-300 dark:border-emerald-500/40 text-emerald-700 dark:text-emerald-300';
       case 'Treatment Started':
-        return 'bg-blue-950 border-blue-500/40 text-blue-300';
+        return 'bg-blue-100 dark:bg-blue-950 border-blue-300 dark:border-blue-500/40 text-blue-700 dark:text-blue-300';
       default:
-        return 'bg-slate-800 border-slate-700 text-slate-300';
+        return 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300';
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="tq-fade-up max-w-full space-y-6 overflow-hidden font-sans">
       {/* Module Bar & Quick Controls */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-900/90 border border-slate-800 p-4 sm:p-5 rounded-2xl shadow-xl">
+      <div className="tq-card flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 sm:p-5 rounded-2xl shadow-xl">
         <div>
-          <span className="text-[10px] font-mono text-cyan-400 font-bold uppercase tracking-wider">Hospital EMR Patient Sub-System</span>
-          <h2 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
-            <User className="text-cyan-400" size={24} />
+          <span className="tq-eyebrow text-[10px] font-mono uppercase tracking-wider">Hospital EMR Patient Sub-System</span>
+          <h2 className="text-xl sm:text-2xl font-black text-ink-900 dark:text-white flex items-center gap-2">
+            <User className="text-brand-teal" size={24} />
             Patient Registry & Admissions
           </h2>
         </div>
@@ -142,7 +142,7 @@ export default function PatientManagementModule({
             soundService.playClick();
             setShowAddModal(true);
           }}
-          className="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black rounded-xl text-xs shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all flex items-center gap-2 shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+          className="tq-btn-primary touch-target px-5 py-2.5 font-black rounded-xl text-xs transition-all flex items-center gap-2 shrink-0"
         >
           <Plus size={16} />
           <span>Register New Patient</span>
@@ -158,7 +158,7 @@ export default function PatientManagementModule({
             placeholder="Search by Patient Name, ID (e.g. P-2024-101), or Symptoms..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-800 focus:border-cyan-500 rounded-xl text-xs text-white placeholder-slate-500 outline-none transition-all focus-visible:ring-2 focus-visible:ring-cyan-400"
+            className="tq-input w-full min-h-11 pl-10 pr-4 py-2.5 rounded-xl text-xs text-ink-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500"
           />
         </div>
 
@@ -167,7 +167,7 @@ export default function PatientManagementModule({
           <select
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 bg-slate-900 border border-slate-800 focus:border-cyan-500 rounded-xl text-xs text-slate-200 outline-none transition-all appearance-none cursor-pointer focus-visible:ring-2 focus-visible:ring-cyan-400"
+            className="tq-input w-full min-h-11 pl-9 pr-4 py-2.5 rounded-xl text-xs text-ink-900 dark:text-slate-200 appearance-none cursor-pointer"
           >
             <option value="ALL">All Clinical Statuses</option>
             <option value="WAITING">Waiting</option>
@@ -184,14 +184,14 @@ export default function PatientManagementModule({
         {filteredPatients.map(patient => (
           <div
             key={patient.id}
-            className="bg-slate-900/90 border border-slate-800 hover:border-cyan-500/50 rounded-2xl p-5 shadow-xl transition-all space-y-4 flex flex-col justify-between"
+            className="tq-card tq-lift max-w-full overflow-hidden rounded-2xl p-5 space-y-4 flex flex-col justify-between"
           >
             <div className="space-y-3">
               <div className="flex justify-between items-start">
                 <div>
-                  <span className="text-[10px] font-mono text-purple-400 font-bold uppercase block">{patient.patientCode}</span>
-                  <h3 className="text-lg font-black text-white">{patient.name}</h3>
-                  <span className="text-xs text-slate-400">{patient.age} Yrs • {patient.gender} • {patient.occupation}</span>
+                  <span className="text-[10px] font-mono text-purple-600 dark:text-purple-300 font-bold uppercase block">{patient.patientCode}</span>
+                  <h3 className="text-lg font-black text-ink-900 dark:text-white">{patient.name}</h3>
+                  <span className="text-xs text-slate-500 dark:text-slate-400">{patient.age} Yrs • {patient.gender} • {patient.occupation}</span>
                 </div>
                 <span className={`px-2.5 py-1 border rounded-full text-[10px] font-mono font-bold ${getStatusBadge(patient.status)}`}>
                   {patient.status}
@@ -199,31 +199,31 @@ export default function PatientManagementModule({
               </div>
 
               {/* Chief Complaint */}
-              <div className="p-3 bg-slate-950 border border-slate-800/80 rounded-xl space-y-1">
-                <span className="text-[10px] font-mono text-cyan-300 font-bold uppercase block">Chief Complaint ({patient.duration})</span>
-                <p className="text-xs text-slate-200 line-clamp-2">"{patient.complaint}"</p>
+              <div className="p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 rounded-xl space-y-1">
+                <span className="text-[10px] font-mono text-teal-600 dark:text-teal-300 font-bold uppercase block">Chief Complaint ({patient.duration})</span>
+                <p className="text-xs text-slate-700 dark:text-slate-200 line-clamp-2">"{patient.complaint}"</p>
               </div>
 
               {/* Vitals Summary Badges */}
               <div className="grid grid-cols-3 gap-1.5 text-center font-mono text-[10px]">
-                <div className="p-1.5 bg-slate-950 rounded-lg border border-slate-800">
+                <div className="p-1.5 bg-slate-50 dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800">
                   <span className="text-slate-500 block">TEMP</span>
-                  <span className="text-amber-300 font-bold">{patient.vitals.temp}</span>
+                  <span className="text-amber-600 dark:text-amber-300 font-bold">{patient.vitals.temp}</span>
                 </div>
-                <div className="p-1.5 bg-slate-950 rounded-lg border border-slate-800">
+                <div className="p-1.5 bg-slate-50 dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800">
                   <span className="text-slate-500 block">SpO2</span>
-                  <span className="text-cyan-300 font-bold">{patient.vitals.spO2}</span>
+                  <span className="text-teal-600 dark:text-teal-300 font-bold">{patient.vitals.spO2}</span>
                 </div>
-                <div className="p-1.5 bg-slate-950 rounded-lg border border-slate-800">
+                <div className="p-1.5 bg-slate-50 dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800">
                   <span className="text-slate-500 block">BMI</span>
-                  <span className="text-emerald-300 font-bold">{patient.bmi.split(' ')[0]}</span>
+                  <span className="text-emerald-600 dark:text-emerald-300 font-bold">{patient.bmi.split(' ')[0]}</span>
                 </div>
               </div>
 
               {/* Risk Factors */}
               <div className="flex flex-wrap gap-1">
                 {patient.riskFactors.map((rf, idx) => (
-                  <span key={idx} className="px-2 py-0.5 bg-rose-950/60 border border-rose-500/30 text-rose-300 rounded text-[9px] font-mono">
+                  <span key={idx} className="tq-chip tq-chip-coral px-2 py-0.5 rounded text-[9px] font-mono">
                     {rf}
                   </span>
                 ))}
@@ -231,13 +231,13 @@ export default function PatientManagementModule({
             </div>
 
             {/* Card Action Buttons */}
-            <div className="flex gap-2 pt-2 border-t border-slate-800/80">
+            <div className="flex gap-2 pt-2 border-t border-slate-200 dark:border-slate-800/80">
               <button
                 onClick={() => {
                   soundService.playClick();
                   setSelectedDossier(patient);
                 }}
-                className="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold"
+                className="tq-btn-secondary touch-target flex-1 py-2 rounded-xl text-xs font-semibold dark:bg-[#111c30] dark:text-slate-200 dark:border-slate-700"
               >
                 View Dossier
               </button>
@@ -246,7 +246,7 @@ export default function PatientManagementModule({
                   soundService.playClick();
                   onSelectPatient(patient);
                 }}
-                className="flex-1 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-extrabold rounded-xl text-xs shadow-[0_0_15px_rgba(6,182,212,0.3)] flex items-center justify-center gap-1"
+                className="tq-btn-primary touch-target flex-1 py-2 font-extrabold rounded-xl text-xs flex items-center justify-center gap-1"
               >
                 <span>Start Workflow</span>
                 <ChevronRight size={14} />
@@ -259,15 +259,15 @@ export default function PatientManagementModule({
       {/* MODAL: REGISTER NEW PATIENT */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
-          <div className="bg-slate-900 border border-cyan-500/40 rounded-2xl max-w-2xl w-full p-6 space-y-5 text-white shadow-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-start border-b border-slate-800 pb-3">
+          <div className="bg-white dark:bg-[#111c30] border border-teal-200 dark:border-teal-500/40 rounded-2xl max-w-2xl w-full p-6 space-y-5 text-ink-900 dark:text-white shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-start border-b border-slate-200 dark:border-slate-800 pb-3">
               <div>
-                <span className="text-[10px] font-mono text-cyan-400 font-bold uppercase">Hospital EMR Registration</span>
-                <h3 className="text-xl font-black text-white">Register New Presumptive TB Patient</h3>
+                <span className="tq-eyebrow text-[10px] font-mono uppercase">Hospital EMR Registration</span>
+                <h3 className="text-xl font-black text-ink-900 dark:text-white">Register New Presumptive TB Patient</h3>
               </div>
               <button 
                 onClick={() => setShowAddModal(false)}
-                className="p-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs"
+                className="touch-target p-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-xs"
               >
                 <X size={16} />
               </button>
@@ -276,30 +276,30 @@ export default function PatientManagementModule({
             <form onSubmit={handleCreatePatientSubmit} className="space-y-4 text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="text-slate-400 font-bold block mb-1">Full Name *</label>
+                  <label className="text-slate-500 dark:text-slate-400 font-bold block mb-1">Full Name *</label>
                   <input
                     type="text"
                     required
                     value={newPatientForm.name}
                     onChange={e => setNewPatientForm(p => ({ ...p, name: e.target.value }))}
                     placeholder="e.g. Ramesh Patil"
-                    className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white outline-none focus:border-cyan-500"
+                    className="tq-input w-full min-h-11 p-2.5 rounded-xl text-ink-900 dark:text-white"
                   />
                 </div>
 
                 <div>
-                  <label className="text-slate-400 font-bold block mb-1">Age & Gender *</label>
+                  <label className="text-slate-500 dark:text-slate-400 font-bold block mb-1">Age & Gender *</label>
                   <div className="flex gap-2">
                     <input
                       type="number"
                       value={newPatientForm.age}
                       onChange={e => setNewPatientForm(p => ({ ...p, age: e.target.value }))}
-                      className="w-1/2 p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white outline-none"
+                      className="tq-input w-1/2 min-w-0 min-h-11 p-2.5 rounded-xl text-ink-900 dark:text-white"
                     />
                     <select
                       value={newPatientForm.gender}
                       onChange={e => setNewPatientForm(p => ({ ...p, gender: e.target.value }))}
-                      className="w-1/2 p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white outline-none"
+                      className="tq-input w-1/2 min-w-0 min-h-11 p-2.5 rounded-xl text-ink-900 dark:text-white"
                     >
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
@@ -309,30 +309,30 @@ export default function PatientManagementModule({
                 </div>
 
                 <div>
-                  <label className="text-slate-400 font-bold block mb-1">Phone Number</label>
+                  <label className="text-slate-500 dark:text-slate-400 font-bold block mb-1">Phone Number</label>
                   <input
                     type="text"
                     value={newPatientForm.phone}
                     onChange={e => setNewPatientForm(p => ({ ...p, phone: e.target.value }))}
                     placeholder="+91 98765 00000"
-                    className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white outline-none"
+                    className="tq-input w-full min-h-11 p-2.5 rounded-xl text-ink-900 dark:text-white"
                   />
                 </div>
 
                 <div>
-                  <label className="text-slate-400 font-bold block mb-1">Occupation</label>
+                  <label className="text-slate-500 dark:text-slate-400 font-bold block mb-1">Occupation</label>
                   <input
                     type="text"
                     value={newPatientForm.occupation}
                     onChange={e => setNewPatientForm(p => ({ ...p, occupation: e.target.value }))}
                     placeholder="e.g. Factory Worker"
-                    className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white outline-none"
+                    className="tq-input w-full min-h-11 p-2.5 rounded-xl text-ink-900 dark:text-white"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-slate-400 font-bold block mb-1">Chief Complaint & Duration *</label>
+                <label className="text-slate-500 dark:text-slate-400 font-bold block mb-1">Chief Complaint & Duration *</label>
                 <div className="flex gap-2">
                   <input
                     type="text"
@@ -340,37 +340,37 @@ export default function PatientManagementModule({
                     value={newPatientForm.complaint}
                     onChange={e => setNewPatientForm(p => ({ ...p, complaint: e.target.value }))}
                     placeholder="e.g. Chronic productive cough with evening fever"
-                    className="w-3/4 p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white outline-none"
+                    className="tq-input w-3/4 min-w-0 min-h-11 p-2.5 rounded-xl text-ink-900 dark:text-white"
                   />
                   <input
                     type="text"
                     value={newPatientForm.duration}
                     onChange={e => setNewPatientForm(p => ({ ...p, duration: e.target.value }))}
                     placeholder="3 weeks"
-                    className="w-1/4 p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white outline-none"
+                    className="tq-input w-1/4 min-w-0 min-h-11 p-2.5 rounded-xl text-ink-900 dark:text-white"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-slate-400 font-bold block mb-1">Symptoms (Comma Separated)</label>
+                <label className="text-slate-500 dark:text-slate-400 font-bold block mb-1">Symptoms (Comma Separated)</label>
                 <input
                   type="text"
                   value={newPatientForm.symptoms}
                   onChange={e => setNewPatientForm(p => ({ ...p, symptoms: e.target.value }))}
                   placeholder="Cough > 2 weeks, Fever, Weight Loss, Night Sweats"
-                  className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white outline-none"
+                  className="tq-input w-full min-h-11 p-2.5 rounded-xl text-ink-900 dark:text-white"
                 />
               </div>
 
               <div>
-                <label className="text-slate-400 font-bold block mb-1">Medical & Treatment History</label>
+                <label className="text-slate-500 dark:text-slate-400 font-bold block mb-1">Medical & Treatment History</label>
                 <textarea
                   rows={2}
                   value={newPatientForm.history}
                   onChange={e => setNewPatientForm(p => ({ ...p, history: e.target.value }))}
                   placeholder="No previous ATT history; Non-diabetic; HIV Negative"
-                  className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white outline-none resize-none"
+                  className="tq-input w-full p-2.5 rounded-xl text-ink-900 dark:text-white resize-none"
                 />
               </div>
 
@@ -378,13 +378,13 @@ export default function PatientManagementModule({
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold"
+                  className="tq-btn-secondary touch-target px-4 py-2 rounded-xl text-xs font-semibold dark:bg-[#111c30] dark:text-slate-200 dark:border-slate-700"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold rounded-xl text-xs shadow-lg"
+                  className="tq-btn-primary touch-target px-6 py-2 font-bold rounded-xl text-xs shadow-lg"
                 >
                   Register & Launch Workflow
                 </button>
@@ -397,50 +397,50 @@ export default function PatientManagementModule({
       {/* MODAL: VIEW FULL PATIENT DOSSIER */}
       {selectedDossier && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
-          <div className="bg-slate-900 border border-cyan-500/40 rounded-2xl max-w-2xl w-full p-6 space-y-5 text-white shadow-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-start border-b border-slate-800 pb-3">
+          <div className="bg-white dark:bg-[#111c30] border border-teal-200 dark:border-teal-500/40 rounded-2xl max-w-2xl w-full p-6 space-y-5 text-ink-900 dark:text-white shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-start border-b border-slate-200 dark:border-slate-800 pb-3">
               <div>
-                <span className="text-[10px] font-mono text-purple-400 font-bold uppercase">{selectedDossier.patientCode}</span>
-                <h3 className="text-xl font-black text-white">{selectedDossier.name} Dossier</h3>
+                <span className="text-[10px] font-mono text-purple-600 dark:text-purple-300 font-bold uppercase">{selectedDossier.patientCode}</span>
+                <h3 className="text-xl font-black text-ink-900 dark:text-white">{selectedDossier.name} Dossier</h3>
               </div>
               <button 
                 onClick={() => setSelectedDossier(null)}
-                className="p-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs"
+                className="touch-target p-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-xs"
               >
                 <X size={16} />
               </button>
             </div>
 
             <div className="space-y-4 text-xs">
-              <div className="grid grid-cols-2 gap-3 bg-slate-950 p-4 rounded-xl border border-slate-800">
+              <div className="grid grid-cols-2 gap-3 bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
                 <div>
                   <span className="text-slate-500 block text-[10px]">Age / Gender:</span>
-                  <span className="text-white font-bold">{selectedDossier.age} Yrs ({selectedDossier.gender})</span>
+                  <span className="text-ink-900 dark:text-white font-bold">{selectedDossier.age} Yrs ({selectedDossier.gender})</span>
                 </div>
                 <div>
                   <span className="text-slate-500 block text-[10px]">Occupation:</span>
-                  <span className="text-slate-300 font-bold">{selectedDossier.occupation}</span>
+                  <span className="text-slate-600 dark:text-slate-300 font-bold">{selectedDossier.occupation}</span>
                 </div>
                 <div>
                   <span className="text-slate-500 block text-[10px]">Phone:</span>
-                  <span className="text-cyan-300 font-mono font-bold">{selectedDossier.phone}</span>
+                  <span className="text-teal-600 dark:text-teal-300 font-mono font-bold">{selectedDossier.phone}</span>
                 </div>
                 <div>
                   <span className="text-slate-500 block text-[10px]">Emergency Contact:</span>
-                  <span className="text-slate-300 font-mono">{selectedDossier.emergencyContact}</span>
+                  <span className="text-slate-600 dark:text-slate-300 font-mono">{selectedDossier.emergencyContact}</span>
                 </div>
               </div>
 
-              <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
-                <h4 className="font-bold text-cyan-300 uppercase tracking-wider">Clinical Examination Notes</h4>
-                <p className="text-slate-300">{selectedDossier.vitals.respExam}</p>
-                <p className="text-slate-400 text-[11px]">{selectedDossier.vitals.notes}</p>
+              <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
+                <h4 className="font-bold text-teal-600 dark:text-teal-300 uppercase tracking-wider">Clinical Examination Notes</h4>
+                <p className="text-slate-600 dark:text-slate-300">{selectedDossier.vitals.respExam}</p>
+                <p className="text-slate-500 dark:text-slate-400 text-[11px]">{selectedDossier.vitals.notes}</p>
               </div>
 
               <div className="flex justify-end gap-3 pt-2">
                 <button
                   onClick={() => setSelectedDossier(null)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold"
+                  className="tq-btn-secondary touch-target px-4 py-2 rounded-xl text-xs font-semibold dark:bg-[#111c30] dark:text-slate-200 dark:border-slate-700"
                 >
                   Close Dossier
                 </button>
@@ -450,7 +450,7 @@ export default function PatientManagementModule({
                     setSelectedDossier(null);
                     onSelectPatient(p);
                   }}
-                  className="px-6 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold rounded-xl text-xs shadow-lg flex items-center gap-1"
+                  className="tq-btn-primary touch-target px-6 py-2 font-bold rounded-xl text-xs shadow-lg flex items-center gap-1"
                 >
                   <span>Select & Start Workflow</span>
                   <ChevronRight size={14} />

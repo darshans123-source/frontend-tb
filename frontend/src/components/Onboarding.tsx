@@ -45,22 +45,22 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#060913] text-white flex flex-col justify-between p-4 sm:p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-navy-900 via-[#0c1b33] to-brand-teal-deep/30 dark:bg-ink-950 text-white font-sans flex flex-col justify-between p-4 sm:p-6 relative overflow-hidden max-w-full">
       {/* Background glow */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-64 sm:w-80 h-64 sm:h-80 bg-cyan-600/10 rounded-full blur-[100px] pointer-events-none"></div>
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-64 sm:w-80 h-64 sm:h-80 bg-brand-teal/20 rounded-full blur-[100px] pointer-events-none"></div>
 
       {/* Top Bar */}
       <div className="flex justify-between items-center z-10">
         <div className="flex items-center gap-2">
-          <Shield className="text-cyan-400" size={22} />
-          <span className="font-bold tracking-wider text-xs sm:text-sm">TB QUEST</span>
+          <Shield className="text-teal-300" size={22} />
+          <span className="tq-display font-bold tracking-wider text-xs sm:text-sm">TB QUEST</span>
         </div>
         <button
           onClick={() => {
             soundService.playClick();
             onComplete();
           }}
-          className="text-xs text-slate-400 hover:text-white font-mono px-3 py-1.5 rounded-lg bg-slate-800/50"
+          className="tq-btn-ghost touch-target text-xs text-slate-300 hover:text-white font-mono px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15"
         >
           Skip
         </button>
@@ -77,11 +77,11 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             transition={{ duration: 0.3 }}
             className="flex flex-col items-center space-y-4 sm:space-y-6 max-w-sm"
           >
-            <div className={`p-4 sm:p-6 rounded-3xl border shadow-xl ${currentSlide.color}`}>
+            <div className={`tq-lift p-4 sm:p-6 rounded-3xl border shadow-xl ${currentSlide.color}`}>
               <Icon size={48} className="sm:w-14 sm:h-14" />
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold tracking-wide">{currentSlide.title}</h2>
-            <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">{currentSlide.desc}</p>
+            <h2 className="tq-display text-xl sm:text-2xl font-bold tracking-wide">{currentSlide.title}</h2>
+            <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">{currentSlide.desc}</p>
           </motion.div>
         </AnimatePresence>
 
@@ -91,7 +91,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             <div
               key={i}
               className={`h-1.5 rounded-full transition-all duration-300 ${
-                i === step ? 'w-8 bg-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.5)]' : 'w-2 bg-slate-800'
+                i === step ? 'w-8 bg-brand-teal shadow-[0_0_10px_rgba(13,148,136,0.5)]' : 'w-2 bg-slate-700'
               }`}
             />
           ))}
@@ -99,10 +99,10 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       </div>
 
       {/* Footer Button */}
-      <div className="z-10 pb-2 sm:pb-4">
+      <div className="z-10 pb-2 sm:pb-4 w-full max-w-md mx-auto">
         <button
           onClick={handleNext}
-          className="w-full py-3.5 sm:py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-xs sm:text-sm rounded-2xl shadow-[0_0_20px_rgba(6,182,212,0.3)] flex items-center justify-center gap-2 transition-all active:scale-[0.99]"
+          className="tq-btn-primary touch-target w-full py-3.5 sm:py-4 text-white font-bold text-xs sm:text-sm rounded-2xl shadow-[0_0_20px_rgba(13,148,136,0.3)] flex items-center justify-center gap-2 transition-all active:scale-[0.99] min-h-11"
         >
           <span>{step === slides.length - 1 ? 'Get Started' : 'Next'}</span>
           <ArrowRight size={18} />

@@ -19,12 +19,12 @@ export default function Header({ userData, currentTab = 'dashboard', setCurrentT
   ];
 
   return (
-    <header className="bg-white/90 backdrop-blur-md border-b border-[#D8E9FF] shadow-xs fixed top-0 left-0 right-0 z-40 h-16 px-4 sm:px-8 flex items-center justify-between">
+    <header className="tq-nav fixed top-0 left-0 right-0 z-40 h-16 px-4 sm:px-8 flex items-center justify-between max-w-full overflow-hidden">
       {/* Left: Logo & Subtitle */}
       <div className="flex items-center gap-3">
         <button
           onClick={onToggleMobileMenu}
-          className="p-1.5 text-slate-600 hover:text-slate-900 rounded-lg lg:hidden"
+          className="touch-target p-1.5 text-slate-600 hover:text-brand-teal-deep dark:text-slate-300 dark:hover:text-teal-300 rounded-xl lg:hidden flex items-center justify-center focus-visible:ring-2 focus-visible:ring-brand-teal"
           title="Toggle Menu"
         >
           <Menu size={22} />
@@ -34,13 +34,13 @@ export default function Header({ userData, currentTab = 'dashboard', setCurrentT
           <img
             src="/nit_logo.png"
             alt="TB Quest Official Logo"
-            className="w-[40px] h-[40px] sm:w-[44px] sm:h-[44px] md:w-[48px] md:h-[48px] object-contain rounded-[8px] shadow-md shadow-blue-500/10 shrink-0"
+            className="tq-img w-[40px] h-[40px] sm:w-[44px] sm:h-[44px] md:w-[48px] md:h-[48px] object-contain rounded-xl bg-white p-1 aspect-square shrink-0"
           />
           <div className="flex flex-col justify-center">
-            <h1 className="text-base sm:text-lg font-extrabold text-[#1E293B] tracking-tight leading-none">
+            <h1 className="tq-display text-base sm:text-lg font-extrabold text-ink-900 dark:text-white tracking-tight leading-none">
               TB QUEST
             </h1>
-            <p className="text-[9px] sm:text-[10px] font-extrabold text-[#0F6FFF] uppercase tracking-wider leading-tight mt-0.5">
+            <p className="tq-eyebrow text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider leading-tight mt-0.5">
               TB DIAGNOSTIC LEARNING PLATFORM
             </p>
           </div>
@@ -57,13 +57,13 @@ export default function Header({ userData, currentTab = 'dashboard', setCurrentT
             <button
               key={item.id}
               onClick={() => setCurrentTab && setCurrentTab(item.id)}
-              className={`flex items-center gap-1.5 px-4 py-1.5 text-xs transition-all cursor-pointer ${
+              className={`tq-lift touch-target flex items-center gap-1.5 px-4 py-1.5 text-xs transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-brand-teal ${
                 isActive
-                  ? 'bg-gradient-to-r from-[#0F6FFF] to-[#2563EB] text-white shadow-md shadow-blue-500/20 rounded-full font-bold'
-                  : 'text-[#64748B] hover:text-[#0F6FFF] hover:bg-[#F2F8FD] rounded-full font-semibold'
+                  ? 'tq-btn-primary rounded-full font-bold shadow-md'
+                  : 'tq-chip-slate text-slate-500 dark:text-slate-300 hover:text-brand-teal-deep dark:hover:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-950/40 rounded-full font-semibold'
               }`}
             >
-              <IconComp size={15} className={isActive ? 'text-white' : 'text-[#64748B]'} />
+              <IconComp size={15} className={isActive ? 'text-white' : 'text-slate-500 dark:text-slate-300'} />
               <span>{item.label}</span>
             </button>
           );
@@ -74,11 +74,11 @@ export default function Header({ userData, currentTab = 'dashboard', setCurrentT
       <div className="flex items-center gap-3">
         {/* Notification Bell with Red Badge */}
         <button
-          className="relative p-2 text-slate-600 hover:text-slate-900 transition-colors"
+          className="touch-target relative p-2 text-slate-600 hover:text-brand-teal-deep dark:text-slate-300 dark:hover:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-950/40 rounded-full transition-colors flex items-center justify-center focus-visible:ring-2 focus-visible:ring-brand-teal"
           title="Notifications"
         >
           <Bell size={20} />
-          <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-red-600 text-white font-mono text-[9px] font-bold flex items-center justify-center shadow-xs">
+          <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-brand-coral text-white font-mono text-[9px] font-bold flex items-center justify-center shadow-xs">
             3
           </span>
         </button>
@@ -86,17 +86,17 @@ export default function Header({ userData, currentTab = 'dashboard', setCurrentT
         {/* User Avatar & Info */}
         <div 
           onClick={() => setCurrentTab && setCurrentTab('profile')}
-          className="flex items-center gap-2.5 pl-2 border-l border-slate-200 cursor-pointer hover:opacity-90 transition-opacity"
+          className="touch-target flex items-center gap-2.5 pl-2 border-l border-slate-200 dark:border-slate-700 cursor-pointer hover:opacity-90 transition-opacity rounded-xl focus-visible:ring-2 focus-visible:ring-brand-teal"
           title="View Profile"
         >
-          <div className="w-9 h-9 rounded-full bg-blue-100 border border-blue-300 flex items-center justify-center text-blue-800 font-bold text-xs shrink-0 shadow-xs">
+          <div className="w-9 h-9 rounded-full bg-brand-teal-soft dark:bg-teal-950 border border-teal-200 dark:border-teal-800 flex items-center justify-center text-brand-teal-deep dark:text-teal-300 font-bold text-xs shrink-0 shadow-xs">
             {userData.name ? userData.name.charAt(0).toUpperCase() : 'S'}
           </div>
           <div className="hidden sm:block text-left">
-            <p className="text-xs font-black text-slate-900 leading-tight">
+            <p className="text-xs font-black text-ink-900 dark:text-white leading-tight">
               {userData.name || 'Student'}
             </p>
-            <p className="text-[10px] font-semibold text-blue-600 leading-tight">
+            <p className="text-[10px] font-semibold text-brand-teal-deep dark:text-teal-300 leading-tight">
               Level {userData.level || 1}
             </p>
           </div>
@@ -106,7 +106,7 @@ export default function Header({ userData, currentTab = 'dashboard', setCurrentT
         {onLogout && (
           <button
             onClick={onLogout}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-red-50 border border-slate-200 hover:border-red-300 text-slate-700 hover:text-red-600 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ml-1"
+            className="tq-btn-secondary touch-target tq-lift flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold transition-all shrink-0 cursor-pointer ml-1 dark:bg-[#111c30] dark:text-slate-200 dark:border-slate-700 dark:hover:border-brand-coral"
             title="Log Out & Switch User"
           >
             <LogOut size={14} />

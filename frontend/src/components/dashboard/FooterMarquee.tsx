@@ -82,11 +82,11 @@ export default function FooterMarquee() {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 w-full px-2 pb-1 pt-0 pointer-events-auto select-none">
       {/* Outer Marquee Container (38px height, 10px rounded corners, enterprise gradient & glow) */}
-      <div className="relative w-full h-[38px] rounded-[10px] bg-gradient-to-r from-[#0F4CFF] via-[#0E3FE0] to-[#0B2E8A] border border-white/20 shadow-[0_-3px_18px_rgba(15,76,255,0.35),0_0_12px_rgba(11,46,138,0.25)] backdrop-blur-md overflow-hidden flex items-center group">
+      <div className="relative w-full min-h-11 h-[38px] rounded-2xl bg-gradient-to-r from-brand-teal-deep via-navy-900 to-brand-royal border border-white/20 border-t border-t-teal-300/40 shadow-[0_-3px_18px_rgba(13,148,136,0.35),0_0_12px_rgba(11,46,138,0.25)] backdrop-blur-md overflow-hidden flex items-center group">
         
         {/* Edge Vignette Fades */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-8 sm:w-16 bg-gradient-to-r from-[#0F4CFF] to-transparent z-10 rounded-l-[10px]" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-8 sm:w-16 bg-gradient-to-l from-[#0B2E8A] to-transparent z-10 rounded-r-[10px]" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-8 sm:w-16 bg-gradient-to-r from-brand-teal-deep to-transparent z-10 rounded-l-2xl" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-8 sm:w-16 bg-gradient-to-l from-brand-royal to-transparent z-10 rounded-r-2xl" />
 
         {/* Marquee Track (Right to Left Continuous Loop) */}
         <div className="animate-marquee-rtl flex items-center whitespace-nowrap h-full">

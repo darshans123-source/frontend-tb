@@ -149,28 +149,28 @@ export default function HospitalEMREngine({
   };
 
   return (
-    <div className="p-3 sm:p-6 pb-24 max-w-7xl mx-auto min-h-[85vh] flex flex-col justify-between text-white font-sans space-y-5">
+    <div className="p-3 sm:p-6 pb-24 max-w-7xl mx-auto w-full min-h-[85vh] flex flex-col justify-between text-slate-900 dark:text-slate-100 font-sans space-y-5 overflow-x-hidden">
       {/* Top Hospital EMR Navigation Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-4">
+      <div className="tq-glass sticky top-0 z-30 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 rounded-2xl p-3 sm:p-4">
         <div>
           <div className="flex flex-wrap items-center gap-2 mb-1.5">
-            <span className="px-2.5 py-0.5 bg-cyan-950 text-cyan-400 border border-cyan-500/30 rounded-full text-[10px] sm:text-xs font-mono uppercase font-bold">
+            <span className="tq-chip tq-chip-teal">
               Hospital EMR System
             </span>
             {activePatient && (
-              <span className="px-2.5 py-0.5 bg-purple-950 text-purple-300 border border-purple-500/30 rounded-full text-[10px] sm:text-xs font-mono font-bold">
+              <span className="tq-chip tq-chip-royal">
                 Active: {activePatient.name} ({activePatient.patientCode})
               </span>
             )}
           </div>
-          <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
+          <h1 className="tq-display text-xl sm:text-2xl text-slate-900 dark:text-white flex items-center gap-2">
             <Stethoscope className="text-cyan-400 shrink-0" size={24} />
             TB Quest Hospital Clinical EMR Engine
           </h1>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-900 border border-cyan-500/30 rounded-xl text-xs font-mono text-cyan-300 font-bold">
+          <div className="tq-chip tq-chip-teal">
             <Award size={16} />
             <span>SCORE: {score}</span>
           </div>
@@ -179,7 +179,7 @@ export default function HospitalEMREngine({
               soundService.playClick();
               onBack();
             }}
-            className="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold shrink-0 flex items-center gap-1.5"
+            className="tq-btn-secondary touch-target px-3.5 py-1.5 text-xs font-semibold shrink-0 flex items-center gap-1.5 dark:bg-[#111c30] dark:text-slate-300 dark:border-slate-700"
           >
             <ArrowLeft size={14} />
             <span>Exit EMR</span>
@@ -188,16 +188,16 @@ export default function HospitalEMREngine({
       </div>
 
       {/* Main Tab Bar */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 font-mono text-xs">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 font-mono text-xs max-w-full">
         <button
           onClick={() => {
             setActiveTab('patients');
             soundService.playClick();
           }}
-          className={`px-4 py-2.5 rounded-xl border font-bold flex items-center gap-2 transition-all shrink-0 ${
+          className={`touch-target px-4 py-2.5 rounded-2xl border font-bold flex items-center gap-2 transition-all shrink-0 ${
             activeTab === 'patients'
-              ? 'bg-cyan-950 border-cyan-400 text-cyan-300 shadow-lg'
-              : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
+              ? 'bg-teal-100 dark:bg-cyan-950 border-brand-teal dark:border-cyan-400 text-teal-800 dark:text-cyan-300 shadow-lg'
+              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
           }`}
         >
           <UserCheck size={16} />
@@ -211,10 +211,10 @@ export default function HospitalEMREngine({
                 setActiveTab('vitals');
                 soundService.playClick();
               }}
-              className={`px-4 py-2.5 rounded-xl border font-bold flex items-center gap-2 transition-all shrink-0 ${
+              className={`touch-target px-4 py-2.5 rounded-2xl border font-bold flex items-center gap-2 transition-all shrink-0 ${
                 activeTab === 'vitals'
-                  ? 'bg-cyan-950 border-cyan-400 text-cyan-300 shadow-lg'
-                  : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
+                  ? 'bg-teal-100 dark:bg-cyan-950 border-brand-teal dark:border-cyan-400 text-teal-800 dark:text-cyan-300 shadow-lg'
+                  : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
               }`}
             >
               <Activity size={16} />
@@ -226,10 +226,10 @@ export default function HospitalEMREngine({
                 setActiveTab('investigations');
                 soundService.playClick();
               }}
-              className={`px-4 py-2.5 rounded-xl border font-bold flex items-center gap-2 transition-all shrink-0 ${
+              className={`touch-target px-4 py-2.5 rounded-2xl border font-bold flex items-center gap-2 transition-all shrink-0 ${
                 activeTab === 'investigations'
-                  ? 'bg-purple-950 border-purple-400 text-purple-300 shadow-lg'
-                  : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
+                  ? 'bg-violet-100 dark:bg-purple-950 border-violet-400 dark:border-purple-400 text-violet-800 dark:text-purple-300 shadow-lg'
+                  : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
               }`}
             >
               <FileText size={16} />
@@ -241,10 +241,10 @@ export default function HospitalEMREngine({
                 setActiveTab('decision');
                 soundService.playClick();
               }}
-              className={`px-4 py-2.5 rounded-xl border font-bold flex items-center gap-2 transition-all shrink-0 ${
+              className={`touch-target px-4 py-2.5 rounded-2xl border font-bold flex items-center gap-2 transition-all shrink-0 ${
                 activeTab === 'decision'
-                  ? 'bg-emerald-950 border-emerald-400 text-emerald-300 shadow-lg'
-                  : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
+                  ? 'bg-emerald-100 dark:bg-emerald-950 border-emerald-400 text-emerald-800 dark:text-emerald-300 shadow-lg'
+                  : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
               }`}
             >
               <Layers size={16} />
@@ -256,10 +256,10 @@ export default function HospitalEMREngine({
                 setActiveTab('treatment');
                 soundService.playClick();
               }}
-              className={`px-4 py-2.5 rounded-xl border font-bold flex items-center gap-2 transition-all shrink-0 ${
+              className={`touch-target px-4 py-2.5 rounded-2xl border font-bold flex items-center gap-2 transition-all shrink-0 ${
                 activeTab === 'treatment'
-                  ? 'bg-blue-950 border-blue-400 text-blue-300 shadow-lg'
-                  : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
+                  ? 'bg-blue-100 dark:bg-blue-950 border-blue-400 text-blue-800 dark:text-blue-300 shadow-lg'
+                  : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
               }`}
             >
               <Pill size={16} />
@@ -271,10 +271,10 @@ export default function HospitalEMREngine({
                 setActiveTab('report');
                 soundService.playClick();
               }}
-              className={`px-4 py-2.5 rounded-xl border font-bold flex items-center gap-2 transition-all shrink-0 ${
+              className={`touch-target px-4 py-2.5 rounded-2xl border font-bold flex items-center gap-2 transition-all shrink-0 ${
                 activeTab === 'report'
-                  ? 'bg-amber-950 border-amber-400 text-amber-300 shadow-lg'
-                  : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
+                  ? 'bg-amber-100 dark:bg-amber-950 border-amber-400 text-amber-800 dark:text-amber-300 shadow-lg'
+                  : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
               }`}
             >
               <Printer size={16} />
@@ -295,46 +295,46 @@ export default function HospitalEMREngine({
 
       {/* TAB 2: CLINICAL EXAMINATION & VITALS ENTRY */}
       {activeTab === 'vitals' && activePatient && (
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-6">
-          <div className="flex justify-between items-start border-b border-slate-800 pb-4">
+        <div className="tq-card tq-fade-up p-6 shadow-2xl space-y-6 max-w-full overflow-hidden">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-200 dark:border-slate-700/60 pb-4">
             <div>
-              <span className="text-[10px] font-mono text-cyan-400 font-bold uppercase">Clinical Examination</span>
-              <h2 className="text-xl font-black text-white">{activePatient.name} Dossier & Vitals</h2>
+              <span className="tq-eyebrow">Clinical Examination</span>
+              <h2 className="tq-display text-xl text-slate-900 dark:text-white">{activePatient.name} Dossier & Vitals</h2>
             </div>
-            <span className="px-3 py-1 bg-cyan-950 border border-cyan-500/40 text-cyan-300 rounded-full text-xs font-mono font-bold">
+            <span className="tq-chip tq-chip-teal">
               PATIENT CODE: {activePatient.patientCode}
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-            <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-3">
-              <h4 className="font-bold text-cyan-300 uppercase tracking-wider">Recorded Vitals</h4>
+            <div className="tq-card p-4 space-y-3 min-w-0">
+              <h4 className="tq-eyebrow">Recorded Vitals</h4>
               <div className="grid grid-cols-2 gap-2 font-mono">
-                <div className="p-2 bg-slate-900 rounded border border-slate-800">
+                <div className="p-2 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700/60 min-w-0">
                   <span className="text-slate-500 text-[10px] block">Temperature:</span>
-                  <span className="text-amber-300 font-bold">{activePatient.vitals.temp}</span>
+                  <span className="text-amber-600 dark:text-amber-300 font-bold">{activePatient.vitals.temp}</span>
                 </div>
-                <div className="p-2 bg-slate-900 rounded border border-slate-800">
+                <div className="p-2 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700/60 min-w-0">
                   <span className="text-slate-500 text-[10px] block">Pulse Rate:</span>
-                  <span className="text-cyan-300 font-bold">{activePatient.vitals.pulse}</span>
+                  <span className="text-brand-teal dark:text-cyan-300 font-bold">{activePatient.vitals.pulse}</span>
                 </div>
-                <div className="p-2 bg-slate-900 rounded border border-slate-800">
+                <div className="p-2 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700/60 min-w-0">
                   <span className="text-slate-500 text-[10px] block">Blood Pressure:</span>
-                  <span className="text-slate-200 font-bold">{activePatient.vitals.bp}</span>
+                  <span className="text-slate-700 dark:text-slate-200 font-bold">{activePatient.vitals.bp}</span>
                 </div>
-                <div className="p-2 bg-slate-900 rounded border border-slate-800">
+                <div className="p-2 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700/60 min-w-0">
                   <span className="text-slate-500 text-[10px] block">SpO2 / BMI:</span>
-                  <span className="text-emerald-300 font-bold">{activePatient.vitals.spO2} / {activePatient.vitals.bmi}</span>
+                  <span className="text-emerald-600 dark:text-emerald-300 font-bold">{activePatient.vitals.spO2} / {activePatient.vitals.bmi}</span>
                 </div>
               </div>
             </div>
 
-            <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-3">
-              <h4 className="font-bold text-emerald-300 uppercase tracking-wider">Physical Auscultation & Examination</h4>
-              <p className="text-slate-300 leading-relaxed bg-slate-900 p-3 rounded-lg border border-slate-800">
+            <div className="tq-card p-4 space-y-3 min-w-0">
+              <h4 className="tq-eyebrow">Physical Auscultation & Examination</h4>
+              <p className="text-slate-600 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60">
                 {activePatient.vitals.respExam}
               </p>
-              <p className="text-slate-400 text-[11px]">{activePatient.vitals.notes}</p>
+              <p className="text-slate-500 dark:text-slate-400 text-[11px]">{activePatient.vitals.notes}</p>
             </div>
           </div>
 
@@ -346,7 +346,7 @@ export default function HospitalEMREngine({
                 setActiveWorkflowStepId('cxr');
                 setActiveTab('investigations');
               }}
-              className="px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black rounded-xl text-xs shadow-lg"
+              className="tq-btn-primary touch-target px-8 py-3 font-black text-xs shadow-lg max-w-full"
             >
               Save Vitals & Proceed to Lab Investigation Orders
             </button>
@@ -380,28 +380,28 @@ export default function HospitalEMREngine({
           />
 
           {/* Evaluated Clinical Rule Result Card */}
-          <div className="bg-slate-900/90 border border-emerald-500/50 rounded-2xl p-6 shadow-2xl space-y-4">
-            <div className="flex justify-between items-start border-b border-slate-800 pb-3">
+          <div className="tq-card tq-fade-up p-6 shadow-2xl space-y-4 max-w-full overflow-hidden">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-200 dark:border-slate-700/60 pb-3">
               <div>
-                <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase">Dynamic Rule Engine Output</span>
-                <h3 className="text-xl font-black text-white">{evaluatedDiagnosis.diagnosisTitle}</h3>
+                <span className="tq-eyebrow">Dynamic Rule Engine Output</span>
+                <h3 className="tq-display text-xl text-slate-900 dark:text-white">{evaluatedDiagnosis.diagnosisTitle}</h3>
               </div>
-              <span className="px-3 py-1 bg-emerald-950 border border-emerald-500/40 text-emerald-300 rounded-full text-xs font-mono font-bold">
+              <span className="tq-chip tq-chip-teal">
                 CONFIRMED VIA LAB EVIDENCE
               </span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-              <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-2">
-                <h4 className="font-bold text-cyan-300 uppercase tracking-wider">Clinical Reasoning</h4>
-                <p className="text-slate-300 leading-relaxed">{evaluatedDiagnosis.clinicalReasoning}</p>
+              <div className="tq-card p-4 space-y-2 min-w-0">
+                <h4 className="tq-eyebrow">Clinical Reasoning</h4>
+                <p className="text-slate-600 dark:text-slate-300 leading-relaxed">{evaluatedDiagnosis.clinicalReasoning}</p>
               </div>
 
-              <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-2">
-                <h4 className="font-bold text-amber-300 uppercase tracking-wider">Evaluated Evidence</h4>
+              <div className="tq-card p-4 space-y-2 min-w-0">
+                <h4 className="tq-eyebrow">Evaluated Evidence</h4>
                 <ul className="space-y-1">
                   {evaluatedDiagnosis.evidenceUsed.map((ev, i) => (
-                    <li key={i} className="text-slate-300 flex items-start gap-1.5">
+                    <li key={i} className="text-slate-600 dark:text-slate-300 flex items-start gap-1.5 min-w-0">
                       <CheckCircle2 size={13} className="text-emerald-400 shrink-0 mt-0.5" />
                       <span>{ev}</span>
                     </li>
@@ -410,9 +410,9 @@ export default function HospitalEMREngine({
               </div>
             </div>
 
-            <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl text-xs space-y-1">
-              <h4 className="font-bold text-purple-300 uppercase tracking-wider">WHO & NTEP Protocol Recommendation</h4>
-              <p className="text-slate-200 leading-relaxed">{evaluatedDiagnosis.ntepRecommendation}</p>
+            <div className="tq-card p-4 text-xs space-y-1 min-w-0">
+              <h4 className="tq-eyebrow">WHO & NTEP Protocol Recommendation</h4>
+              <p className="text-slate-700 dark:text-slate-200 leading-relaxed">{evaluatedDiagnosis.ntepRecommendation}</p>
             </div>
 
             <div className="flex justify-end pt-2">
@@ -421,7 +421,7 @@ export default function HospitalEMREngine({
                   soundService.playCorrect();
                   setActiveTab('treatment');
                 }}
-                className="px-8 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-black rounded-xl text-xs shadow-lg"
+                className="tq-btn-primary touch-target px-8 py-3.5 font-black text-xs shadow-lg max-w-full"
               >
                 Proceed to Treatment Assignment
               </button>

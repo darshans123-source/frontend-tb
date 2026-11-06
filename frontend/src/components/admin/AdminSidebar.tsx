@@ -81,21 +81,21 @@ export default function AdminSidebar({
 
   return (
     <aside
-      className={`fixed lg:sticky top-0 left-0 z-40 w-72 h-screen bg-[#0c1329] text-slate-200 border-r border-slate-800 flex flex-col justify-between transition-transform duration-300 ${
+      className={`fixed lg:sticky top-0 left-0 z-40 w-72 max-w-[85vw] h-screen bg-white dark:bg-[#0c1329] text-slate-700 dark:text-slate-200 border-r border-slate-200 dark:border-slate-800 flex flex-col justify-between transition-transform duration-300 ${
         isOpenMobile ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
       }`}
     >
       {/* Sidebar Header */}
-      <div className="p-5 border-b border-slate-800/80 flex items-center justify-between">
+      <div className="p-5 border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 p-0.5 flex items-center justify-center shadow-lg">
-            <div className="w-full h-full bg-[#0c1329] rounded-[10px] flex items-center justify-center">
-              <ShieldAlert size={20} className="text-purple-400" />
+          <div className="tq-lift w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-teal via-brand-emerald to-brand-royal p-0.5 flex items-center justify-center shadow-lg shrink-0">
+            <div className="w-full h-full bg-white dark:bg-[#0c1329] rounded-[14px] flex items-center justify-center">
+              <ShieldAlert size={20} className="text-brand-teal" />
             </div>
           </div>
           <div>
-            <h2 className="font-extrabold text-sm text-white tracking-wide">TB QUEST CMS</h2>
-            <p className="text-[10px] font-mono text-purple-400">Admin Control Panel</p>
+            <h2 className="tq-display font-extrabold text-sm text-ink-900 dark:text-white tracking-wide">TB QUEST CMS</h2>
+            <p className="tq-eyebrow text-[10px] font-mono">Admin Control Panel</p>
           </div>
         </div>
       </div>
@@ -113,19 +113,19 @@ export default function AdminSidebar({
                 setCurrentTab(item.id as AdminTab);
                 if (onCloseMobile) onCloseMobile();
               }}
-              className={`w-full p-2.5 rounded-xl font-medium text-xs flex items-center justify-between transition-all group ${
+              className={`touch-target w-full p-2.5 rounded-xl font-medium text-xs flex items-center justify-between transition-all group ${
                 isActive
-                  ? 'bg-purple-600 text-white font-bold shadow-md shadow-purple-900/40'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                  ? 'tq-btn-primary text-white font-bold shadow-md'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-ink-900 dark:hover:text-white hover:bg-teal-50 dark:hover:bg-slate-800/60 tq-lift'
               }`}
             >
               <div className="flex items-center gap-3">
-                <IconComp size={18} className={isActive ? 'text-white' : 'text-slate-400 group-hover:text-purple-400'} />
+                <IconComp size={18} className={isActive ? 'text-white' : 'text-slate-400 group-hover:text-brand-teal'} />
                 <span>{item.label}</span>
               </div>
               <ChevronRight
                 size={14}
-                className={`transition-transform ${isActive ? 'text-white translate-x-0.5' : 'text-slate-600 group-hover:text-slate-400'}`}
+                className={`transition-transform ${isActive ? 'text-white translate-x-0.5' : 'text-slate-400 dark:text-slate-600 group-hover:text-slate-500 dark:group-hover:text-slate-400'}`}
               />
             </button>
           );
@@ -133,13 +133,13 @@ export default function AdminSidebar({
       </div>
 
       {/* Footer Logout */}
-      <div className="p-4 border-t border-slate-800/80 bg-slate-950/40">
+      <div className="p-4 border-t border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-950/40">
         <button
           onClick={() => {
             soundService.playClick();
             onLogout();
           }}
-          className="w-full p-2.5 bg-slate-900 hover:bg-rose-950/60 text-slate-300 hover:text-rose-400 border border-slate-800 hover:border-rose-800/40 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-colors"
+          className="tq-btn-secondary touch-target w-full p-2.5 dark:bg-[#111c30] dark:text-slate-300 dark:border-slate-700 hover:text-rose-500 dark:hover:text-rose-400 hover:border-rose-300 dark:hover:border-rose-800/40 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-colors"
         >
           <LogOut size={16} /> Logout Admin
         </button>

@@ -170,51 +170,51 @@ export default function Level2Page({ onBack, initialTab }: Level2PageProps) {
     <button
       key={t}
       onClick={() => setTab(t)}
-      className={`flex-1 py-3 text-[11px] sm:text-xs font-extrabold rounded-xl transition-all min-h-[48px] ${tab === t ? 'bg-[#2563EB] text-white shadow' : 'bg-white border border-[#E2E8F0] text-slate-600'}`}
+      className={`flex-1 py-3 text-[11px] sm:text-xs font-extrabold rounded-xl transition-all min-h-[48px] ${tab === t ? 'bg-[#2563EB] text-white shadow' : 'tq-card text-slate-600 dark:text-slate-400'}`}
     >
       {label}
     </button>
   );
 
   return (
-    <div className="bg-[#F8FAFC] p-3 sm:p-6 max-w-3xl mx-auto space-y-5 text-[#1E293B] min-h-screen font-sans pb-28">
+    <div className="bg-alabaster dark:bg-[#0b1220] p-3 sm:p-6 max-w-3xl mx-auto space-y-5 text-ink-900 dark:text-slate-100 min-h-screen font-sans pb-28">
       {/* Header — same light style as the Level 1 pages */}
-      <div className="bg-white border border-[#E2E8F0] rounded-2xl p-5 space-y-3 shadow-sm">
-        <button onClick={onBack} className="text-[#2563EB] font-bold text-xs sm:text-sm">← Back to Learning Modules</button>
+      <div className="tq-card rounded-2xl p-5 space-y-3 shadow-sm">
+        <button onClick={onBack} className="text-brand-royal dark:text-blue-400 font-bold text-xs sm:text-sm">← Back to Learning Modules</button>
         <div>
-          <span className="inline-block px-3 py-1 bg-blue-50 text-[#1677FF] border border-blue-200 rounded-full text-xs font-bold font-mono">Level 2 • Investigate &amp; Interpret</span>
-          <h2 className="font-extrabold text-[#102A43] text-2xl sm:text-3xl mt-2">What does this test result mean, and what next?</h2>
-          <p className="text-slate-600 text-xs sm:text-sm mt-1 leading-relaxed font-medium">
+          <span className="inline-block px-3 py-1 bg-blue-50 text-brand-royal dark:text-blue-400 border border-blue-200 rounded-full text-xs font-bold font-mono">Level 2 • Investigate &amp; Interpret</span>
+          <h2 className="font-extrabold text-ink-900 dark:text-slate-100 text-2xl sm:text-3xl mt-2">What does this test result mean, and what next?</h2>
+          <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm mt-1 leading-relaxed font-medium">
             Level 1 taught you to recognise a presumptive TB patient. Suspicion is NOT confirmation. Level 2 starts from that patient and teaches you to read the test, then choose the next step.
           </p>
-          <p className="text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 text-xs font-bold mt-3">
+          <p className="tq-chip tq-chip-amber px-3 py-2 text-xs font-bold mt-3">
             Teaching simulation — not a real patient record. Education only, not a real clinical diagnostic tool.
           </p>
         </div>
         <div className="grid grid-cols-3 gap-2 text-center">
-          <div className="bg-[#EFF6FF] rounded-xl p-3"><div className="font-extrabold text-[#2563EB] text-lg">{progress.score}</div><div className="text-[11px] font-bold text-slate-500">SCORE</div></div>
-          <div className="bg-[#EFF6FF] rounded-xl p-3"><div className="font-extrabold text-[#2563EB] text-lg">{solvedCount} / 8</div><div className="text-[11px] font-bold text-slate-500">CASES SOLVED</div></div>
-          <div className="bg-[#EFF6FF] rounded-xl p-3"><div className="font-extrabold text-[#2563EB] text-lg">🔥 {streak}</div><div className="text-[11px] font-bold text-slate-500">STREAK</div></div>
+          <div className="bg-blue-50 dark:bg-[#111c30] rounded-xl p-3"><div className="font-extrabold text-brand-royal dark:text-blue-400 text-lg">{progress.score}</div><div className="text-[11px] font-bold text-slate-500 dark:text-slate-400">SCORE</div></div>
+          <div className="bg-blue-50 dark:bg-[#111c30] rounded-xl p-3"><div className="font-extrabold text-brand-royal dark:text-blue-400 text-lg">{solvedCount} / 8</div><div className="text-[11px] font-bold text-slate-500 dark:text-slate-400">CASES SOLVED</div></div>
+          <div className="bg-blue-50 dark:bg-[#111c30] rounded-xl p-3"><div className="font-extrabold text-brand-royal dark:text-blue-400 text-lg">🔥 {streak}</div><div className="text-[11px] font-bold text-slate-500 dark:text-slate-400">STREAK</div></div>
         </div>
-        <div className="text-xs text-slate-500 font-mono">
+        <div className="text-xs text-slate-500 dark:text-slate-400 font-mono">
           Case accuracy (first tries): {progress.firstTotal > 0 ? `${accuracy}% (${progress.firstCorrect}/${progress.firstTotal})` : 'No case answers yet'} · +10 per correct first-try answer · Progress saved on this device.
         </div>
         {allCasesDone && (
           <div className={`rounded-xl p-4 border ${level3Unlocked ? 'bg-emerald-50 border-emerald-300' : 'bg-amber-50 border-amber-300'}`}>
             {level3Unlocked ? (
-              <p className="font-extrabold text-emerald-800 text-sm">🎉 Level 3 unlocked! You finished Level 2 at {accuracy}% accuracy (80% or higher required).</p>
+              <p className="font-extrabold text-emerald-800 dark:text-emerald-200 text-sm">🎉 Level 3 unlocked! You finished Level 2 at {accuracy}% accuracy (80% or higher required).</p>
             ) : (
               <div className="space-y-2">
-                <p className="font-extrabold text-amber-800 text-sm">Level 3 stays locked at {accuracy}% accuracy — 80% or higher is required.</p>
+                <p className="font-extrabold text-amber-800 dark:text-amber-200 text-sm">Level 3 stays locked at {accuracy}% accuracy — 80% or higher is required.</p>
                 <p className="text-xs text-amber-800 font-medium">Targeted practice on your weak topics:</p>
                 <div className="flex flex-wrap gap-2">
                   {(weakTopics.length > 0 ? weakTopics : (['cbnaat'] as Topic[])).map((t) => (
-                    <button key={t} onClick={() => practiceSimilar(t)} className="px-3 py-2 bg-white border border-amber-300 rounded-lg text-xs font-bold text-amber-800 min-h-[40px]">
+                    <button key={t} onClick={() => practiceSimilar(t)} className="tq-chip tq-chip-amber px-3 py-2 min-h-11">
                       Practice: {TOPIC_LABELS[t]}
                     </button>
                   ))}
                 </div>
-                <p className="text-xs text-slate-500">Replay cases from the list below for practice, then use Rapid → Quiz on the weak topic.</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Replay cases from the list below for practice, then use Rapid → Quiz on the weak topic.</p>
               </div>
             )}
           </div>
@@ -222,7 +222,7 @@ export default function Level2Page({ onBack, initialTab }: Level2PageProps) {
       </div>
 
       {/* Bottom navigation inside the level (Cases | Rapid | First-Test | Study All) */}
-      <div className="sticky top-0 z-10 bg-[#F8FAFC]/95 backdrop-blur py-2 flex gap-2">
+      <div className="sticky top-0 z-10 bg-alabaster dark:bg-[#0b1220]/95 backdrop-blur py-2 flex gap-2">
         {tabBtn('cases', '🔬 Cases')}
         {tabBtn('rapid', '⚡ Rapid')}
         {tabBtn('first', '🎯 First-Test')}
@@ -232,16 +232,16 @@ export default function Level2Page({ onBack, initialTab }: Level2PageProps) {
       {tab === 'cases' && (
         <div className="space-y-4">
           {/* Case picker */}
-          <div className="bg-white border border-[#E2E8F0] rounded-2xl p-4 space-y-3 shadow-sm">
+          <div className="tq-card rounded-2xl p-4 space-y-3 shadow-sm">
             <h3 className="font-extrabold text-base">TB Detective Lab — Operate it yourself</h3>
-            <p className="text-xs text-slate-500 font-medium">Patient card → Run test in the lab → Report prints → Step 1 interpret → Step 2 next step → Case solved. No skipping.</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Patient card → Run test in the lab → Report prints → Step 1 interpret → Step 2 next step → Case solved. No skipping.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {LEVEL2_CASES.map((c, i) => {
                 const solved = progress.solved.includes(c.id);
                 return (
-                  <button key={c.id} onClick={() => startCase(i)} className={`p-3 rounded-xl border text-left min-h-[64px] transition-all ${i === caseIdx ? 'border-[#2563EB] bg-[#EFF6FF]' : 'border-[#E2E8F0] bg-white hover:border-blue-300'}`}>
+                  <button key={c.id} onClick={() => startCase(i)} className={`p-3 rounded-xl border text-left min-h-[64px] transition-all ${i === caseIdx ? 'border-brand-royal bg-blue-50 dark:bg-blue-950/40 ring-2 ring-brand-royal' : 'border-slate-200 dark:border-slate-700 bg-white hover:border-blue-300'}`}>
                     <span className="block font-extrabold text-xs">{i + 1}. {c.title} {solved ? '✓' : ''}</span>
-                    <span className="block text-[11px] text-slate-500 mt-1">{c.id} · {c.difficulty} · {solved ? 'Solved — tap to replay for practice' : 'Not solved yet'}</span>
+                    <span className="block text-[11px] text-slate-500 dark:text-slate-400 mt-1">{c.id} · {c.difficulty} · {solved ? 'Solved — tap to replay for practice' : 'Not solved yet'}</span>
                   </button>
                 );
               })}
@@ -249,32 +249,32 @@ export default function Level2Page({ onBack, initialTab }: Level2PageProps) {
           </div>
 
           {/* Active case */}
-          <div className="bg-white border border-[#E2E8F0] rounded-2xl p-4 sm:p-5 space-y-4 shadow-sm">
+          <div className="tq-card rounded-2xl p-4 sm:p-5 space-y-4 shadow-sm">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="px-2.5 py-1 bg-blue-50 text-[#2563EB] rounded-md text-[11px] font-bold font-mono">{activeCase.id}</span>
-              <span className="px-2.5 py-1 bg-slate-100 rounded-md text-[11px] font-bold">{activeCase.tbCategory}</span>
-              <span className="px-2.5 py-1 bg-slate-100 rounded-md text-[11px] font-bold">{activeCase.difficulty}</span>
-              {practiceMode && <span className="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-md text-[11px] font-bold">Practice replay — score not changed</span>}
+              <span className="px-2.5 py-1 bg-blue-50 text-brand-royal dark:text-blue-400 rounded-md text-[11px] font-bold font-mono">{activeCase.id}</span>
+              <span className="tq-chip tq-chip-slate px-2.5 py-1">{activeCase.tbCategory}</span>
+              <span className="tq-chip tq-chip-slate px-2.5 py-1">{activeCase.difficulty}</span>
+              {practiceMode && <span className="tq-chip tq-chip-amber px-2.5 py-1">Practice replay — score not changed</span>}
             </div>
-            <p className="text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 text-xs font-bold">Teaching simulation — not a real patient record.</p>
+            <p className="tq-chip tq-chip-amber px-3 py-2 text-xs font-bold">Teaching simulation — not a real patient record.</p>
 
             <div>
               <h4 className="font-extrabold text-base">{activeCase.title}</h4>
-              <p className="text-sm text-slate-600 leading-relaxed mt-1">{activeCase.scenario}</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mt-1">{activeCase.scenario}</p>
               <div className="grid grid-cols-2 gap-2 mt-3 text-xs">
-                <div className="bg-slate-50 border border-[#E2E8F0] rounded-xl p-3"><span className="font-bold text-slate-500 block">Age / Category</span>{activeCase.age} · {activeCase.category}</div>
-                <div className="bg-slate-50 border border-[#E2E8F0] rounded-xl p-3"><span className="font-bold text-slate-500 block">Test ordered</span>{activeCase.investigationType}</div>
-                <div className="bg-slate-50 border border-[#E2E8F0] rounded-xl p-3"><span className="font-bold text-slate-500 block">CXR note</span>{activeCase.cxrFinding}</div>
-                <div className="bg-slate-50 border border-[#E2E8F0] rounded-xl p-3"><span className="font-bold text-slate-500 block">Next pathway (after solving)</span>{activeCase.nextNode}</div>
+                <div className="bg-slate-50 border border-slate-200 dark:border-slate-700 rounded-xl p-3"><span className="font-bold text-slate-500 dark:text-slate-400 block">Age / Category</span>{activeCase.age} · {activeCase.category}</div>
+                <div className="bg-slate-50 border border-slate-200 dark:border-slate-700 rounded-xl p-3"><span className="font-bold text-slate-500 dark:text-slate-400 block">Test ordered</span>{activeCase.investigationType}</div>
+                <div className="bg-slate-50 border border-slate-200 dark:border-slate-700 rounded-xl p-3"><span className="font-bold text-slate-500 dark:text-slate-400 block">CXR note</span>{activeCase.cxrFinding}</div>
+                <div className="bg-slate-50 border border-slate-200 dark:border-slate-700 rounded-xl p-3"><span className="font-bold text-slate-500 dark:text-slate-400 block">Next pathway (after solving)</span>{activeCase.nextNode}</div>
               </div>
             </div>
 
             {phase === 'patient' && (
-              <button onClick={runLab} className="w-full py-4 bg-gradient-to-r from-[#1677FF] via-[#00B8A9] to-teal-500 text-white font-extrabold rounded-xl text-sm shadow-lg min-h-[52px]">🧪 Run test in the lab</button>
+              <button onClick={runLab} className="w-full py-4 tq-btn-primary text-white font-extrabold rounded-xl text-sm shadow-lg min-h-[52px]">🧪 Run test in the lab</button>
             )}
 
             {phase === 'lab' && (
-              <div className="bg-slate-900 text-white rounded-2xl p-5 text-center space-y-3">
+              <div className="tq-card p-5 text-center space-y-3 bg-navy-900 dark:bg-[#111c30] text-white dark:text-slate-100">
                 <div className="w-10 h-10 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin mx-auto" />
                 <p className="font-mono text-sm">Running {activeCase.investigationType}…</p>
                 <p className="text-xs text-slate-400">Machine running — the report prints next. Do not skip.</p>
@@ -282,12 +282,12 @@ export default function Level2Page({ onBack, initialTab }: Level2PageProps) {
             )}
 
             {(phase === 'report' || phase === 'step' || phase === 'solved') && (
-              <div className="bg-[#EFF6FF] border-2 border-dashed border-[#2563EB] rounded-2xl p-4 space-y-2">
-                <p className="font-mono text-[11px] font-bold text-[#2563EB] uppercase">🖨️ Printed report</p>
+              <div className="bg-blue-50 dark:bg-[#111c30] border-2 border-dashed border-[#2563EB] rounded-2xl p-4 space-y-2">
+                <p className="font-mono text-[11px] font-bold text-brand-royal dark:text-blue-400 uppercase">🖨️ Printed report</p>
                 <p className="font-mono font-bold text-sm">{activeCase.report}</p>
-                <p className="text-xs text-slate-600"><span className="font-bold">Result:</span> {activeCase.investigationResult}</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400"><span className="font-bold">Result:</span> {activeCase.investigationResult}</p>
                 {phase === 'report' && (
-                  <button onClick={() => setPhase('step')} className="w-full py-3.5 bg-[#2563EB] text-white font-extrabold rounded-xl text-sm min-h-[48px] mt-2">Read the report → Step 1</button>
+                  <button onClick={() => setPhase('step')} className="tq-btn-primary touch-target w-full py-3.5 font-extrabold rounded-xl text-sm min-h-[48px] mt-2">Read the report → Step 1</button>
                 )}
               </div>
             )}
@@ -295,7 +295,7 @@ export default function Level2Page({ onBack, initialTab }: Level2PageProps) {
             {phase === 'step' && (
               <div className="space-y-3">
                 <h4 className="font-extrabold text-base">{activeCase.steps[stepIdx].question}</h4>
-                <p className="text-xs text-slate-500">Topic: {TOPIC_LABELS[activeCase.steps[stepIdx].topic]} · {stepFirstTry ? 'First try — +10 if correct' : 'Retry — no points, but you must get it right to move on'}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Topic: {TOPIC_LABELS[activeCase.steps[stepIdx].topic]} · {stepFirstTry ? 'First try — +10 if correct' : 'Retry — no points, but you must get it right to move on'}</p>
                 {activeCase.steps[stepIdx].options.map((opt, i) => {
                   const isChosen = chosen === i;
                   const isCorrect = i === activeCase.steps[stepIdx].correctIndex;
@@ -305,25 +305,25 @@ export default function Level2Page({ onBack, initialTab }: Level2PageProps) {
                       key={i}
                       disabled={chosen !== null}
                       onClick={() => answerStep(i)}
-                      className={`w-full p-3.5 text-left rounded-xl border text-sm font-medium min-h-[52px] transition-all ${answeredCorrect && isChosen ? 'bg-emerald-50 border-emerald-500 text-emerald-800 font-bold' : isChosen ? 'bg-rose-50 border-rose-500 text-rose-800' : 'bg-white border-[#E2E8F0] hover:border-blue-300'}`}
+                      className={`w-full p-3.5 text-left rounded-xl border text-sm font-medium min-h-[52px] touch-target transition-all touch-target ${answeredCorrect && isChosen ? 'bg-emerald-50 dark:bg-emerald-900/50 border-emerald-500 text-emerald-800 dark:text-emerald-100 font-bold ring-2 ring-emerald-500' : isChosen ? 'bg-rose-50 dark:bg-rose-900/50 border-rose-500 text-rose-800 dark:text-rose-100 ring-2 ring-rose-500' : 'bg-white dark:bg-[#111c30] border-slate-200 dark:border-slate-700 hover:border-teal-400'}`}
                     >
                       {String.fromCharCode(65 + i)}. {opt}
                     </button>
                   );
                 })}
                 {chosen !== null && chosen === activeCase.steps[stepIdx].correctIndex && (
-                  <p className="text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2 text-xs font-bold">✓ Correct! {activeCase.steps[stepIdx].whyCorrect}</p>
+                  <p className="tq-chip tq-chip-teal px-3 py-2 text-xs font-bold">✓ Correct! {activeCase.steps[stepIdx].whyCorrect}</p>
                 )}
                 {relearn !== null && (
-                  <div className="bg-amber-50 border border-amber-300 rounded-2xl p-4 space-y-2">
+                  <div className="tq-card p-4 space-y-2">
                     <p className="font-extrabold text-amber-900 text-sm">📖 Re-learning card — a wrong tap is a lesson, not just a penalty</p>
                     <p className="text-sm"><span className="font-bold">Correct answer:</span> {activeCase.steps[stepIdx].options[activeCase.steps[stepIdx].correctIndex]}</p>
                     <p className="text-sm"><span className="font-bold">Why it is correct:</span> {activeCase.steps[stepIdx].whyCorrect}</p>
                     <p className="text-sm"><span className="font-bold">Why your answer was wrong:</span> {activeCase.steps[stepIdx].whyWrong[relearn]}</p>
                     <p className="text-sm"><span className="font-bold">One-line learning point:</span> {activeCase.steps[stepIdx].keyPoint}</p>
                     <div className="flex flex-col sm:flex-row gap-2 pt-1">
-                      <button onClick={tryAgainStep} className="flex-1 py-3 bg-[#2563EB] text-white font-extrabold rounded-xl text-sm min-h-[48px]">Try again</button>
-                      <button onClick={() => practiceSimilar(activeCase.steps[stepIdx].topic)} className="flex-1 py-3 bg-white border-2 border-[#2563EB] text-[#2563EB] font-extrabold rounded-xl text-sm min-h-[48px]">Similar question in Rapid →</button>
+                      <button onClick={tryAgainStep} className="tq-btn-primary touch-target flex-1 py-3 font-extrabold rounded-xl text-sm min-h-[48px]">Try again</button>
+                      <button onClick={() => practiceSimilar(activeCase.steps[stepIdx].topic)} className="tq-btn-secondary touch-target flex-1 py-3 font-extrabold rounded-xl text-sm min-h-[48px]">Similar question in Rapid →</button>
                     </div>
                   </div>
                 )}
@@ -331,11 +331,11 @@ export default function Level2Page({ onBack, initialTab }: Level2PageProps) {
             )}
 
             {phase === 'solved' && (
-              <div className="bg-emerald-50 border border-emerald-300 rounded-2xl p-4 space-y-3 text-center">
+              <div className="tq-card p-4 space-y-3 text-center">
                 <p className="font-extrabold text-emerald-800 text-lg">🎉 Case solved!</p>
                 <p className="text-sm text-emerald-800">{activeCase.title} — {activeCase.nextNode}.</p>
                 {caseIdx < LEVEL2_CASES.length - 1 ? (
-                  <button onClick={() => startCase(caseIdx + 1)} className="w-full py-3.5 bg-emerald-600 text-white font-extrabold rounded-xl text-sm min-h-[48px]">Next case →</button>
+                  <button onClick={() => startCase(caseIdx + 1)} className="tq-btn-primary touch-target w-full py-3.5 font-extrabold rounded-xl text-sm min-h-[48px]">Next case →</button>
                 ) : (
                   <p className="text-sm font-bold text-emerald-800">All 8 cases done. Check your accuracy and Level 3 status at the top of this page.</p>
                 )}
@@ -373,18 +373,18 @@ function RapidSection({ topicFilter, onClearTopic }: { topicFilter: Topic | null
 
   return (
     <div className="space-y-4">
-      <div className="bg-white border border-[#E2E8F0] rounded-2xl p-4 space-y-3 shadow-sm">
+      <div className="tq-card rounded-2xl p-4 space-y-3 shadow-sm">
         <h3 className="font-extrabold text-base">Rapid Report Reader + 17-Question Check</h3>
-        <p className="text-xs text-slate-500 font-medium">Read a report, say what it means, then check yourself. Answers are never marked in advance — you choose first, then you see the explanation.</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Read a report, say what it means, then check yourself. Answers are never marked in advance — you choose first, then you see the explanation.</p>
         {topicFilter && (
-          <div className="flex items-center gap-2 bg-amber-50 border border-amber-300 rounded-xl px-3 py-2">
+          <div className="tq-chip tq-chip-amber px-3 py-2">
             <span className="text-xs font-bold text-amber-800 flex-1">Practising weak topic: {TOPIC_LABELS[topicFilter]}</span>
-            <button onClick={onClearTopic} className="text-xs font-extrabold text-[#2563EB] min-h-[36px] px-2">Show all 17 →</button>
+            <button onClick={onClearTopic} className="text-xs font-extrabold text-brand-royal dark:text-blue-400 min-h-[36px] px-2">Show all 17 →</button>
           </div>
         )}
         <div className="flex gap-2">
-          <button onClick={() => setSub('reader')} className={`flex-1 py-3 rounded-xl text-xs font-extrabold min-h-[48px] ${sub === 'reader' ? 'bg-[#2563EB] text-white' : 'bg-white border border-[#E2E8F0] text-slate-600'}`}>📄 Report Reader (16)</button>
-          <button onClick={() => setSub('quiz')} className={`flex-1 py-3 rounded-xl text-xs font-extrabold min-h-[48px] ${sub === 'quiz' ? 'bg-[#2563EB] text-white' : 'bg-white border border-[#E2E8F0] text-slate-600'}`}>⚡ {topicFilter ? `${questions.length} Questions` : '17 Questions'}</button>
+          <button onClick={() => setSub('reader')} className={`flex-1 py-3 rounded-xl text-xs font-extrabold min-h-[48px] ${sub === 'reader' ? 'bg-[#2563EB] text-white' : 'tq-card text-slate-600 dark:text-slate-400'}`}>📄 Report Reader (16)</button>
+          <button onClick={() => setSub('quiz')} className={`flex-1 py-3 rounded-xl text-xs font-extrabold min-h-[48px] ${sub === 'quiz' ? 'bg-[#2563EB] text-white' : 'tq-card text-slate-600 dark:text-slate-400'}`}>⚡ {topicFilter ? `${questions.length} Questions` : '17 Questions'}</button>
         </div>
       </div>
 
@@ -392,28 +392,28 @@ function RapidSection({ topicFilter, onClearTopic }: { topicFilter: Topic | null
         <div className="space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {RAPID_REPORTS.map((r) => (
-              <button key={r.id} onClick={() => setReportId(r.id)} className={`p-3 rounded-xl border text-left min-h-[56px] text-sm font-bold ${reportId === r.id ? 'border-[#2563EB] bg-[#EFF6FF]' : 'bg-white border-[#E2E8F0]'}`}>
+              <button key={r.id} onClick={() => setReportId(r.id)} className={`p-3 rounded-xl border text-left min-h-[56px] text-sm font-bold ${reportId === r.id ? 'border-brand-royal bg-blue-50 dark:bg-blue-950/40 ring-2 ring-brand-royal' : 'bg-white dark:bg-[#111c30] border-slate-200 dark:border-slate-700'}`}>
                 {r.title}
               </button>
             ))}
           </div>
           {report ? (
-            <div className="bg-white border border-[#E2E8F0] rounded-2xl p-4 space-y-2 shadow-sm">
+            <div className="tq-card rounded-2xl p-4 space-y-2 shadow-sm">
               <p className="font-mono font-bold text-sm">{report.report}</p>
               <p className="text-sm"><span className="font-bold">Reading:</span> {report.reading}</p>
               <p className="text-sm"><span className="font-bold">It does NOT mean:</span> {report.notMean}</p>
               <p className="text-sm"><span className="font-bold">Next step:</span> {report.next}</p>
-              <p className="text-xs text-slate-500">Topic: {TOPIC_LABELS[report.topic]}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Topic: {TOPIC_LABELS[report.topic]}</p>
             </div>
           ) : (
-            <p className="text-sm text-slate-500 text-center py-4">Tap a report above to read it.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400 text-center py-4">Tap a report above to read it.</p>
           )}
         </div>
       )}
 
       {sub === 'quiz' && questions.length > 0 && (
-        <div className="bg-white border border-[#E2E8F0] rounded-2xl p-4 sm:p-5 space-y-4 shadow-sm">
-          <div className="flex justify-between items-center text-xs font-bold text-slate-500">
+        <div className="tq-card rounded-2xl p-4 sm:p-5 space-y-4 shadow-sm">
+          <div className="flex justify-between items-center text-xs font-bold text-slate-500 dark:text-slate-400">
             <span>Question {qIdx + 1} / {questions.length}</span>
             <span>Quiz score: {quizScore} · Answered: {quizAnswered}</span>
           </div>
@@ -431,7 +431,7 @@ function RapidSection({ topicFilter, onClearTopic }: { topicFilter: Topic | null
                     setQuizAnswered((n) => n + 1);
                     if (i === q.correctIndex) setQuizScore((s) => s + 10);
                   }}
-                  className={`w-full p-3.5 text-left rounded-xl border text-sm font-medium min-h-[52px] ${chosen !== null && isChosen && isCorrect ? 'bg-emerald-50 border-emerald-500 text-emerald-800 font-bold' : chosen !== null && isChosen ? 'bg-rose-50 border-rose-500 text-rose-800' : 'bg-white border-[#E2E8F0] hover:border-blue-300'}`}
+                  className={`w-full p-3.5 text-left rounded-xl border text-sm font-medium min-h-[52px] touch-target ${chosen !== null && isChosen && isCorrect ? 'bg-emerald-50 dark:bg-emerald-900/50 border-emerald-500 text-emerald-800 dark:text-emerald-100 font-bold ring-2 ring-emerald-500' : chosen !== null && isChosen ? 'bg-rose-50 dark:bg-rose-900/50 border-rose-500 text-rose-800 dark:text-rose-100 ring-2 ring-rose-500' : 'bg-white dark:bg-[#111c30] border-slate-200 dark:border-slate-700 hover:border-teal-400'}`}
                 >
                   {String.fromCharCode(65 + i)}. {opt}
                 </button>
@@ -439,18 +439,18 @@ function RapidSection({ topicFilter, onClearTopic }: { topicFilter: Topic | null
             })}
           </div>
           {chosen !== null && (
-            <div className="bg-slate-50 border border-[#E2E8F0] rounded-2xl p-4 space-y-2">
+            <div className="bg-slate-50 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 space-y-2">
               <p className="text-sm"><span className="font-bold">Correct answer:</span> {q.options[q.correctIndex]}</p>
               <p className="text-sm"><span className="font-bold">Why:</span> {q.whyCorrect}</p>
               {chosen !== q.correctIndex && <p className="text-sm"><span className="font-bold">Why your answer was wrong:</span> {q.whyWrong[chosen]}</p>}
               <p className="text-sm"><span className="font-bold">Key point:</span> {q.keyPoint}</p>
               <div className="flex gap-2 pt-1">
                 {qIdx < questions.length - 1 ? (
-                  <button onClick={() => { setQIdx(qIdx + 1); setChosen(null); }} className="flex-1 py-3 bg-[#2563EB] text-white font-extrabold rounded-xl text-sm min-h-[48px]">Next question →</button>
+                  <button onClick={() => { setQIdx(qIdx + 1); setChosen(null); }} className="tq-btn-primary touch-target flex-1 py-3 font-extrabold rounded-xl text-sm min-h-[48px]">Next question →</button>
                 ) : (
                   <p className="flex-1 text-center font-extrabold text-emerald-700 py-3">Quiz complete — score {quizScore} / {questions.length * 10}.</p>
                 )}
-                <button onClick={() => { setQIdx(0); setChosen(null); setQuizScore(0); setQuizAnswered(0); }} className="px-4 py-3 bg-white border border-[#E2E8F0] font-extrabold rounded-xl text-sm min-h-[48px]">Restart</button>
+                <button onClick={() => { setQIdx(0); setChosen(null); setQuizScore(0); setQuizAnswered(0); }} className="px-4 py-3 tq-card font-extrabold rounded-xl text-sm min-h-[48px]">Restart</button>
               </div>
             </div>
           )}
@@ -504,22 +504,22 @@ function FirstTestSection() {
   if (done) {
     return (
       <div className="space-y-4">
-        <div className="bg-white border border-[#E2E8F0] rounded-2xl p-5 space-y-3 shadow-sm text-center">
+        <div className="tq-card rounded-2xl p-5 space-y-3 shadow-sm text-center">
           <h3 className="font-extrabold text-xl">Pick First! — Results</h3>
-          <p className="font-extrabold text-3xl text-[#2563EB]">{score} / 80</p>
+          <p className="font-extrabold text-3xl text-brand-royal dark:text-blue-400">{score} / 80</p>
           <p className="font-bold text-sm">{band}</p>
-          <p className="text-sm text-slate-600">Score bands: 70–80 = First-Test Champion · 50–60 = Getting there · 0–40 = Needs practice.</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">Score bands: 70–80 = First-Test Champion · 50–60 = Getting there · 0–40 = Needs practice.</p>
           <p className="text-sm text-left"><span className="font-bold">Rounds you got wrong:</span> {wrong.length === 0 ? 'None — perfect round!' : wrong.map((i) => `Round ${i + 1} (${FIRST_TEST_ROUNDS[i].scenario})`).join('; ')}</p>
           <p className="text-sm text-left"><span className="font-bold">One line you will remember:</span> “Age decides the specimen. The specimen goes for CBNAAT first. Then read MTB → RIF → validity.”</p>
-          <button onClick={() => { setRoundIdx(0); setChosen(null); setSeconds(20); setScore(0); setWrong([]); setDone(false); }} className="w-full py-3.5 bg-[#2563EB] text-white font-extrabold rounded-xl text-sm min-h-[48px]">Play again</button>
+          <button onClick={() => { setRoundIdx(0); setChosen(null); setSeconds(20); setScore(0); setWrong([]); setDone(false); }} className="tq-btn-primary touch-target w-full py-3.5 font-extrabold rounded-xl text-sm min-h-[48px]">Play again</button>
         </div>
-        <div className="bg-white border border-[#E2E8F0] rounded-2xl p-4 space-y-4 shadow-sm">
+        <div className="tq-card rounded-2xl p-4 space-y-4 shadow-sm">
           <h4 className="font-extrabold text-base">Full answer key with reasons</h4>
           {FIRST_TEST_ROUNDS.map((r, i) => (
-            <div key={r.id} className="border-b border-[#E2E8F0] pb-3 space-y-1">
+            <div key={r.id} className="border-b border-slate-200 dark:border-slate-700 pb-3 space-y-1">
               <p className="font-bold text-sm">Round {i + 1}: {r.scenario} {wrong.includes(i) ? '✗ (you missed this one)' : '✓'}</p>
               <p className="text-sm"><span className="font-bold">Correct:</span> {r.options[r.correctIndex]}</p>
-              <p className="text-sm text-slate-600">{r.reason}</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400">{r.reason}</p>
               <p className="text-sm"><span className="font-bold">Remember:</span> {r.remember}</p>
             </div>
           ))}
@@ -529,13 +529,13 @@ function FirstTestSection() {
   }
 
   return (
-    <div className="bg-white border border-[#E2E8F0] rounded-2xl p-4 sm:p-5 space-y-4 shadow-sm">
+    <div className="tq-card rounded-2xl p-4 sm:p-5 space-y-4 shadow-sm">
       <div className="flex justify-between items-center">
         <h3 className="font-extrabold text-base">Pick First! The First-Test Game</h3>
-        <span className="font-mono font-extrabold text-[#2563EB]">⏱ {seconds}s</span>
+        <span className="font-mono font-extrabold text-brand-royal dark:text-blue-400">⏱ {seconds}s</span>
       </div>
-      <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><div className="bg-[#2563EB] h-full transition-all" style={{ width: `${(seconds / 20) * 100}%` }} /></div>
-      <p className="text-xs text-slate-500 font-bold">Round {roundIdx + 1} / 8 · Score: {score} / 80 · 20 seconds per round · 10 points per round · Correct answers are NOT marked — choose before checking.</p>
+      <div className="tq-progress w-full"><div className="tq-progress-bar" style={{ width: `${(seconds / 20) * 100}%` }} /></div>
+      <p className="text-xs text-slate-500 dark:text-slate-400 font-bold">Round {roundIdx + 1} / 8 · Score: {score} / 80 · 20 seconds per round · 10 points per round · Correct answers are NOT marked — choose before checking.</p>
       <p className="font-bold text-sm">{round.scenario}</p>
       <h4 className="font-extrabold text-base">{round.question}</h4>
       <div className="space-y-2">
@@ -548,7 +548,7 @@ function FirstTestSection() {
               key={i}
               disabled={revealed}
               onClick={() => pick(i)}
-              className={`w-full p-3.5 text-left rounded-xl border text-sm font-medium min-h-[52px] ${revealed && isCorrect ? 'bg-emerald-50 border-emerald-500 text-emerald-800 font-bold' : revealed && isChosen ? 'bg-rose-50 border-rose-500 text-rose-800' : 'bg-white border-[#E2E8F0] hover:border-blue-300'}`}
+              className={`w-full p-3.5 text-left rounded-xl border text-sm font-medium min-h-[52px] touch-target ${revealed && isCorrect ? 'bg-emerald-50 dark:bg-emerald-900/50 border-emerald-500 text-emerald-800 dark:text-emerald-100 font-bold ring-2 ring-emerald-500' : revealed && isChosen ? 'bg-rose-50 dark:bg-rose-900/50 border-rose-500 text-rose-800 dark:text-rose-100 ring-2 ring-rose-500' : 'bg-white dark:bg-[#111c30] border-slate-200 dark:border-slate-700 hover:border-teal-400'}`}
             >
               {String.fromCharCode(65 + i)}. {opt}
             </button>
@@ -556,12 +556,12 @@ function FirstTestSection() {
         })}
       </div>
       {chosen !== null && (
-        <div className="bg-slate-50 border border-[#E2E8F0] rounded-2xl p-4 space-y-2">
+        <div className="bg-slate-50 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 space-y-2">
           {chosen === -1 && <p className="font-bold text-sm text-rose-700">⏰ Time up! This round counts as wrong.</p>}
           <p className="text-sm"><span className="font-bold">Correct answer:</span> {round.options[round.correctIndex]}</p>
           <p className="text-sm">{round.reason}</p>
           <p className="text-sm"><span className="font-bold">Remember:</span> {round.remember}</p>
-          <button onClick={next} className="w-full py-3.5 bg-[#2563EB] text-white font-extrabold rounded-xl text-sm min-h-[48px]">{roundIdx < FIRST_TEST_ROUNDS.length - 1 ? 'Next round →' : 'See results →'}</button>
+          <button onClick={next} className="tq-btn-primary touch-target w-full py-3.5 font-extrabold rounded-xl text-sm min-h-[48px]">{roundIdx < FIRST_TEST_ROUNDS.length - 1 ? 'Next round →' : 'See results →'}</button>
         </div>
       )}
     </div>
@@ -570,17 +570,17 @@ function FirstTestSection() {
 
 function StudySection() {
   const tableCls = 'w-full text-xs sm:text-sm border-collapse';
-  const thCls = 'border border-[#E2E8F0] bg-[#EFF6FF] p-2.5 text-left font-bold';
-  const tdCls = 'border border-[#E2E8F0] p-2.5 align-top';
+  const thCls = 'border border-slate-200 dark:border-slate-700 bg-blue-50 dark:bg-[#111c30] p-2.5 text-left font-bold';
+  const tdCls = 'border border-slate-200 dark:border-slate-700 p-2.5 align-top';
   return (
     <div className="space-y-4">
-      <div className="bg-white border border-[#E2E8F0] rounded-2xl p-4 sm:p-5 space-y-4 shadow-sm">
+      <div className="tq-card rounded-2xl p-4 sm:p-5 space-y-4 shadow-sm">
         <h3 className="font-extrabold text-lg">Study All — Level 2 summary</h3>
-        <p className="text-sm text-slate-600">Study first, then play, without leaving Level 2. Level 1 asked “Should I think about TB?” Level 2 asks “What does this test result mean, and what next?”</p>
-        <p className="text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 text-xs font-bold">Teaching material only — not a real clinical diagnostic tool. The final game algorithm must be faculty-validated against current NTEP/WHO guidance before classroom use.</p>
+        <p className="text-sm text-slate-600 dark:text-slate-400">Study first, then play, without leaving Level 2. Level 1 asked “Should I think about TB?” Level 2 asks “What does this test result mean, and what next?”</p>
+        <p className="tq-chip tq-chip-amber px-3 py-2 text-xs font-bold">Teaching material only — not a real clinical diagnostic tool. The final game algorithm must be faculty-validated against current NTEP/WHO guidance before classroom use.</p>
 
         <h4 className="font-extrabold text-base pt-2">Learning objectives — by the end of Level 2 you can:</h4>
-        <ul className="list-disc pl-5 space-y-1 text-sm text-slate-700">
+        <ul className="list-disc pl-5 space-y-1 text-sm text-slate-700 dark:text-slate-200">
           <li>Interpret smear, CBNAAT/GeneXpert and chest X-ray results correctly.</li>
           <li>Distinguish positive, negative, indeterminate, invalid, error and no-result.</li>
           <li>Recognise rifampicin resistance and its pathway change.</li>
@@ -590,7 +590,7 @@ function StudySection() {
         </ul>
 
         <h4 className="font-extrabold text-base pt-2">2A. Smear microscopy</h4>
-        <ul className="list-disc pl-5 space-y-1 text-sm text-slate-700">
+        <ul className="list-disc pl-5 space-y-1 text-sm text-slate-700 dark:text-slate-200">
           <li>Looks for acid-fast bacilli (AFB) in sputum. AFB detected — even scanty / 1+ / 2+ / 3+ — = smear POSITIVE. Scanty is still positive.</li>
           <li>AFB not detected = smear NEGATIVE, but negative ≠ No TB. Low sensitivity, especially in children, people living with HIV, paucibacillary disease and poor specimens.</li>
           <li>Smear does NOT confirm species (other acid-fast organisms can be seen) and does NOT tell drug resistance.</li>
@@ -613,16 +613,16 @@ function StudySection() {
             </tbody>
           </table>
         </div>
-        <p className="text-sm text-slate-700">CBNAAT is a rapid molecular NAAT: it detects Mycobacterium tuberculosis complex (MTBC) DNA, and with Xpert MTB/RIF / Ultra also checks rifampicin resistance (mainly rpoB).</p>
+        <p className="text-sm text-slate-700 dark:text-slate-200">CBNAAT is a rapid molecular NAAT: it detects Mycobacterium tuberculosis complex (MTBC) DNA, and with Xpert MTB/RIF / Ultra also checks rifampicin resistance (mainly rpoB).</p>
 
         <h4 className="font-extrabold text-base pt-2">2C. Rifampicin resistance — the branching point</h4>
-        <ul className="list-disc pl-5 space-y-1 text-sm text-slate-700">
+        <ul className="list-disc pl-5 space-y-1 text-sm text-slate-700 dark:text-slate-200">
           <li>RIF DETECTED = think RR-TB, do NOT follow the routine drug-susceptible pathway, do further drug-resistance assessment.</li>
           <li>RIF NOT DETECTED = does NOT mean all TB drugs work. Other resistance can exist.</li>
           <li>RIF INDETERMINATE = unresolved, do not guess.</li>
           <li>RIF DETECTED does NOT automatically mean MDR-TB. MDR-TB = resistance to at least rifampicin AND isoniazid.</li>
         </ul>
-        <p className="text-sm font-bold bg-[#EFF6FF] border border-blue-200 rounded-xl p-3">One-line rule: “TB detected → check rifampicin. RIF detected → RR-TB. RIF not detected → don’t assume all drugs susceptible. RIF indeterminate → investigate further.”</p>
+        <p className="text-sm font-bold bg-blue-50 dark:bg-[#111c30] border border-blue-200 rounded-xl p-3">One-line rule: “TB detected → check rifampicin. RIF detected → RR-TB. RIF not detected → don’t assume all drugs susceptible. RIF indeterminate → investigate further.”</p>
 
         <h4 className="font-extrabold text-base pt-2">2D. Chest X-ray — SEE → IDENTIFY → INTERPRET → CORRELATE</h4>
         <p className="text-sm font-bold">Rule everywhere: “CXR can suggest TB; CXR alone does NOT confirm TB.”</p>
@@ -638,16 +638,16 @@ function StudySection() {
             </tbody>
           </table>
         </div>
-        <div className="bg-amber-50 border border-amber-300 rounded-2xl p-4 space-y-2">
-          <p className="font-extrabold text-sm text-amber-900">Faculty-approved CXR image slots — NO real image embedded yet</p>
-          <p className="text-xs text-amber-900">CXR images must be radiology-faculty approved before use. Each slot needs:</p>
+        <div className="tq-card p-4 space-y-2">
+          <p className="font-extrabold text-sm text-amber-800 dark:text-amber-200">Faculty-approved CXR image slots — NO real image embedded yet</p>
+          <p className="text-xs text-amber-800 dark:text-amber-200">CXR images must be radiology-faculty approved before use. Each slot needs:</p>
           {CXR_IMAGE_SLOTS.map((s) => (
-            <p key={s.pattern} className="text-xs text-slate-700"><span className="font-bold">{s.pattern}:</span> {s.fields} — Status: Pending, no image embedded.</p>
+            <p key={s.pattern} className="text-xs text-slate-700 dark:text-slate-200"><span className="font-bold">{s.pattern}:</span> {s.fields} — Status: Pending, no image embedded.</p>
           ))}
         </div>
 
         <h4 className="font-extrabold text-base pt-2">2E. Extrapulmonary TB — test the site</h4>
-        <ul className="list-disc pl-5 space-y-1 text-sm text-slate-700">
+        <ul className="list-disc pl-5 space-y-1 text-sm text-slate-700 dark:text-slate-200">
           <li>No cough does not exclude TB.</li>
           <li>Neck swelling → lymph-node aspirate molecular test = TB lymphadenitis if MTB detected.</li>
           <li>Headache, fever, neck stiffness, drowsiness → CSF molecular test = TB meningitis supported if MTB detected in CSF.</li>
@@ -668,13 +668,13 @@ function StudySection() {
             </tbody>
           </table>
         </div>
-        <p className="text-sm font-bold bg-[#EFF6FF] border border-blue-200 rounded-xl p-3">One line to remember: “Age decides the specimen. The specimen goes for CBNAAT first. Then read MTB → RIF → validity.”</p>
+        <p className="text-sm font-bold bg-blue-50 dark:bg-[#111c30] border border-blue-200 rounded-xl p-3">One line to remember: “Age decides the specimen. The specimen goes for CBNAAT first. Then read MTB → RIF → validity.”</p>
 
         <h4 className="font-extrabold text-base pt-2">Trap case to remember</h4>
-        <p className="text-sm text-slate-700">CXR persistent upper-zone opacity + MTB NOT DETECTED = TB not excluded, further evaluation needed. A negative test with persistent suspicion never ends the work-up.</p>
+        <p className="text-sm text-slate-700 dark:text-slate-200">CXR persistent upper-zone opacity + MTB NOT DETECTED = TB not excluded, further evaluation needed. A negative test with persistent suspicion never ends the work-up.</p>
 
         <h4 className="font-extrabold text-base pt-2">Operator rules — never say</h4>
-        <ul className="list-disc pl-5 space-y-1 text-sm text-slate-700">
+        <ul className="list-disc pl-5 space-y-1 text-sm text-slate-700 dark:text-slate-200">
           <li>Never say a symptom alone confirms TB. Suspicion ≠ diagnosis.</li>
           <li>Never say smear is automatically first for every patient.</li>
           <li>Never say CXR alone confirms TB.</li>
@@ -687,7 +687,7 @@ function StudySection() {
         </ul>
 
         <h4 className="font-extrabold text-base pt-2">References — in order</h4>
-        <ol className="list-decimal pl-5 space-y-1 text-sm text-slate-700">
+        <ol className="list-decimal pl-5 space-y-1 text-sm text-slate-700 dark:text-slate-200">
           {LEVEL2_REFERENCES.map((r, i) => <li key={i}>{r}</li>)}
         </ol>
         <p className="text-[11px] text-slate-400 font-mono">{metaLine()}</p>

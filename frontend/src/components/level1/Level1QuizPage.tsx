@@ -202,9 +202,9 @@ export default function Level1QuizPage({ userId, onFinishQuiz }: Level1QuizPageP
 
   if (questions.length === 0) {
     return (
-      <div className="p-8 text-center text-[#2563EB] font-mono flex flex-col items-center justify-center min-h-[60vh] space-y-3">
+      <div className="p-8 text-center text-brand-royal dark:text-blue-400 font-mono flex flex-col items-center justify-center min-h-[60vh] space-y-3">
         <div className="w-10 h-10 border-4 border-[#2563EB] border-t-transparent rounded-full animate-spin" />
-        <span className="font-semibold text-slate-700">Loading Official Level 1 Medical Assessment Portal...</span>
+        <span className="font-semibold text-slate-700 dark:text-slate-200">Loading Official Level 1 Medical Assessment Portal...</span>
       </div>
     );
   }
@@ -344,39 +344,39 @@ export default function Level1QuizPage({ userId, onFinishQuiz }: Level1QuizPageP
   const isTimeLow = remainingSeconds < 300; // Under 5 mins
 
   return (
-    <div className="bg-[#F8FAFC] p-3 sm:p-6 max-w-7xl mx-auto space-y-6 text-[#1E293B] min-h-screen font-sans">
+    <div className="bg-alabaster dark:bg-[#0b1220] p-3 sm:p-6 max-w-7xl mx-auto space-y-6 text-ink-900 dark:text-slate-100 min-h-screen font-sans">
       {/* 1. Top Fixed Examination Header (Clean White Medical Theme) */}
-      <header className="sticky top-16 sm:top-20 z-30 bg-white border border-[#E2E8F0] p-4 sm:p-5 rounded-2xl shadow-sm space-y-3">
+      <header className="sticky top-16 sm:top-20 z-30 tq-card p-4 sm:p-5 rounded-2xl shadow-sm space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           {/* Institutional Branding */}
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-[#EFF6FF] text-[#2563EB] rounded-xl border border-blue-100 shrink-0">
+            <div className="p-2 bg-blue-50 dark:bg-[#111c30] text-brand-royal dark:text-blue-400 rounded-xl border border-blue-100 shrink-0">
               <Stethoscope size={22} />
             </div>
             <div>
-              <h1 className="text-sm sm:text-base font-extrabold text-[#1E293B] leading-tight">
+              <h1 className="text-sm sm:text-base font-extrabold text-ink-900 dark:text-slate-100 leading-tight">
                 TB Quest • National Medical Assessment Portal
               </h1>
-              <span className="text-xs font-semibold text-[#2563EB]">Official Level 1 Competency Examination</span>
+              <span className="text-xs font-semibold text-brand-royal dark:text-blue-400">Official Level 1 Competency Examination</span>
             </div>
           </div>
 
           {/* Right Metrics: Countdown Timer & Live Score */}
           <div className="flex items-center gap-2 sm:gap-3 text-xs font-mono">
             {/* Live Marks */}
-            <div className="flex items-center gap-1.5 px-3.5 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl shadow-xs">
+            <div className="flex items-center gap-1.5 px-3.5 py-2 bg-alabaster dark:bg-[#0b1220] border border-slate-200 dark:border-slate-700 rounded-xl shadow-xs">
               <Trophy size={16} className="text-amber-500" />
-              <span className="text-slate-500 font-medium">Score:</span>
-              <span className="font-extrabold text-[#1E293B] text-sm">{score} / {MAX_SCORE}</span>
+              <span className="text-slate-500 dark:text-slate-400 font-medium">Score:</span>
+              <span className="font-extrabold text-ink-900 dark:text-slate-100 text-sm">{score} / {MAX_SCORE}</span>
             </div>
 
             {/* Countdown Timer (Top-Right) */}
             <div className={`flex items-center gap-2 px-4 py-2 rounded-xl border font-bold text-sm shadow-xs transition-all ${
               isTimeLow
                 ? 'bg-rose-50 border-rose-300 text-rose-600 animate-pulse'
-                : 'bg-[#EFF6FF] border-blue-200 text-[#2563EB]'
+                : 'bg-blue-50 dark:bg-[#111c30] border-blue-200 text-brand-royal dark:text-blue-400'
             }`}>
-              <Clock size={16} className={isTimeLow ? 'text-rose-600' : 'text-[#2563EB]'} />
+              <Clock size={16} className={isTimeLow ? 'text-rose-600' : 'text-brand-royal dark:text-blue-400'} />
               <span className="font-mono tracking-wider">{formatTime(remainingSeconds)}</span>
             </div>
           </div>
@@ -385,16 +385,16 @@ export default function Level1QuizPage({ userId, onFinishQuiz }: Level1QuizPageP
         {/* Animated Progress Bar & Percentage */}
         <div className="space-y-1.5 pt-1">
           <div className="flex justify-between items-center text-xs font-mono">
-            <span className="font-semibold text-slate-700">
-              Questions Completed: <strong className="text-[#2563EB] font-extrabold ml-1">{answeredTotalCount} / {TOTAL_QUESTIONS}</strong>
+            <span className="font-semibold text-slate-700 dark:text-slate-200">
+              Questions Completed: <strong className="text-brand-royal dark:text-blue-400 font-extrabold ml-1">{answeredTotalCount} / {TOTAL_QUESTIONS}</strong>
             </span>
-            <span className="font-bold text-[#2563EB] bg-[#EFF6FF] border border-blue-200 px-2.5 py-0.5 rounded-md">
+            <span className="font-bold text-brand-royal dark:text-blue-400 bg-blue-50 dark:bg-[#111c30] border border-blue-200 px-2.5 py-0.5 rounded-md">
               {progressPercent}% Completed
             </span>
           </div>
-          <div className="w-full bg-[#F1F5F9] h-2.5 rounded-full overflow-hidden p-0.5 border border-[#E2E8F0]">
+          <div className="w-full bg-[#F1F5F9] h-2.5 rounded-full overflow-hidden p-0.5 border border-slate-200 dark:border-slate-700">
             <div
-              className="bg-[#2563EB] h-full rounded-full transition-all duration-500 ease-out shadow-xs"
+              className="tq-progress-bar ease-out shadow-xs"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
@@ -402,47 +402,47 @@ export default function Level1QuizPage({ userId, onFinishQuiz }: Level1QuizPageP
       </header>
 
       {/* 2. Live Question Palette Summary Widget (Clean White Card) */}
-      <div className="bg-white border border-[#E2E8F0] rounded-2xl p-4 shadow-sm space-y-3">
-        <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-2">
-          <h3 className="text-xs font-extrabold text-[#2563EB] uppercase tracking-wider font-mono flex items-center gap-2">
+      <div className="tq-card rounded-2xl p-4 shadow-sm space-y-3">
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
+          <h3 className="text-xs font-extrabold text-brand-royal dark:text-blue-400 uppercase tracking-wider font-mono flex items-center gap-2">
             <Award size={16} /> Question Palette Summary
           </h3>
-          <span className="text-[11px] text-slate-500 font-mono">Click any circle number to navigate</span>
+          <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">Click any circle number to navigate</span>
         </div>
 
         {/* 6 Stats Counters */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 text-xs font-mono">
-          <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-2.5 text-center">
-            <span className="text-[10px] text-slate-500 uppercase font-semibold block">Total Questions</span>
-            <span className="text-base font-black text-[#1E293B]">50</span>
+          <div className="bg-alabaster dark:bg-[#0b1220] border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-center">
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold block">Total Questions</span>
+            <span className="text-base font-black text-ink-900 dark:text-slate-100">50</span>
           </div>
 
-          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-2.5 text-center">
+          <div className="tq-chip tq-chip-teal rounded-xl p-2.5 text-center">
             <span className="text-[10px] text-emerald-700 uppercase font-semibold block flex items-center justify-center gap-1">
               <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" /> Correct
             </span>
             <span className="text-base font-black text-emerald-700">{answeredCorrectCount}</span>
           </div>
 
-          <div className="bg-rose-50 border border-rose-200 rounded-xl p-2.5 text-center">
+          <div className="tq-chip tq-chip-coral rounded-xl p-2.5 text-center">
             <span className="text-[10px] text-rose-700 uppercase font-semibold block flex items-center justify-center gap-1">
               <span className="w-2 h-2 rounded-full bg-rose-500 inline-block" /> Wrong
             </span>
             <span className="text-base font-black text-rose-700">{answeredWrongCount}</span>
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-2.5 text-center">
-            <span className="text-[10px] text-[#2563EB] uppercase font-semibold block flex items-center justify-center gap-1">
+          <div className="tq-chip tq-chip-royal rounded-xl p-2.5 text-center">
+            <span className="text-[10px] text-brand-royal dark:text-blue-400 uppercase font-semibold block flex items-center justify-center gap-1">
               <span className="w-2 h-2 rounded-full bg-[#2563EB] inline-block" /> Visited
             </span>
-            <span className="text-base font-black text-[#2563EB]">{visitedCount}</span>
+            <span className="text-base font-black text-brand-royal dark:text-blue-400">{visitedCount}</span>
           </div>
 
-          <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-2.5 text-center">
-            <span className="text-[10px] text-slate-500 uppercase font-semibold block flex items-center justify-center gap-1">
+          <div className="bg-alabaster dark:bg-[#0b1220] border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-center">
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold block flex items-center justify-center gap-1">
               <span className="w-2 h-2 rounded-full bg-slate-400 inline-block" /> Not Visited
             </span>
-            <span className="text-base font-black text-slate-600">{notVisitedCount}</span>
+            <span className="text-base font-black text-slate-600 dark:text-slate-400">{notVisitedCount}</span>
           </div>
 
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-2.5 text-center">
@@ -453,9 +453,9 @@ export default function Level1QuizPage({ userId, onFinishQuiz }: Level1QuizPageP
       </div>
 
       {/* 3. Circular Question Navigation Buttons */}
-      <div className="bg-white border border-[#E2E8F0] rounded-2xl p-4 space-y-3 shadow-sm">
-        <div className="flex items-center justify-between text-xs font-mono text-slate-600">
-          <span className="font-bold text-[#1E293B]">Question Navigator (1 to 50)</span>
+      <div className="tq-card rounded-2xl p-4 space-y-3 shadow-sm">
+        <div className="flex items-center justify-between text-xs font-mono text-slate-600 dark:text-slate-400">
+          <span className="font-bold text-ink-900 dark:text-slate-100">Question Navigator (1 to 50)</span>
 
           {/* Color Legend */}
           <div className="flex flex-wrap items-center gap-3 text-[11px]">
@@ -498,10 +498,10 @@ export default function Level1QuizPage({ userId, onFinishQuiz }: Level1QuizPageP
               }
             } else if (isVisited) {
               // 🔵 Blue - Visited but not answered
-              circleStyle = 'bg-[#2563EB] text-white font-bold border-2 border-blue-600 shadow-xs hover:bg-blue-700';
+              circleStyle = 'bg-brand-royal text-white font-bold border-2 border-brand-royal-deep shadow-xs hover:bg-brand-royal-deep';
             } else {
               // ⚪ White/Grey - Not visited yet
-              circleStyle = 'bg-[#F8FAFC] text-slate-600 font-semibold border-2 border-[#E2E8F0] hover:border-slate-400 hover:bg-white';
+              circleStyle = 'bg-alabaster dark:bg-[#0b1220] text-slate-600 dark:text-slate-400 font-semibold border-2 border-slate-200 dark:border-slate-700 hover:border-slate-400 hover:bg-white';
             }
 
             return (
@@ -519,35 +519,35 @@ export default function Level1QuizPage({ userId, onFinishQuiz }: Level1QuizPageP
       </div>
 
       {/* 4. Large Question Display Card (White Background, 16px Rounded) */}
-      <div className="bg-white border border-[#E2E8F0] rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
+      <div className="tq-card rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
         {/* Category & Marks Header */}
-        <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-4">
-          <span className="px-3.5 py-1 bg-[#EFF6FF] text-[#2563EB] border border-blue-200 rounded-full text-xs font-mono font-semibold">
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-4">
+          <span className="px-3.5 py-1 bg-blue-50 dark:bg-[#111c30] text-brand-royal dark:text-blue-400 border border-blue-200 rounded-full text-xs font-mono font-semibold">
             {currentQ.category} • {currentQ.type === 'scenario' ? 'Clinical Vignette' : 'Core Theory'}
           </span>
-          <span className="text-xs text-emerald-700 font-mono font-bold px-3 py-1 bg-emerald-50 border border-emerald-200 rounded-full">
+          <span className="tq-chip tq-chip-teal px-3 py-1 font-mono">
             +2 Marks
           </span>
         </div>
 
         {/* Clinical Scenario Vignette Box (if applicable) */}
         {currentQ.patientScenario && (
-          <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-4 sm:p-5 space-y-3">
-            <div className="flex items-center gap-2 text-[#2563EB] font-bold text-xs uppercase tracking-wide">
+          <div className="bg-alabaster dark:bg-[#0b1220] border border-slate-200 dark:border-slate-700 rounded-xl p-4 sm:p-5 space-y-3">
+            <div className="flex items-center gap-2 text-brand-royal dark:text-blue-400 font-bold text-xs uppercase tracking-wide">
               <Stethoscope size={16} /> Patient Clinical Vignette Record
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs text-slate-700 font-mono bg-white p-3 rounded-lg border border-[#E2E8F0]">
-              <div>Age / Sex: <strong className="text-[#1E293B]">{currentQ.patientScenario.age}y / {currentQ.patientScenario.gender}</strong></div>
-              <div>Duration: <strong className="text-[#1E293B]">{currentQ.patientScenario.duration}</strong></div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs text-slate-700 dark:text-slate-200 font-mono bg-white p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+              <div>Age / Sex: <strong className="text-ink-900 dark:text-slate-100">{currentQ.patientScenario.age}y / {currentQ.patientScenario.gender}</strong></div>
+              <div>Duration: <strong className="text-ink-900 dark:text-slate-100">{currentQ.patientScenario.duration}</strong></div>
               {currentQ.patientScenario.vitals && (
-                <div>Vitals: <strong className="text-[#1E293B]">{currentQ.patientScenario.vitals}</strong></div>
+                <div>Vitals: <strong className="text-ink-900 dark:text-slate-100">{currentQ.patientScenario.vitals}</strong></div>
               )}
             </div>
-            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed pt-1">
-              <strong className="text-[#2563EB]">Chief Complaint & History:</strong> {currentQ.patientScenario.chiefComplaint}.
+            <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-200 leading-relaxed pt-1">
+              <strong className="text-brand-royal dark:text-blue-400">Chief Complaint & History:</strong> {currentQ.patientScenario.chiefComplaint}.
             </p>
             {currentQ.patientScenario.labOrRadiology && (
-              <p className="text-xs sm:text-sm text-[#2563EB] leading-relaxed font-mono bg-blue-50/70 p-2.5 rounded-md border border-blue-200">
+              <p className="text-xs sm:text-sm text-brand-royal dark:text-blue-400 leading-relaxed font-mono bg-blue-50/70 p-2.5 rounded-md border border-blue-200">
                 <strong>Investigations / Diagnostic Labs:</strong> {currentQ.patientScenario.labOrRadiology}
               </p>
             )}
@@ -555,8 +555,8 @@ export default function Level1QuizPage({ userId, onFinishQuiz }: Level1QuizPageP
         )}
 
         {/* Question Statement */}
-        <h2 className="text-base sm:text-xl font-bold text-[#1E293B] leading-relaxed tracking-tight">
-          <span className="text-[#2563EB] font-mono mr-2">Question {currentIndex + 1} of {TOTAL_QUESTIONS}:</span>
+        <h2 className="text-base sm:text-xl font-bold text-ink-900 dark:text-slate-100 leading-relaxed tracking-tight">
+          <span className="text-brand-royal dark:text-blue-400 font-mono mr-2">Question {currentIndex + 1} of {TOTAL_QUESTIONS}:</span>
           {currentQ.question}
         </h2>
 
@@ -566,18 +566,18 @@ export default function Level1QuizPage({ userId, onFinishQuiz }: Level1QuizPageP
             const isSelected = chosenOption === oIdx;
             const isCorrect = oIdx === currentQ.correctIndex;
 
-            let optionStyle = 'bg-white border-[#E2E8F0] text-[#1E293B] hover:border-[#2563EB] hover:bg-[#EFF6FF]/40';
+            let optionStyle = 'bg-white border-slate-200 dark:border-slate-700 text-ink-900 dark:text-slate-100 hover:border-brand-teal hover:bg-teal-50/40 dark:hover:bg-teal-950/40';
 
             if (isAnswered) {
               if (isCorrect) {
                 // Correct Option: Green background + Green border
-                optionStyle = 'bg-emerald-50 border-2 border-emerald-500 text-emerald-900 font-bold shadow-xs';
+                optionStyle = 'bg-emerald-50 dark:bg-emerald-900/50 border-2 border-emerald-500 text-emerald-900 dark:text-emerald-100 font-bold shadow-xs ring-2 ring-emerald-500';
               } else if (isSelected && !isCorrect) {
                 // Selected Wrong Option: Red background + Red border
-                optionStyle = 'bg-rose-50 border-2 border-rose-500 text-rose-900 font-bold shadow-xs';
+                optionStyle = 'bg-rose-50 dark:bg-rose-900/50 border-2 border-rose-500 text-rose-900 dark:text-rose-100 font-bold shadow-xs ring-2 ring-rose-500';
               } else {
                 // Other options disabled
-                optionStyle = 'bg-slate-50 border-[#E2E8F0] text-slate-400 opacity-60';
+                optionStyle = 'bg-slate-50 border-slate-200 dark:border-slate-700 text-slate-400 opacity-60';
               }
             }
 
@@ -593,7 +593,7 @@ export default function Level1QuizPage({ userId, onFinishQuiz }: Level1QuizPageP
                     ? 'bg-emerald-500 text-white border-emerald-600'
                     : isAnswered && isSelected && !isCorrect
                     ? 'bg-rose-500 text-white border-rose-600'
-                    : 'bg-[#F8FAFC] text-[#1E293B] border-[#E2E8F0]'
+                    : 'bg-alabaster dark:bg-[#0b1220] text-ink-900 dark:text-slate-100 border-slate-200 dark:border-slate-700'
                 }`}>
                   {String.fromCharCode(65 + oIdx)}
                 </span>
@@ -614,7 +614,7 @@ export default function Level1QuizPage({ userId, onFinishQuiz }: Level1QuizPageP
         {isAnswered && (
           <div className="pt-2 space-y-4 animate-in fade-in duration-300">
             {chosenOption === currentQ.correctIndex ? (
-              <div className="bg-emerald-50 border border-emerald-300 p-4 sm:p-5 rounded-xl space-y-2 text-xs sm:text-sm">
+              <div className="tq-card p-4 sm:p-5 rounded-xl space-y-2 text-xs sm:text-sm">
                 <div className="flex items-center justify-between text-emerald-800 font-bold">
                   <span className="flex items-center gap-2">
                     <CheckCircle2 size={20} className="text-emerald-600" /> Correct Answer!
@@ -623,12 +623,12 @@ export default function Level1QuizPage({ userId, onFinishQuiz }: Level1QuizPageP
                     +2 Marks
                   </span>
                 </div>
-                <p className="text-slate-800 leading-relaxed font-mono pt-1">
+                <p className="text-slate-800 dark:text-slate-200 leading-relaxed font-mono pt-1">
                   <strong>Clinical Rationale:</strong> {currentQ.explanation}
                 </p>
               </div>
             ) : (
-              <div className="bg-rose-50 border border-rose-300 p-4 sm:p-5 rounded-xl space-y-2 text-xs sm:text-sm">
+              <div className="tq-card p-4 sm:p-5 rounded-xl space-y-2 text-xs sm:text-sm">
                 <div className="flex items-center justify-between text-rose-800 font-bold">
                   <span className="flex items-center gap-2">
                     <XCircle size={20} className="text-rose-600" /> Incorrect Answer
@@ -638,9 +638,9 @@ export default function Level1QuizPage({ userId, onFinishQuiz }: Level1QuizPageP
                   </span>
                 </div>
                 <p className="text-rose-900 font-semibold">
-                  Correct Choice: <span className="underline font-bold text-[#1E293B]">{currentQ.options[currentQ.correctIndex]}</span>
+                  Correct Choice: <span className="underline font-bold text-ink-900 dark:text-slate-100">{currentQ.options[currentQ.correctIndex]}</span>
                 </p>
-                <p className="text-slate-800 leading-relaxed font-mono pt-1">
+                <p className="text-slate-800 dark:text-slate-200 leading-relaxed font-mono pt-1">
                   <strong>Clinical Rationale:</strong> {currentQ.explanation}
                 </p>
               </div>
@@ -649,27 +649,27 @@ export default function Level1QuizPage({ userId, onFinishQuiz }: Level1QuizPageP
         )}
 
         {/* 6. Navigation Buttons */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#E2E8F0]">
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
           {/* Previous Button */}
           <button
             onClick={handlePrevQuestion}
             disabled={currentIndex === 0}
-            className="flex items-center gap-2 px-5 py-3 bg-white border border-[#E2E8F0] hover:bg-[#F8FAFC] disabled:opacity-40 disabled:pointer-events-none text-[#1E293B] rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer shadow-xs"
+            className="flex items-center gap-2 px-5 py-3 tq-card hover:bg-alabaster dark:bg-[#0b1220] disabled:opacity-40 disabled:pointer-events-none text-ink-900 dark:text-slate-100 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer shadow-xs"
           >
             <ChevronLeft size={18} />
             <span>Previous</span>
           </button>
 
           {/* Question Counter Indicator */}
-          <span className="text-xs text-slate-600 font-mono font-medium">
-            Question <strong className="text-[#2563EB]">{currentIndex + 1}</strong> of {TOTAL_QUESTIONS}
+          <span className="text-xs text-slate-600 dark:text-slate-400 font-mono font-medium">
+            Question <strong className="text-brand-royal dark:text-blue-400">{currentIndex + 1}</strong> of {TOTAL_QUESTIONS}
           </span>
 
           <div className="flex items-center gap-2">
             {/* Submit Quiz Button */}
             <button
               onClick={() => setShowSubmitModal(true)}
-              className="flex items-center gap-2 px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl text-xs sm:text-sm shadow-sm transition-all cursor-pointer"
+              className="tq-btn-primary touch-target flex items-center gap-2 px-5 py-3 font-extrabold rounded-xl text-xs sm:text-sm shadow-sm transition-all cursor-pointer"
             >
               <Send size={16} />
               <span>Submit Quiz</span>
@@ -690,29 +690,29 @@ export default function Level1QuizPage({ userId, onFinishQuiz }: Level1QuizPageP
       {/* Submission Confirmation Modal */}
       {showSubmitModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white border border-[#E2E8F0] rounded-2xl p-6 max-w-md w-full space-y-4 shadow-xl animate-in zoom-in-95 duration-200">
-            <div className="flex items-center gap-3 text-[#2563EB]">
+          <div className="tq-card rounded-2xl p-6 max-w-md w-full space-y-4 shadow-xl animate-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-3 text-brand-royal dark:text-blue-400">
               <AlertCircle size={28} />
-              <h3 className="text-lg font-bold text-[#1E293B]">Submit Level 1 Assessment?</h3>
+              <h3 className="text-lg font-bold text-ink-900 dark:text-slate-100">Submit Level 1 Assessment?</h3>
             </div>
-            <p className="text-xs text-slate-600 leading-relaxed font-mono">
-              You have answered <strong className="text-emerald-600">{answeredTotalCount}</strong> of <strong className="text-[#1E293B]">50</strong> questions.
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-mono">
+              You have answered <strong className="text-emerald-600">{answeredTotalCount}</strong> of <strong className="text-ink-900 dark:text-slate-100">50</strong> questions.
               {remainingCount > 0 && (
                 <span className="text-amber-600 block mt-1">
                   ⚠️ Note: You still have <strong>{remainingCount}</strong> unanswered questions.
                 </span>
               )}
             </p>
-            <div className="grid grid-cols-2 gap-2 text-xs font-mono bg-[#F8FAFC] p-3 rounded-xl border border-[#E2E8F0]">
+            <div className="grid grid-cols-2 gap-2 text-xs font-mono bg-alabaster dark:bg-[#0b1220] p-3 rounded-xl border border-slate-200 dark:border-slate-700">
               <div>Correct: <strong className="text-emerald-600">{answeredCorrectCount}</strong></div>
               <div>Wrong: <strong className="text-rose-600">{answeredWrongCount}</strong></div>
-              <div>Visited: <strong className="text-[#2563EB]">{visitedCount}</strong></div>
+              <div>Visited: <strong className="text-brand-royal dark:text-blue-400">{visitedCount}</strong></div>
               <div>Unanswered: <strong className="text-amber-600">{remainingCount}</strong></div>
             </div>
             <div className="flex items-center justify-end gap-3 pt-2">
               <button
                 onClick={() => setShowSubmitModal(false)}
-                className="px-4 py-2.5 bg-[#F8FAFC] hover:bg-slate-100 border border-[#E2E8F0] text-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                className="px-4 py-2.5 bg-alabaster dark:bg-[#0b1220] hover:bg-slate-100 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition-all cursor-pointer"
               >
                 Continue Exam
               </button>

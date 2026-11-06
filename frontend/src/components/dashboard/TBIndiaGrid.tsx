@@ -158,7 +158,7 @@ export default function TBIndiaGrid({ onOpenArticle, onOpenQuickLink }: TBIndiaG
       btnColor: 'bg-purple-600 hover:bg-purple-700 text-white',
       btnText: 'EXPLORE STATISTICS',
       graphic: (
-        <div className="w-full h-28 rounded-[12px] bg-slate-50 border border-slate-200/80 p-2 flex flex-col items-center justify-center relative overflow-hidden text-center">
+        <div className="w-full h-28 rounded-2xl bg-slate-50 dark:bg-[#111c30] border border-slate-200/80 dark:border-slate-700 p-2 flex flex-col items-center justify-center relative overflow-hidden text-center">
           <svg viewBox="0 0 200 90" className="w-full h-full opacity-30 absolute inset-0">
             <path
               d="M 10 30 Q 30 10 50 30 T 90 20 T 130 40 T 170 20 T 190 50"
@@ -171,9 +171,9 @@ export default function TBIndiaGrid({ onOpenArticle, onOpenQuickLink }: TBIndiaG
             <circle cx="125" cy="40" r="4" fill="#dc2626" />
           </svg>
           <div className="relative z-10 space-y-0.5">
-            <p className="text-[10px] text-slate-500 font-semibold">In 2024, an estimated</p>
-            <p className="text-xs font-black text-slate-900 leading-none">10.7 MILLION</p>
-            <p className="text-[9px] text-slate-500 font-medium">people developed TB globally.</p>
+            <p className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold">In 2024, an estimated</p>
+            <p className="tq-display text-xs font-black text-ink-900 dark:text-slate-100 leading-none">10.7 MILLION</p>
+            <p className="text-[9px] text-slate-500 dark:text-slate-400 font-medium">people developed TB globally.</p>
           </div>
         </div>
       ),
@@ -205,13 +205,13 @@ export default function TBIndiaGrid({ onOpenArticle, onOpenQuickLink }: TBIndiaG
       btnColor: 'bg-emerald-600 hover:bg-emerald-700 text-white',
       btnText: 'READ ARTICLE',
       graphic: (
-        <div className="w-full h-32 rounded-[12px] bg-slate-950/30 border border-[#D8E9FF] overflow-hidden relative shadow-xs flex items-center justify-center group">
+        <div className="w-full h-32 rounded-2xl bg-slate-950/30 border border-slate-200 dark:border-slate-700 overflow-hidden relative shadow-xs flex items-center justify-center group">
           <img
             src={tbMuktBharatBanner}
             onError={() => setBannerUrl('/tb_mukt_bharat_banner.png')}
             alt="TB Mukt Bharat Abhiyaan 2026 Official Banner"
             loading="lazy"
-            className="w-full h-full object-contain rounded-[12px] group-hover:scale-105 transition-transform duration-300"
+            className="tq-img object-cover aspect-[16/10] w-full h-full rounded-2xl group-hover:scale-105 transition-transform duration-300"
           />
         </div>
       ),
@@ -247,16 +247,16 @@ export default function TBIndiaGrid({ onOpenArticle, onOpenQuickLink }: TBIndiaG
       btnColor: 'bg-amber-600 hover:bg-amber-700 text-white',
       btnText: nikshayCard.btnText,
       graphic: (
-        <div className="w-full h-28 rounded-[12px] bg-slate-900 border border-amber-200/60 overflow-hidden relative shadow-xs">
+        <div className="w-full h-28 rounded-2xl bg-slate-900 border border-amber-200/60 dark:border-amber-500/40 overflow-hidden relative shadow-xs">
           {nikshayCard.imageUrl && !nikshayImageError ? (
             <img
               src={nikshayCard.imageUrl}
               onError={() => setNikshayImageError(true)}
               alt="NI-KSHAY MITRA Official Banner"
-              className="w-full h-full object-cover rounded-[12px] hover:scale-105 transition-transform duration-300"
+              className="tq-img object-cover aspect-[16/10] w-full h-full rounded-2xl hover:scale-105 transition-transform duration-300"
             />
           ) : (
-            <div className="w-full h-full rounded-[12px] bg-gradient-to-br from-amber-700 to-amber-900 p-2 flex flex-col items-center justify-center text-white text-center">
+            <div className="w-full h-full rounded-2xl bg-gradient-to-br from-amber-700 to-amber-900 p-2 flex flex-col items-center justify-center text-white text-center">
               <p className="text-[10px] font-bold tracking-wider text-amber-200 uppercase">NI-KSHAY MITRA</p>
               <p className="text-[9px] text-amber-300 font-medium">Community Support Initiative</p>
             </div>
@@ -293,16 +293,16 @@ export default function TBIndiaGrid({ onOpenArticle, onOpenQuickLink }: TBIndiaG
       btnColor: 'bg-blue-600 hover:bg-blue-700 text-white',
       btnText: ntepCard.btnText,
       graphic: (
-        <div className="w-full h-28 rounded-[12px] bg-slate-900 border border-blue-200/60 overflow-hidden relative shadow-xs">
+        <div className="w-full h-28 rounded-2xl bg-slate-900 border border-blue-200/60 dark:border-blue-500/40 overflow-hidden relative shadow-xs">
           {ntepCard.imageUrl && !ntepImageError ? (
             <img
               src={ntepCard.imageUrl}
               onError={() => setNtepImageError(true)}
               alt="NTEP Official Banner"
-              className="w-full h-full object-cover rounded-[12px] hover:scale-105 transition-transform duration-300"
+              className="tq-img object-cover aspect-[16/10] w-full h-full rounded-2xl hover:scale-105 transition-transform duration-300"
             />
           ) : (
-            <div className="w-full h-full rounded-[12px] bg-gradient-to-br from-blue-700 to-blue-950 p-2 flex flex-col items-center justify-center text-white text-center">
+            <div className="w-full h-full rounded-2xl bg-gradient-to-br from-blue-700 to-blue-950 p-2 flex flex-col items-center justify-center text-white text-center">
               <p className="text-[10px] font-bold tracking-wider text-blue-200 uppercase">NTEP PROGRAMME</p>
             </div>
           )}
@@ -339,18 +339,18 @@ export default function TBIndiaGrid({ onOpenArticle, onOpenQuickLink }: TBIndiaG
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 min-w-0 overflow-hidden tq-fade-up">
       {/* Section Header with Centered Horizontal Lines */}
       <div className="text-center space-y-1">
         <div className="flex items-center justify-center gap-3">
-          <span className="h-0.5 bg-gradient-to-r from-transparent to-[#0F6FFF] w-12 sm:w-20 rounded-full" />
-          <h2 className="text-base sm:text-lg font-black text-[#1E293B] uppercase tracking-widest flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#0F6FFF] animate-pulse" />
+          <span className="tq-accent-bar h-0.5 w-12 sm:w-20 rounded-full" />
+          <h2 className="tq-display text-base sm:text-lg lg:text-xl font-black text-ink-900 dark:text-slate-100 uppercase tracking-widest flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-brand-teal animate-pulse" />
             <span>TB IN INDIA – 2026</span>
           </h2>
-          <span className="h-0.5 bg-gradient-to-l from-transparent to-[#0F6FFF] w-12 sm:w-20 rounded-full" />
+          <span className="tq-accent-bar h-0.5 w-12 sm:w-20 rounded-full" />
         </div>
-        <p className="text-[#64748B] text-xs font-medium">
+        <p className="text-slate-500 dark:text-slate-400 text-xs font-medium">
           Explore current statistics, government initiatives and awareness programs
         </p>
       </div>
@@ -364,14 +364,14 @@ export default function TBIndiaGrid({ onOpenArticle, onOpenQuickLink }: TBIndiaG
             return (
               <div
                 key={card.id}
-                className="bg-white border border-[#D8E9FF] rounded-2xl p-4 shadow-[0_10px_30px_rgba(15,111,255,0.06)] hover:shadow-[0_20px_40px_rgba(15,111,255,0.12)] hover:border-[#0F6FFF]/35 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between space-y-3 group"
+                className="tq-card tq-lift rounded-2xl p-4 flex flex-col justify-between space-y-3 group min-w-0"
               >
                 {/* Header Icon + Title */}
                 <div className="flex items-center gap-2">
-                  <div className={`p-2 rounded-xl bg-[#F2F8FD] text-[#0F6FFF] border border-[#D8E9FF] shrink-0`}>
+                  <div className={`tq-chip tq-chip-teal p-2 rounded-xl shrink-0`}>
                     <IconComp size={16} />
                   </div>
-                  <h3 className={`text-xs font-extrabold uppercase leading-tight text-[#1E293B]`}>
+                  <h3 className={`text-xs font-extrabold uppercase leading-tight text-ink-900 dark:text-slate-100`}>
                     {card.title}
                   </h3>
                 </div>
@@ -380,7 +380,7 @@ export default function TBIndiaGrid({ onOpenArticle, onOpenQuickLink }: TBIndiaG
                 {card.graphic}
 
                 {/* Description */}
-                <p className="text-xs text-[#64748B] leading-relaxed font-medium line-clamp-3">
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium line-clamp-3">
                   {card.description}
                 </p>
 
@@ -391,7 +391,7 @@ export default function TBIndiaGrid({ onOpenArticle, onOpenQuickLink }: TBIndiaG
                     soundService.playClick();
                     card.onClick();
                   }}
-                  className="w-full py-2.5 px-3 bg-gradient-to-r from-[#0F6FFF] to-[#2563EB] hover:from-[#0D62E0] hover:to-[#1D4ED8] text-white font-bold rounded-xl text-[11px] uppercase tracking-wider transition-all text-center shadow-md shadow-blue-500/20 hover:scale-[1.02] cursor-pointer"
+                  className="tq-btn-primary touch-target min-h-11 w-full py-2.5 px-3 text-white font-bold rounded-xl text-[11px] uppercase tracking-wider transition-all text-center shadow-md shadow-blue-500/20 hover:scale-[1.02] cursor-pointer"
                 >
                   {card.btnText}
                 </button>
@@ -403,30 +403,30 @@ export default function TBIndiaGrid({ onOpenArticle, onOpenQuickLink }: TBIndiaG
         {/* Right Column: TB AWARENESS - 2026 + QUICK LINKS (Span 3 columns on desktop) */}
         <div className="lg:col-span-3 space-y-4">
           {/* Top Right: TB AWARENESS - 2026 Card */}
-          <div className="bg-white border border-[#D8E9FF] rounded-2xl p-4 shadow-[0_10px_30px_rgba(15,111,255,0.06)] hover:shadow-[0_20px_40px_rgba(15,111,255,0.12)] hover:border-[#0F6FFF]/35 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between space-y-3 group">
-            <h3 className="text-xs font-extrabold uppercase text-[#0F6FFF] text-center tracking-wider flex items-center justify-center gap-1.5">
+          <div className="tq-card tq-lift rounded-2xl p-4 flex flex-col justify-between space-y-3 group min-w-0">
+            <h3 className="tq-eyebrow text-xs font-extrabold uppercase text-center tracking-wider flex items-center justify-center gap-1.5">
               <span>✨</span>
               <span>{awarenessCardState.title}</span>
             </h3>
 
             {/* Banner Image */}
-            <div className="w-full h-32 rounded-xl bg-slate-900 border border-[#D8E9FF] overflow-hidden relative shadow-xs">
+            <div className="w-full h-32 rounded-2xl bg-slate-900 border border-slate-200 dark:border-slate-700 overflow-hidden relative shadow-xs">
               {awarenessCardState.imageUrl && !awarenessImageError ? (
                 <img
                   src={awarenessCardState.imageUrl}
                   onError={() => setAwarenessImageError(true)}
                   alt="TB Awareness Official Banner"
-                  className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500"
+                  className="tq-img object-cover aspect-[16/10] w-full h-full rounded-2xl group-hover:scale-105 transition-transform duration-500"
                 />
               ) : (
-                <div className="w-full h-full rounded-xl bg-gradient-to-br from-[#0F6FFF] to-[#2563EB] p-2 flex flex-col items-center justify-center text-white text-center">
+                <div className="w-full h-full rounded-2xl bg-gradient-to-br from-brand-teal to-brand-royal p-2 flex flex-col items-center justify-center text-white text-center">
                   <p className="text-[10px] font-bold text-blue-200">WORLD TB DAY 2026</p>
                   <h4 className="text-sm font-black text-white my-0.5">Yes! We Can End TB</h4>
                 </div>
               )}
             </div>
 
-            <p className="text-xs text-[#64748B] leading-relaxed font-medium text-center line-clamp-3">
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium text-center line-clamp-3">
               {awarenessCardState.description}
             </p>
 
@@ -452,16 +452,16 @@ export default function TBIndiaGrid({ onOpenArticle, onOpenQuickLink }: TBIndiaG
                   });
                 }
               }}
-              className="w-full py-2.5 px-3 bg-gradient-to-r from-[#0F6FFF] to-[#2563EB] hover:from-[#0D62E0] hover:to-[#1D4ED8] text-white font-bold rounded-xl text-[11px] uppercase tracking-wider transition-all text-center shadow-md shadow-blue-500/20 hover:scale-[1.02] cursor-pointer"
+              className="tq-btn-primary touch-target min-h-11 w-full py-2.5 px-3 text-white font-bold rounded-xl text-[11px] uppercase tracking-wider transition-all text-center shadow-md shadow-blue-500/20 hover:scale-[1.02] cursor-pointer"
             >
               {awarenessCardState.btnText}
             </button>
           </div>
 
           {/* Bottom Right: QUICK LINKS Card */}
-          <div className="bg-white border border-[#D8E9FF] rounded-2xl p-4 shadow-[0_10px_30px_rgba(15,111,255,0.06)] space-y-3">
-            <h3 className="text-xs font-extrabold uppercase text-[#1E293B] tracking-wider flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#0F6FFF]" />
+          <div className="tq-card rounded-2xl p-4 space-y-3 min-w-0">
+            <h3 className="tq-eyebrow text-xs font-extrabold uppercase text-ink-900 dark:text-slate-100 tracking-wider flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-teal" />
               <span>QUICK LINKS</span>
             </h3>
 
@@ -475,9 +475,9 @@ export default function TBIndiaGrid({ onOpenArticle, onOpenQuickLink }: TBIndiaG
                       soundService.playClick();
                       if (onOpenQuickLink) onOpenQuickLink(link.id);
                     }}
-                    className="w-full p-2.5 bg-[#F2F8FD] hover:bg-[#EBF3FE] border border-[#D8E9FF] rounded-xl text-left font-bold text-xs text-[#0F6FFF] flex items-center gap-2.5 transition-all group cursor-pointer"
+                    className="touch-target min-h-11 w-full p-2.5 bg-teal-50 dark:bg-teal-950/40 hover:bg-teal-100 dark:hover:bg-teal-900/50 border border-teal-200 dark:border-teal-500/40 rounded-xl text-left font-bold text-xs text-brand-teal-deep dark:text-teal-300 flex items-center gap-2.5 transition-all group cursor-pointer"
                   >
-                    <IconComp size={15} className="text-[#0F6FFF] group-hover:scale-110 transition-transform" />
+                    <IconComp size={15} className="text-brand-teal-deep dark:text-teal-300 group-hover:scale-110 transition-transform" />
                     <span>{link.label}</span>
                   </button>
                 );

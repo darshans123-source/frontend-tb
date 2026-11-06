@@ -266,29 +266,29 @@ export default function TBIntroductionPage({ onCompleteRead }: TBIntroductionPag
   };
 
   return (
-    <div className="bg-[#F8FAFC] min-h-screen text-[#1E293B] font-sans p-4 sm:p-6 md:p-8 space-y-6 max-w-7xl mx-auto">
+    <div className="bg-alabaster dark:bg-[#0b1220] min-h-screen text-ink-900 dark:text-slate-100 font-sans p-4 sm:p-6 md:p-8 space-y-6 max-w-7xl mx-auto">
       {/* 1. Top Reading Progress Header Card */}
-      <header className="sticky top-16 sm:top-20 z-30 bg-white border border-[#E2E8F0] rounded-2xl p-4 shadow-sm flex items-center justify-between gap-4">
+      <header className="sticky top-16 sm:top-20 z-30 tq-card rounded-2xl p-4 shadow-sm flex items-center justify-between gap-4">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="p-2.5 bg-[#EFF6FF] text-[#2563EB] rounded-xl shrink-0">
+          <div className="p-2.5 bg-blue-50 dark:bg-[#111c30] text-brand-royal dark:text-blue-400 rounded-xl shrink-0">
             <BookOpen size={22} />
           </div>
           <div className="min-w-0">
-            <h1 className="text-sm sm:text-base font-extrabold text-[#1E293B] truncate">
+            <h1 className="text-sm sm:text-base font-extrabold text-ink-900 dark:text-slate-100 truncate">
               TB Introduction & WHO/NTEP Curriculum
             </h1>
-            <p className="text-xs text-slate-500 font-medium">Read 90%+ to unlock Level 1 Snake & Ladder</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Read 90%+ to unlock Level 1 Snake & Ladder</p>
           </div>
         </div>
 
         <div className="flex items-center gap-3 shrink-0">
           <div className="text-right font-mono">
-            <span className="text-sm font-extrabold text-[#2563EB]">{scrollProgress}%</span>
-            <span className="block text-[10px] text-slate-500 uppercase font-semibold">Reading</span>
+            <span className="text-sm font-extrabold text-brand-royal dark:text-blue-400">{scrollProgress}%</span>
+            <span className="block text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Reading</span>
           </div>
-          <div className="w-20 sm:w-32 bg-[#F1F5F9] h-2.5 rounded-full overflow-hidden p-0.5 border border-[#E2E8F0]">
+          <div className="w-20 sm:w-32 bg-[#F1F5F9] h-2.5 rounded-full overflow-hidden p-0.5 border border-slate-200 dark:border-slate-700">
             <div
-              className="bg-[#2563EB] h-full rounded-full transition-all duration-300 shadow-sm"
+              className="tq-progress-bar"
               style={{ width: `${scrollProgress}%` }}
             />
           </div>
@@ -296,24 +296,24 @@ export default function TBIntroductionPage({ onCompleteRead }: TBIntroductionPag
       </header>
 
       {/* 2. Main Page Hero Banner */}
-      <div className="bg-white border border-[#E2E8F0] rounded-2xl p-6 sm:p-8 shadow-sm space-y-4 relative overflow-hidden">
+      <div className="tq-card rounded-2xl p-6 sm:p-8 shadow-sm space-y-4 relative overflow-hidden">
         <div className="flex flex-col lg:flex-row items-center gap-6">
           <div className="space-y-3 flex-1">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#EFF6FF] text-[#2563EB] border border-blue-200 rounded-full text-xs font-semibold">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 dark:bg-[#111c30] text-brand-royal dark:text-blue-400 border border-blue-200 rounded-full text-xs font-semibold">
               <Sparkles size={14} /> Official Medical Curriculum • Level 1
             </span>
-            <h1 className="text-2xl sm:text-4xl font-extrabold text-[#1E293B] tracking-tight leading-tight">
+            <h1 className="text-2xl sm:text-4xl font-extrabold text-ink-900 dark:text-slate-100 tracking-tight leading-tight">
               Tuberculosis Core Curriculum & Guidelines
             </h1>
-            <p className="text-slate-600 text-xs sm:text-base leading-relaxed">
+            <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-base leading-relaxed">
               Explore the 10 foundational domains of Tuberculosis, covering clinical microbiology, airborne transmission, diagnostic algorithms, treatment FDCs, NTEP national strategy, and the TB Mukt Bharat Abhiyan 2026.
             </p>
           </div>
-          <div className="w-full lg:w-72 h-44 rounded-2xl overflow-hidden shadow-sm border border-slate-200 shrink-0">
+          <div className="w-full lg:w-72 h-44 rounded-2xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-700 shrink-0">
             <img
               src="/tb_lungs_hero.png"
               alt="TB Lungs Hero"
-              className="w-full h-full object-cover"
+              className="tq-img w-full h-full object-cover aspect-[16/9]"
               loading="lazy"
             />
           </div>
@@ -329,24 +329,24 @@ export default function TBIntroductionPage({ onCompleteRead }: TBIntroductionPag
           return (
             <div
               key={section.id}
-              className="bg-white border border-[#E2E8F0] rounded-2xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-all duration-200"
+              className="tq-card rounded-2xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-all duration-200"
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 {/* Left Title & Badge */}
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-[#EFF6FF] text-[#2563EB] rounded-xl shrink-0 mt-0.5 border border-blue-100">
+                  <div className="p-3 bg-blue-50 dark:bg-[#111c30] text-brand-royal dark:text-blue-400 rounded-xl shrink-0 mt-0.5 border border-blue-100">
                     <IconComp size={24} />
                   </div>
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-mono font-bold text-[#2563EB] bg-blue-50 px-2 py-0.5 rounded-md">
+                      <span className="text-xs font-mono font-bold text-brand-royal dark:text-blue-400 bg-blue-50 px-2 py-0.5 rounded-md">
                         Section {section.number}
                       </span>
-                      <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full">
+                      <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 px-2.5 py-0.5 rounded-full">
                         {section.badge}
                       </span>
                     </div>
-                    <h2 className="text-base sm:text-xl font-bold text-[#1E293B]">
+                    <h2 className="text-base sm:text-xl font-bold text-ink-900 dark:text-slate-100">
                       {section.title}
                     </h2>
                   </div>
@@ -355,7 +355,7 @@ export default function TBIntroductionPage({ onCompleteRead }: TBIntroductionPag
                 {/* Read More Toggle Button */}
                 <button
                   onClick={() => toggleSection(section.id)}
-                  className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-white hover:bg-[#F8FAFC] border border-[#E2E8F0] text-[#1E293B] text-xs font-bold rounded-xl transition-all cursor-pointer self-start sm:self-center"
+                  className="tq-btn-secondary touch-target inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer self-start sm:self-center"
                 >
                   <span>{isExpanded ? 'Show Less' : 'Read More'}</span>
                   {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -363,39 +363,39 @@ export default function TBIntroductionPage({ onCompleteRead }: TBIntroductionPag
               </div>
 
               {/* Short Summary Always Visible */}
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed pt-3">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed pt-3">
                 {section.shortDesc}
               </p>
 
               {/* Expandable Details Section */}
               {isExpanded && (
-                <div className="pt-4 mt-4 border-t border-[#E2E8F0] space-y-5 animate-in fade-in duration-300">
+                <div className="pt-4 mt-4 border-t border-slate-200 dark:border-slate-700 space-y-5 animate-in fade-in duration-300">
                   <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
                     {/* Illustration Image */}
-                    <div className="md:col-span-4 rounded-2xl overflow-hidden border border-slate-200 shadow-sm bg-slate-50">
+                    <div className="md:col-span-4 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm bg-slate-50 dark:bg-[#111c30]">
                       <img
                         src={section.image}
                         alt={section.title}
-                        className="w-full h-48 sm:h-56 object-cover"
+                        className="tq-img w-full h-48 sm:h-56 object-cover aspect-[16/9]"
                         loading="lazy"
                       />
                     </div>
 
                     {/* Detailed Information */}
                     <div className="md:col-span-8 space-y-4">
-                      <p className="text-xs sm:text-sm text-[#1E293B] leading-relaxed font-normal">
+                      <p className="text-xs sm:text-sm text-ink-900 dark:text-slate-100 leading-relaxed font-normal">
                         {section.fullDesc}
                       </p>
 
                       {/* Key Points */}
-                      <div className="bg-[#F8FAFC] p-4 rounded-xl border border-[#E2E8F0] space-y-2">
-                        <h3 className="text-xs font-extrabold text-[#2563EB] uppercase tracking-wide">
+                      <div className="bg-alabaster dark:bg-[#0b1220] p-4 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
+                        <h3 className="text-xs font-extrabold text-brand-royal dark:text-blue-400 uppercase tracking-wide">
                           Key Clinical Takeaways:
                         </h3>
-                        <ul className="space-y-1.5 text-xs text-slate-700 font-medium">
+                        <ul className="space-y-1.5 text-xs text-slate-700 dark:text-slate-200 font-medium">
                           {section.keyPoints.map((point, pIdx) => (
                             <li key={pIdx} className="flex items-start gap-2">
-                              <CheckCircle2 size={15} className="text-[#2563EB] mt-0.5 shrink-0" />
+                              <CheckCircle2 size={15} className="text-brand-royal dark:text-blue-400 mt-0.5 shrink-0" />
                               <span>{point}</span>
                             </li>
                           ))}
@@ -406,9 +406,9 @@ export default function TBIntroductionPage({ onCompleteRead }: TBIntroductionPag
                       {section.clinicalHighlights && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                           {section.clinicalHighlights.map((hl, hIdx) => (
-                            <div key={hIdx} className="p-3 bg-blue-50/60 border border-blue-200/70 rounded-xl space-y-1">
-                              <span className="text-xs font-bold text-[#2563EB] block">{hl.title}</span>
-                              <p className="text-[11px] text-slate-600 leading-snug">{hl.desc}</p>
+                            <div key={hIdx} className="tq-card p-3 rounded-xl space-y-1">
+                              <span className="text-xs font-bold text-brand-royal dark:text-blue-400 block">{hl.title}</span>
+                              <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-snug">{hl.desc}</p>
                             </div>
                           ))}
                         </div>
@@ -423,13 +423,13 @@ export default function TBIntroductionPage({ onCompleteRead }: TBIntroductionPag
       </div>
 
       {/* 4. Bottom Read Completion Action Card */}
-      <div className="bg-white border border-[#E2E8F0] p-6 sm:p-8 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+      <div className="tq-card p-6 sm:p-8 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
         <div className="space-y-1">
-          <h2 className="font-extrabold text-[#1E293B] text-base sm:text-lg flex items-center gap-2">
-            <ShieldCheck size={20} className="text-[#1677FF]" />
+          <h2 className="font-extrabold text-ink-900 dark:text-slate-100 text-base sm:text-lg flex items-center gap-2">
+            <ShieldCheck size={20} className="text-brand-royal dark:text-blue-400" />
             <span>Ready to Play Level 1 Snake & Ladder?</span>
           </h2>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             {isReadComplete
               ? 'You have completed the required curriculum reading. Click below to begin the Level 1 Game Introduction.'
               : 'Scroll and review the core curriculum (90%+) to unlock Level 1 Snake & Ladder.'}
@@ -441,7 +441,7 @@ export default function TBIntroductionPage({ onCompleteRead }: TBIntroductionPag
           disabled={!isReadComplete}
           className={`flex items-center gap-2 px-6 py-3.5 rounded-xl font-bold text-xs sm:text-sm transition-all shrink-0 ${
             isReadComplete
-              ? 'bg-gradient-to-r from-[#1677FF] via-[#00B8A9] to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white shadow-md shadow-blue-500/25 cursor-pointer active:scale-95'
+              ? 'tq-btn-primary text-white shadow-md shadow-blue-500/25 cursor-pointer active:scale-95'
               : 'bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed'
           }`}
         >

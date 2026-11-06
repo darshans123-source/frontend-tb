@@ -31,6 +31,14 @@ const ProgressReportModal = lazy(() => import('./components/ProgressReportModal'
 const CertificateModal = lazy(() => import('./components/CertificateModal'));
 
 export default function App() {
+  // Temporary (Darshan, 2026-11-06): sign-in removed for now. The app opens
+  // straight into the student experience as a guest — no Login page, no
+  // account. The Login page, authService and handleLogin are KEPT, not
+  // deleted, so sign-in can be restored by setting this back to false.
+  // While this is true, faculty/admin dashboards cannot be reached (they
+  // need a signed-in role), and progress is saved on-device only — cloud
+  // save needs a signed-in student.
+  const SIGN_IN_DISABLED = true;
   const isDirectLogin = typeof window !== 'undefined' && window.location.pathname === '/login';
   const [appStage, setAppStage] = useState<'splash' | 'onboarding' | 'login' | 'app'>(isDirectLogin ? 'login' : 'splash');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -144,6 +152,25 @@ export default function App() {
   // Session Restore & Auto-Login on Refresh / OAuth Callback
   useEffect(() => {
     async function restoreSession() {
+      // Sign-in removed for now: open straight in as a guest student.
+      if (SIGN_IN_DISABLED) {
+        setCurrentUserId(null);
+        setUserRole('student');
+        setUserData(prev => ({
+          ...prev,
+          name: 'Guest Student',
+          email: '',
+          level: 1,
+          xp: 0,
+          accuracy: 0,
+          streak: 0,
+          completedCases: 0
+        }));
+        setIsAuthenticated(true);
+        setAppStage('app');
+        syncBrowserUrl('/dashboard');
+        return;
+      }
       const authUser = await authService.getMe();
       if (authUser) {
         setCurrentUserId(authUser.id);
@@ -216,6 +243,7 @@ export default function App() {
       if (event === 'SIGNED_IN' && session?.user) {
         restoreSession();
       } else if (event === 'SIGNED_OUT') {
+        if (SIGN_IN_DISABLED) return;
         setIsAuthenticated(false);
         setAppStage('login');
         syncBrowserUrl('/login');
@@ -300,6 +328,31 @@ export default function App() {
   };
 
   const handleLogout = async () => {
+    // Sign-in removed for now: "logging out" just returns to the guest
+    // dashboard instead of opening the Login page.
+    if (SIGN_IN_DISABLED) {
+      setCurrentUserId(null);
+      setUserRole('student');
+      setUserData(prev => ({
+        ...prev,
+        name: 'Guest Student',
+        email: '',
+        level: 1,
+        xp: 0,
+        accuracy: 0,
+        streak: 0,
+        completedCases: 0
+      }));
+      setBadges([]);
+      setBookmarkedCases([]);
+      setLeaderboardEntries([]);
+      setCompletedQuizzes([]);
+      setUnlockedCases([]);
+      setIsAuthenticated(true);
+      setAppStage('app');
+      syncBrowserUrl('/dashboard');
+      return;
+    }
     await authService.logout();
     setCurrentUserId(null);
     setIsAuthenticated(false);
@@ -385,7 +438,7 @@ export default function App() {
     return (
       <SplashScreen
         onFinish={() => {
-          if (isAuthenticated) {
+          if (isAuthenticated || SIGN_IN_DISABLED) {
             setAppStage('app');
           } else {
             setAppStage('login');
@@ -399,7 +452,9 @@ export default function App() {
     return <Onboarding onComplete={() => setAppStage('login')} />;
   }
 
-  if (appStage === 'login' || !isAuthenticated) {
+  // Sign-in removed for now: the Login page is never shown while the flag
+  // above is true. (Login import and handleLogin are kept for restore.)
+  if (!SIGN_IN_DISABLED && (appStage === 'login' || !isAuthenticated)) {
     return <Login onLogin={handleLogin} />;
   }
 

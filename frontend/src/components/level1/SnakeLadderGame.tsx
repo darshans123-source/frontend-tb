@@ -40,6 +40,7 @@ import {
   getLearnerStage,
   getLearnerStageDetails
 } from '../../data/snakeLadderData';
+import { LEVEL1_DOCX_TRAP_QUESTIONS } from '../../data/level1DocxQuestions';
 import { ChallengeCategory } from '../../types/snakeLadder';
 import { soundService } from '../../services/soundService';
 import { supabaseData } from '../../services/supabaseData';
@@ -47,6 +48,11 @@ import Level1HowToPlayModal from './Level1HowToPlayModal';
 
 interface SnakeLadderGameProps {
   currentUserId?: string | null;
+  /** True when the student signed in with Name + Phone + 4-digit PIN (student_accounts).
+   *  PIN students have no auth.users row, so Supabase progress is saved via the
+   *  save_game_progress / get_game_progress RPCs (see supabase_game_progress.sql),
+   *  never via the auth.users-keyed profiles table. */
+  isPinStudent?: boolean;
   onProceedToLevel2?: () => void;
   onBackToDashboard?: () => void;
   onUnlockLevel1?: () => void;
@@ -76,7 +82,9 @@ const INITIAL_STATE: SavedGameState = {
   currentSquare: 1,
   score: 0,
   xp: 0,
-  accuracy: 100,
+  // Accuracy is (correctAnswers / 25) * 100. It must start at 0, not 100:
+  // showing 100% before the first answer is misleading.
+  accuracy: 0,
   correctAnswers: 0,
   wrongAnswers: 0,
   totalAnswered: 0,
@@ -123,6 +131,7 @@ const SNAKE_REASONS: Record<number, string> = {
 
 export default function SnakeLadderGame({
   currentUserId,
+  isPinStudent = false,
   onProceedToLevel2,
   onBackToDashboard,
   onUnlockLevel1
@@ -216,6 +225,15 @@ export default function SnakeLadderGame({
   // Restart Confirmation Dialog
   const [showRestartConfirm, setShowRestartConfirm] = useState(false);
 
+  // Cloud-save status. LocalStorage is always the offline fallback; Supabase
+  // is best-effort and never blocks play (table may not exist yet — see
+  // supabase_game_progress.sql, which must be run once in Supabase).
+  const [syncStatus, setSyncStatus] = useState<'local' | 'saving' | 'saved' | 'cloud-offline'>('local');
+  const hydratedFromCloudRef = useRef(false);
+  const lastSavedPayloadRef = useRef('');
+  const unlockPersistedRef = useRef(false);
+  const weakQueueRef = useRef<string[]>([]);
+
   // Active Snake / Ladder Highlight Animation States
   const [highlightedSnake, setHighlightedSnake] = useState<number | null>(null);
   const [highlightedLadder, setHighlightedLadder] = useState<number | null>(null);
@@ -232,14 +250,102 @@ export default function SnakeLadderGame({
     };
   }, [musicEnabled, showHowToPlay]);
 
-  // Persist game state
+  // Hydrate from Supabase/RPC once on mount: cloud progress wins only if
+  // it is ahead of this device (more questions answered), never behind.
+  useEffect(() => {
+    if (!currentUserId || hydratedFromCloudRef.current) return;
+    hydratedFromCloudRef.current = true;
+    supabaseData.fetchGameProgress(currentUserId, isPinStudent).then((rec) => {
+      if (!rec) return;
+      setGameState((prev) => {
+        if ((rec.attempted ?? 0) <= prev.totalAnswered) return prev;
+        return {
+          ...prev,
+          currentSquare: Math.min(100, Math.max(1, rec.current_square ?? prev.currentSquare)),
+          xp: rec.xp ?? prev.xp,
+          score: rec.score ?? prev.score,
+          correctAnswers: rec.correct_answers ?? prev.correctAnswers,
+          wrongAnswers: rec.wrong_answers ?? prev.wrongAnswers,
+          totalAnswered: rec.attempted ?? prev.totalAnswered,
+          accuracy: rec.accuracy ?? prev.accuracy,
+          gameCompleted: rec.completed ?? prev.gameCompleted,
+          level2Unlocked: rec.level2_unlocked ?? prev.level2Unlocked
+        };
+      });
+      setSyncStatus('saved');
+    }).catch(() => { /* offline / table not created yet: localStorage stands */ });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Persist game state: localStorage immediately, Supabase debounced.
+  // Never throws, never blocks play.
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState));
     } catch (e) {
       console.error('Failed to save snake ladder state', e);
     }
-  }, [gameState]);
+    if (!currentUserId) return;
+    const payload = JSON.stringify({
+      currentSquare: gameState.currentSquare,
+      xp: gameState.xp,
+      score: gameState.score,
+      correctAnswers: gameState.correctAnswers,
+      wrongAnswers: gameState.wrongAnswers,
+      totalAnswered: gameState.totalAnswered,
+      accuracy: gameState.accuracy,
+      gameCompleted: gameState.gameCompleted,
+      level2Unlocked: gameState.level2Unlocked
+    });
+    if (payload === lastSavedPayloadRef.current) return;
+    setSyncStatus('saving');
+    const timer = setTimeout(() => {
+      supabaseData.saveGameProgress(currentUserId, {
+        currentSquare: gameState.currentSquare,
+        xp: gameState.xp,
+        score: gameState.score,
+        correctAnswers: gameState.correctAnswers,
+        wrongAnswers: gameState.wrongAnswers,
+        attempted: gameState.totalAnswered,
+        accuracy: gameState.accuracy,
+        completed: gameState.gameCompleted,
+        level2Unlocked: gameState.level2Unlocked
+      }, isPinStudent).then((ok) => {
+        if (ok) {
+          lastSavedPayloadRef.current = payload;
+          setSyncStatus('saved');
+        } else {
+          setSyncStatus('cloud-offline');
+        }
+      }).catch(() => setSyncStatus('cloud-offline'));
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [gameState, currentUserId, isPinStudent]);
+
+  // Persist the Level 2 unlock exactly once per session. For PIN students
+  // this goes through the game_progress RPC (never profiles, whose FK is
+  // auth.users and would fail silently for PIN students).
+  const persistUnlock = () => {
+    if (unlockPersistedRef.current || !currentUserId) return;
+    unlockPersistedRef.current = true;
+    supabaseData.saveGameProgress(currentUserId, {
+      currentSquare: gameState.currentSquare,
+      xp: gameState.xp + 500,
+      score: gameState.score,
+      correctAnswers: gameState.correctAnswers,
+      wrongAnswers: gameState.wrongAnswers,
+      attempted: gameState.totalAnswered,
+      accuracy: gameState.accuracy,
+      completed: true,
+      level2Unlocked: true
+    }, isPinStudent).catch(() => {});
+    if (!isPinStudent) {
+      supabaseData.updateUserProfile(currentUserId, {
+        xp: gameState.xp + 500,
+        level: 2
+      }).catch(() => {});
+    }
+  };
 
   // Dice face 3D angles
   const getFaceRotation = (face: number) => {
@@ -498,6 +604,10 @@ export default function SnakeLadderGame({
     if (!activeChallenge) return;
 
     const isCorrect = chosenIdx === activeChallenge.correctIndex;
+    // XP: 20 per correct answer (Q25: 100) — this is the live behaviour shown
+    // in the reference screenshot (2 correct = 40 XP) and in the dashboard.
+    // The redesign brief said "4 XP", which contradicts the live game, so the
+    // existing 20 XP is kept; see the PR description for the discrepancy.
     const earnedMarks = isCorrect ? activeChallenge.marks : 0;
     const earnedXp = isCorrect ? activeChallenge.xp : 0;
 
@@ -583,9 +693,7 @@ export default function SnakeLadderGame({
         from: currentAction.from,
         to: currentAction.to,
         title: '🪜 LADDER ACTIVATED!',
-        description: LADDER_REASONS[currentAction.from] || 'Great TB Clinical Reasoning! Climbing upward!',
-        marks: 10,
-        xp: 20
+        description: (LADDER_REASONS[currentAction.from] || 'Great TB Clinical Reasoning! Climbing upward!') + ' The +10 marks / +20 XP for this question were already awarded — the climb itself is your reward.'
       });
 
       setTimeout(async () => {
@@ -667,12 +775,7 @@ export default function SnakeLadderGame({
                 level2Unlocked: true
               }));
               if (onUnlockLevel1) onUnlockLevel1();
-              if (currentUserId) {
-                supabaseData.updateUserProfile(currentUserId, {
-                  xp: gameState.xp + 500,
-                  level: 2
-                }).catch(() => {});
-              }
+              persistUnlock();
             }
           }, 800);
           return 5;
@@ -683,15 +786,17 @@ export default function SnakeLadderGame({
     }, 600);
   };
 
-  // Replay Weak Areas Mode
+  // Replay Weak Areas Mode — the queue is snapshotted at start. Previously
+  // handleNextWeakAreaQuestion indexed into the live missedQuestionIds list,
+  // which shrinks as questions are re-answered correctly, so entries were skipped.
   const handleStartReplayWeakAreas = () => {
     setShowGrandMastery(false);
     setIsReplayingWeakAreas(true);
     setWeakQueueIndex(0);
+    weakQueueRef.current = [...gameState.missedQuestionIds];
 
-    if (gameState.missedQuestionIds.length > 0) {
-      const firstMissedId = gameState.missedQuestionIds[0];
-      const q = getChallengeById(firstMissedId);
+    if (weakQueueRef.current.length > 0) {
+      const q = getChallengeById(weakQueueRef.current[0]);
       if (q) {
         triggerClinicalChallenge(q);
       }
@@ -700,9 +805,9 @@ export default function SnakeLadderGame({
 
   const handleNextWeakAreaQuestion = () => {
     const nextIdx = weakQueueIndex + 1;
-    if (nextIdx < gameState.missedQuestionIds.length) {
+    if (nextIdx < weakQueueRef.current.length) {
       setWeakQueueIndex(nextIdx);
-      const q = getChallengeById(gameState.missedQuestionIds[nextIdx]);
+      const q = getChallengeById(weakQueueRef.current[nextIdx]);
       if (q) {
         triggerClinicalChallenge(q);
       }
@@ -719,12 +824,7 @@ export default function SnakeLadderGame({
           level2Unlocked: true
         }));
         if (onUnlockLevel1) onUnlockLevel1();
-        if (currentUserId) {
-          supabaseData.updateUserProfile(currentUserId, {
-            xp: gameState.xp + 500,
-            level: 2
-          }).catch(() => {});
-        }
+        persistUnlock();
       }
     }
   };
@@ -1040,6 +1140,15 @@ export default function SnakeLadderGame({
               <div className="progress-shine" />
             </div>
           </div>
+          <div className="mt-1 text-right text-[10px] font-mono font-bold text-slate-500">
+            {syncStatus === 'saved'
+              ? 'Progress saved to cloud'
+              : syncStatus === 'saving'
+              ? 'Saving progress…'
+              : syncStatus === 'cloud-offline'
+              ? 'Saved on this device — cloud save needs supabase_game_progress.sql run once in Supabase'
+              : 'Progress saved on this device'}
+          </div>
         </div>
       </header>
 
@@ -1064,6 +1173,7 @@ export default function SnakeLadderGame({
                 const squareNum = idx + 1;
                 const coords = getSquareCoordinates(squareNum);
                 const isCurrent = gameState.currentSquare === squareNum;
+                const isDestination = (pendingAction && pendingAction.to === squareNum) || (eventNotification && eventNotification.to === squareNum);
                 const isVisited = gameState.visitedSquares.includes(squareNum);
                 const hasLadder = !!LADDERS[squareNum];
                 const hasSnake = !!SNAKES[squareNum];
@@ -1111,6 +1221,10 @@ export default function SnakeLadderGame({
                 // Current player highlight
                 if (isCurrent) {
                   squareStyle += ' ring-4 ring-blue-500/40 border-2 border-blue-600 shadow-[0_0_20px_rgba(22,119,255,0.45)] z-20';
+                }
+                // Destination highlight: where a ladder climb / snake slide will land
+                if (!isCurrent && isDestination) {
+                  squareStyle += ' ring-4 ring-amber-400/70 border-2 border-amber-400 z-10';
                 }
 
                 return (
@@ -1381,6 +1495,17 @@ export default function SnakeLadderGame({
               </div>
             </div>
           </div>
+          {/* Board legend — what each square colour means */}
+          <div className="mt-3 w-full max-w-[680px] flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-[10px] font-mono font-bold text-slate-600">
+            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-indigo-200 border border-indigo-300" /> Question</span>
+            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-emerald-200 border border-emerald-400" /> Ladder</span>
+            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-rose-200 border border-rose-400" /> Snake</span>
+            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-emerald-100 border border-emerald-300" /> Correct</span>
+            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-rose-100 border border-rose-300" /> Review</span>
+            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-cyan-100 border border-cyan-300" /> Learning pearl</span>
+            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-blue-500" /> You are here</span>
+            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-amber-400" /> Destination</span>
+          </div>
         </div>
 
         {/* ========================================================================= */}
@@ -1546,6 +1671,31 @@ export default function SnakeLadderGame({
               <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-slate-300" /> Pending</span>
             </div>
           </div>
+
+          {/* 10 Docx Traps — the 10 Level 1 questions from Content_2_PTB.docx
+              that were missing from the board bank. Tap to reveal the answer.
+              Teaching simulations from the faculty document, not scored. */}
+          <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm">
+            <div className="flex items-center justify-between mb-2 font-mono">
+              <span className="text-[11px] uppercase tracking-wider text-[#64748B] font-extrabold">10 Docx Traps — Re-learn Deck</span>
+              <span className="text-xs font-black text-blue-600">TAP TO REVEAL</span>
+            </div>
+            <p className="text-[11px] text-slate-500 leading-snug mb-2">
+              From the Level 1 faculty document — the traps students miss most: absence of a symptom does NOT exclude TB, and distractors are not clues.
+            </p>
+            <div className="space-y-2">
+              {LEVEL1_DOCX_TRAP_QUESTIONS.map((q) => (
+                <details key={q.id} className="rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2">
+                  <summary className="cursor-pointer text-xs font-bold text-[#102A43] leading-snug">
+                    {q.question}
+                  </summary>
+                  <p className="mt-1.5 text-xs font-semibold text-emerald-800">Answer: {q.options[q.correctIndex]}</p>
+                  <p className="mt-0.5 text-[11px] text-slate-600 leading-relaxed">{q.explanation}</p>
+                  <p className="mt-0.5 text-[11px] font-bold text-amber-700">Remember: {q.learningPoint}</p>
+                </details>
+              ))}
+            </div>
+          </div>
         </div>
       </main>
 
@@ -1561,7 +1711,7 @@ export default function SnakeLadderGame({
                 <Sparkles className="w-4 h-4 text-emerald-600" />
                 <span>
                   {activeChallenge?.questionNumber === 25
-                    ? '+30 BONUS MARKS • +100 XP'
+                    ? '+10 MARKS • +100 XP'
                     : '+10 MARKS • +20 XP'}
                 </span>
               </div>
@@ -1834,7 +1984,24 @@ export default function SnakeLadderGame({
       {/* ========================================================================= */}
       {showGrandMastery && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-md animate-in fade-in duration-300 overflow-y-auto">
-          <div className="w-full max-w-xl bg-white border border-slate-200 rounded-3xl shadow-2xl p-6 sm:p-8 text-center relative my-6 text-[#102A43]">
+          <div className="w-full max-w-xl bg-white border border-slate-200 rounded-3xl shadow-2xl p-6 sm:p-8 text-center relative my-6 text-[#102A43] overflow-hidden">
+            {/* Confetti when Level 2 is unlocked (80%+, Q25 passed) */}
+            {gameState.correctAnswers >= 20 && gameState.finalChallengePassed && (
+              <div className="confetti-container" aria-hidden="true">
+                {Array.from({ length: 36 }).map((_, i) => (
+                  <span
+                    key={i}
+                    className="confetti-piece"
+                    style={{
+                      left: `${(i * 29) % 100}%`,
+                      background: ['#1677FF', '#00B8A9', '#F59E0B', '#E11D48', '#22C55E', '#8B5CF6'][i % 6],
+                      animationDelay: `${(i % 10) * 0.18}s`,
+                      animationDuration: `${2.4 + (i % 5) * 0.45}s`
+                    }}
+                  />
+                ))}
+              </div>
+            )}
             {/* 5-Step Diagnostic Cascade Display */}
             <div className="flex items-center justify-center gap-1 sm:gap-2 mb-5 flex-wrap">
               {['RECOGNIZE', 'ASSESS', 'TEST', 'INTERPRET', 'DIAGNOSE'].map((step, idx) => (
@@ -2127,6 +2294,26 @@ export default function SnakeLadderGame({
         }
         .animate-shake {
           animation: shake 0.4s ease-in-out;
+        }
+
+        /* Confetti on game completion */
+        .confetti-container {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          pointer-events: none;
+        }
+        .confetti-piece {
+          position: absolute;
+          top: -12px;
+          width: 8px;
+          height: 14px;
+          border-radius: 2px;
+          animation: confetti-fall linear infinite;
+        }
+        @keyframes confetti-fall {
+          0% { transform: translateY(-12px) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(460px) rotate(720deg); opacity: 0.7; }
         }
       `}</style>
     </div>

@@ -117,6 +117,12 @@ class SoundService {
     return this._isMusicEnabled;
   }
 
+  // Getter (not a method): 9 internal call sites read `this.isSfxEnabled`
+  // as a property. Without this, `tsc --noEmit` fails on live main.
+  public get isSfxEnabled(): boolean {
+    return this._isSfxEnabled;
+  }
+
   public isSoundEnabled(): boolean {
     return this._isSfxEnabled;
   }

@@ -344,7 +344,7 @@ class SoundService {
   }
 
   public playCorrect() {
-    if (this.isMuted || !this.isSfxEnabled) return;
+    if (this.isMuted || !this._isSfxEnabled) return;
     this.initCtx();
     if (!this.ctx) return;
 
@@ -380,7 +380,7 @@ class SoundService {
   }
 
   public playIncorrect() {
-    if (this.isMuted || !this.isSfxEnabled) return;
+    if (this.isMuted || !this._isSfxEnabled) return;
     this.initCtx();
     if (!this.ctx) return;
 
@@ -737,7 +737,7 @@ class SoundService {
 
   // 12. REALISTIC SNAKE & LADDER GAME SOUND EFFECTS
   public playDiceRoll() {
-    if (this.isMuted || !this.isSfxEnabled) return;
+    if (this.isMuted || !this._isSfxEnabled) return;
     this.initCtx();
     if (!this.ctx) return;
 
@@ -777,7 +777,7 @@ class SoundService {
   }
 
   public playMoveStep() {
-    if (this.isMuted || !this.isSfxEnabled) return;
+    if (this.isMuted || !this._isSfxEnabled) return;
     this.initCtx();
     if (!this.ctx) return;
 
@@ -802,7 +802,7 @@ class SoundService {
   }
 
   public playLadderClimb() {
-    if (this.isMuted || !this.isSfxEnabled) return;
+    if (this.isMuted || !this._isSfxEnabled) return;
     this.initCtx();
     if (!this.ctx) return;
 
@@ -830,7 +830,7 @@ class SoundService {
   }
 
   public playSnakeSlide() {
-    if (this.isMuted || !this.isSfxEnabled) return;
+    if (this.isMuted || !this._isSfxEnabled) return;
     this.initCtx();
     if (!this.ctx) return;
 
@@ -855,7 +855,7 @@ class SoundService {
   }
 
   public playTimerTick() {
-    if (this.isMuted || !this.isSfxEnabled) return;
+    if (this.isMuted || !this._isSfxEnabled) return;
     this.initCtx();
     if (!this.ctx) return;
 
@@ -878,7 +878,7 @@ class SoundService {
   }
 
   public playBonusEarned() {
-    if (this.isMuted || !this.isSfxEnabled) return;
+    if (this.isMuted || !this._isSfxEnabled) return;
     this.initCtx();
     if (!this.ctx) return;
 
@@ -905,7 +905,7 @@ class SoundService {
   }
 
   public playLevelUnlock() {
-    if (this.isMuted || !this.isSfxEnabled) return;
+    if (this.isMuted || !this._isSfxEnabled) return;
     this.initCtx();
     if (!this.ctx) return;
 

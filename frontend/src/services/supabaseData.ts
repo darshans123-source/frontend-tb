@@ -716,6 +716,81 @@ class SupabaseDataService {
     }
   }
 
+  // --- Level 1 Snake & Ladders progress -----------------------------------
+  // Stored in public.snake_ladder_progress (see supabase_level1_snake_progress.sql).
+  // Best-effort: returns false when the table has not been migrated yet or
+  // when the user id is not an auth.users id (e.g. a PIN student account).
+  // The game always keeps localStorage as the fallback, so a missing table
+  // never blocks gameplay.
+  async saveSnakeProgress(userId: string, progress: {
+    currentSquare: number;
+    score: number;
+    xp: number;
+    accuracy: number;
+    correctAnswers: number;
+    wrongAnswers: number;
+    questionsAnswered: number;
+    completed: boolean;
+    completedQuestionIds: string[];
+    missedQuestionIds: string[];
+    lastPlayedAt: string;
+  }): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('snake_ladder_progress')
+        .upsert({
+          user_id: userId,
+          current_square: progress.currentSquare,
+          score: progress.score,
+          xp: progress.xp,
+          accuracy: progress.accuracy,
+          correct_answers: progress.correctAnswers,
+          wrong_answers: progress.wrongAnswers,
+          questions_answered: progress.questionsAnswered,
+          completed: progress.completed,
+          completed_question_ids: progress.completedQuestionIds,
+          missed_question_ids: progress.missedQuestionIds,
+          last_played_at: progress.lastPlayedAt,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'user_id' });
+
+      if (error) {
+        console.warn('Supabase saveSnakeProgress note:', error.message);
+        return false;
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  async loadSnakeProgress(userId: string) {
+    try {
+      const { data, error } = await supabase
+        .from('snake_ladder_progress')
+        .select('*')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (error || !data) return null;
+      return data as {
+        current_square: number;
+        score: number;
+        xp: number;
+        accuracy: number;
+        correct_answers: number;
+        wrong_answers: number;
+        questions_answered: number;
+        completed: boolean;
+        completed_question_ids: string[];
+        missed_question_ids: string[];
+        last_played_at: string | null;
+      };
+    } catch (e) {
+      return null;
+    }
+  }
+
   async saveCertificate(userId: string, cert: CertificateData) {
     try {
       const { data, error } = await supabase

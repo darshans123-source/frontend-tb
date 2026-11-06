@@ -7,6 +7,27 @@ export interface UserModuleProgressRecord {
   score: number;
 }
 
+export interface GameProgressInput {
+  currentSquare: number;
+  xp: number;
+  score: number;
+  correctAnswers: number;
+  wrongAnswers: number;
+  attempted: number;
+  accuracy: number;
+  completed: boolean;
+  level2Unlocked: boolean;
+}
+
+export interface GameProgressRecord extends GameProgressInput {
+  game_id: string;
+  current_square: number;
+  correct_answers: number;
+  wrong_answers: number;
+  level2_unlocked: boolean;
+  last_played: string;
+}
+
 export interface UserDataAggregate {
   profile: any;
   achievements: string[];
@@ -711,6 +732,97 @@ class SupabaseDataService {
 
       if (error) console.warn('Supabase saveModuleProgress note:', error.message);
       return data;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // ==========================================
+  // LEVEL 1 SNAKE & LADDERS GAME PROGRESS
+  // Table: public.game_progress (see supabase_game_progress.sql — run once
+  // in the Supabase SQL Editor). Auth users (email/Google) upsert directly
+  // with RLS auth.uid() = user_id. PIN students have no auth.users row and
+  // no Supabase session, so they go through the SECURITY DEFINER RPCs
+  // save_game_progress / get_game_progress instead. Both paths return null
+  // (never throw) when the table/RPC does not exist yet — the game then
+  // keeps working from localStorage and retries on the next save.
+  // ==========================================
+
+  async saveGameProgress(
+    userId: string,
+    input: GameProgressInput,
+    isPinStudent = false,
+    gameId = 'level1-snake-ladder'
+  ): Promise<boolean> {
+    try {
+      if (isPinStudent) {
+        const { error } = await supabase.rpc('save_game_progress', {
+          p_student_account_id: userId,
+          p_game_id: gameId,
+          p_current_square: input.currentSquare,
+          p_xp: input.xp,
+          p_score: input.score,
+          p_correct: input.correctAnswers,
+          p_wrong: input.wrongAnswers,
+          p_attempted: input.attempted,
+          p_accuracy: input.accuracy,
+          p_completed: input.completed,
+          p_level2_unlocked: input.level2Unlocked
+        });
+        if (error) console.warn('Supabase saveGameProgress (PIN RPC) note:', error.message);
+        return !error;
+      }
+      const { error } = await supabase.from('game_progress').upsert({
+        user_id: userId,
+        game_id: gameId,
+        owner_key: `auth:${userId}`,
+        current_square: input.currentSquare,
+        xp: input.xp,
+        score: input.score,
+        correct_answers: input.correctAnswers,
+        wrong_answers: input.wrongAnswers,
+        attempted: input.attempted,
+        accuracy: input.accuracy,
+        completed: input.completed,
+        level2_unlocked: input.level2Unlocked,
+        last_played: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'game_id,owner_key' });
+      if (error) console.warn('Supabase saveGameProgress note:', error.message);
+      return !error;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  async fetchGameProgress(
+    userId: string,
+    isPinStudent = false,
+    gameId = 'level1-snake-ladder'
+  ): Promise<GameProgressRecord | null> {
+    try {
+      if (isPinStudent) {
+        const { data, error } = await supabase.rpc('get_game_progress', {
+          p_student_account_id: userId,
+          p_game_id: gameId
+        });
+        if (error) {
+          console.warn('Supabase fetchGameProgress (PIN RPC) note:', error.message);
+          return null;
+        }
+        const row = Array.isArray(data) ? data[0] : data;
+        return row || null;
+      }
+      const { data, error } = await supabase
+        .from('game_progress')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('game_id', gameId)
+        .single();
+      if (error && error.code !== 'PGRST116') {
+        console.warn('Supabase fetchGameProgress note:', error.message);
+      }
+      return data || null;
     } catch (e) {
       return null;
     }
